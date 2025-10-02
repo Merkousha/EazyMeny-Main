@@ -270,7 +270,7 @@ public class WebsiteController : BaseRestaurantController
     /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> EditContent(UpdateContentCommand command)
+    public async Task<IActionResult> EditContent(EditContentViewModel viewModel)
     {
         try
         {
@@ -282,13 +282,37 @@ public class WebsiteController : BaseRestaurantController
                 return Redirect("/Restaurant/Website/Index");
             }
 
-            command.RestaurantId = restaurantId;
-
             if (!ModelState.IsValid)
             {
-                ViewBag.SectionType = command.SectionType;
-                return View(command);
+                // بازیابی اطلاعات بخش برای نمایش دوباره فرم
+                var websiteQuery = new GetRestaurantWebsiteQuery
+                {
+                    RestaurantId = restaurantId,
+                    OnlyPublished = false
+                };
+
+                var website = await _mediator.Send(websiteQuery);
+                
+                if (website != null && website.Template != null)
+                {
+                    var section = website.Template.Sections.FirstOrDefault(s => s.SectionType == viewModel.SectionType);
+                    viewModel.SectionTitle = section?.Title ?? viewModel.SectionType.ToString();
+                    viewModel.IsRequired = section?.IsRequired ?? false;
+                    viewModel.IsEditable = section?.IsEditable ?? true;
+                }
+                
+                return View(viewModel);
             }
+
+            // ایجاد Command از ViewModel
+            var command = new UpdateContentCommand
+            {
+                RestaurantId = restaurantId,
+                SectionType = viewModel.SectionType,
+                Content = viewModel.CustomContent ?? string.Empty,
+                UseDefaultContent = viewModel.UseDefaultContent,
+                IsVisible = viewModel.IsVisible
+            };
 
             await _mediator.Send(command);
 
@@ -297,10 +321,35 @@ public class WebsiteController : BaseRestaurantController
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error saving content for section: {Section}", command.SectionType);
+            _logger.LogError(ex, "Error saving content for section: {Section}", viewModel.SectionType);
             TempData["Error"] = $"خطا در ذخیره محتوا: {ex.Message}";
-            ViewBag.SectionType = command.SectionType;
-            return View(command);
+            
+            // بازیابی اطلاعات بخش برای نمایش خطا
+            try
+            {
+                var restaurantId = GetRestaurantId();
+                var websiteQuery = new GetRestaurantWebsiteQuery
+                {
+                    RestaurantId = restaurantId,
+                    OnlyPublished = false
+                };
+
+                var website = await _mediator.Send(websiteQuery);
+                
+                if (website != null && website.Template != null)
+                {
+                    var section = website.Template.Sections.FirstOrDefault(s => s.SectionType == viewModel.SectionType);
+                    viewModel.SectionTitle = section?.Title ?? viewModel.SectionType.ToString();
+                    viewModel.IsRequired = section?.IsRequired ?? false;
+                    viewModel.IsEditable = section?.IsEditable ?? true;
+                }
+            }
+            catch
+            {
+                // در صورت خطا در بازیابی، مقادیر پیش‌فرض
+            }
+            
+            return View(viewModel);
         }
     }
 
