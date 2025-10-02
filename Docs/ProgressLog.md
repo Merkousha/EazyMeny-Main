@@ -212,12 +212,54 @@ Coverage:            0%
 
 ---
 
-## 📅 لاگ‌های پیشرفت
+## [2025-10-02 23:45] - Admin Orders Section Complete
 
----
+### ✅ تکمیل شده:
+- پیاده‌سازی کامل بخش سفارشات ادمین:
+  - DTOهای OrderListDto، OrderDetailsDto، OrderItemDto
+  - Query و Handler: GetAllOrdersQuery، GetOrderDetailsQuery
+  - کنترلر: Areas/Admin/Controllers/OrderController.cs
+  - Viewها: Areas/Admin/Views/Order/Index.cshtml، Details.cshtml
+  - فیلتر وضعیت سفارش و رستوران
+  - لینک فعال در Sidebar
 
-## [2025-10-03 15:30] - Admin Dashboard (HomeController + Views) Complete
+**فایل‌های ایجاد/تغییر یافته:**
+1. src/EazyMenu.Application/Common/Models/Order/OrderListDto.cs
+2. src/EazyMenu.Application/Common/Models/Order/OrderDetailsDto.cs
+3. src/EazyMenu.Application/Common/Models/Order/OrderItemDto.cs
+4. src/EazyMenu.Application/Features/Orders/Queries/GetAllOrders/GetAllOrdersQuery.cs
+5. src/EazyMenu.Application/Features/Orders/Queries/GetAllOrders/GetAllOrdersQueryHandler.cs
+6. src/EazyMenu.Application/Features/Orders/Queries/GetOrderDetails/GetOrderDetailsQuery.cs
+7. src/EazyMenu.Application/Features/Orders/Queries/GetOrderDetails/GetOrderDetailsQueryHandler.cs
+8. src/EazyMenu.Web/Areas/Admin/Controllers/OrderController.cs
+9. src/EazyMenu.Web/Areas/Admin/Views/Order/Index.cshtml
+10. src/EazyMenu.Web/Areas/Admin/Views/Order/Details.cshtml
+11. src/EazyMenu.Web/Areas/Admin/Views/Shared/_Sidebar.cshtml
 
+**خطاهای رفع شده:**
+- فعال‌سازی فیلتر وضعیت سفارش در Query و View
+- رفع مشکل لینک سفارشات در Sidebar
+
+### 📊 نتیجه:
+- Build: ✅ موفق (17.3s، 0 error، 4 warning)
+- Migration: ➖ مربوط نیست (تغییری در دیتابیس نبود)
+- Tests: ⏸️ تست دستی موفق - برنامه اجرا شد
+- Application Status: 🟢 Running
+
+### 🔍 نکات:
+- CQRS کامل برای سفارشات
+- فیلتر وضعیت سفارش با دکمه‌های فعال
+- نمایش جزئیات سفارش با آیتم‌ها و پرداخت
+- UI کاملاً RTL و Mobile-first
+- لینک سفارشات در Sidebar فعال شد
+
+### 📈 Progress Update:
+**قبل:** 88% (Admin Dashboard)
+**بعد:** 90% (Admin Orders Section)
+**باقی‌مانده:** Public Menu Page + Order System
+
+### ⏭️ مراحل بعدی:
+- پیاده‌سازی صفحه منوی عمومی برای مشتریان
 ### ✅ تکمیل شده:
 - پیاده‌سازی کامل **Admin Dashboard** با CQRS Pattern
 - **Backend (CQRS):**
