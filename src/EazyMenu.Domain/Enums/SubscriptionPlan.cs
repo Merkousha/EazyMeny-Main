@@ -1,9 +1,9 @@
 namespace EazyMenu.Domain.Enums;
 
 /// <summary>
-/// پلن‌های اشتراک
+/// انواع پلن‌های اشتراک (Enum)
 /// </summary>
-public enum SubscriptionPlan
+public enum PlanType
 {
     Basic = 1,
     Standard = 2,

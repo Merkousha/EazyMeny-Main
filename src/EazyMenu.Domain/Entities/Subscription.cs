@@ -11,7 +11,12 @@ public class Subscription : BaseEntity
     public Guid RestaurantId { get; set; }
     public virtual Restaurant Restaurant { get; set; } = null!;
     
-    public SubscriptionPlan Plan { get; set; }
+    /// <summary>
+    /// شناسه پلن اشتراک
+    /// </summary>
+    public Guid SubscriptionPlanId { get; set; }
+    public virtual SubscriptionPlan SubscriptionPlan { get; set; } = null!;
+    
     public SubscriptionStatus Status { get; set; }
     
     public DateTime StartDate { get; set; }

@@ -50,7 +50,7 @@ public class GetAllSubscriptionsQueryHandler : IRequestHandler<GetAllSubscriptio
                 Id = subscription.Id,
                 RestaurantId = subscription.RestaurantId,
                 RestaurantName = restaurantLookup.TryGetValue(subscription.RestaurantId, out var name) ? name : "-",
-                Plan = GetPlanTitle(subscription.Plan),
+                Plan = "پایه", // TODO: باید از subscription.SubscriptionPlan.Name استفاده شود
                 Status = GetStatusTitle(subscription.Status),
                 StartDate = subscription.StartDate,
                 EndDate = subscription.EndDate,
@@ -63,11 +63,11 @@ public class GetAllSubscriptionsQueryHandler : IRequestHandler<GetAllSubscriptio
         return result;
     }
 
-    private static string GetPlanTitle(SubscriptionPlan plan) => plan switch
+    private static string GetPlanTitle(PlanType plan) => plan switch
     {
-        SubscriptionPlan.Basic => "پایه",
-        SubscriptionPlan.Standard => "استاندارد",
-        SubscriptionPlan.Premium => "پیشرفته",
+        PlanType.Basic => "پایه",
+        PlanType.Standard => "استاندارد",
+        PlanType.Premium => "پیشرفته",
         _ => plan.ToString()
     };
 

@@ -481,30 +481,31 @@ public static class DatabaseSeeder
             return;
         }
 
-        var subscription = new Subscription
-        {
-            Id = Guid.NewGuid(),
-            RestaurantId = restaurant.Id,
-            Plan = SubscriptionPlan.Standard,
-            Status = SubscriptionStatus.Active,
-            StartDate = DateTime.UtcNow.AddDays(-30),
-            EndDate = DateTime.UtcNow.AddDays(60),
-            Amount = 500000,
-            IsYearly = false,
-            AutoRenew = true,
-            MaxProducts = 100,
-            MaxOrdersPerMonth = 1000,
-            HasReservationFeature = true,
-            HasWebsiteBuilder = true,
-            HasAdvancedReporting = false,
-            CurrentProductCount = 0,
-            CurrentMonthOrderCount = 0,
-            CreatedAt = DateTime.UtcNow.AddDays(-30)
-        };
+        // TODO: باید ابتدا SubscriptionPlan ها را seed کنیم
+        // var subscription = new Subscription
+        // {
+        //     Id = Guid.NewGuid(),
+        //     RestaurantId = restaurant.Id,
+        //     SubscriptionPlanId = Guid.Empty, // باید از دیتابیس گرفته شود
+        //     Status = SubscriptionStatus.Active,
+        //     StartDate = DateTime.UtcNow.AddDays(-30),
+        //     EndDate = DateTime.UtcNow.AddDays(60),
+        //     Amount = 500000,
+        //     IsYearly = false,
+        //     AutoRenew = true,
+        //     MaxProducts = 100,
+        //     MaxOrdersPerMonth = 1000,
+        //     HasReservationFeature = true,
+        //     HasWebsiteBuilder = true,
+        //     HasAdvancedReporting = false,
+        //     CurrentProductCount = 0,
+        //     CurrentMonthOrderCount = 0,
+        //     CreatedAt = DateTime.UtcNow.AddDays(-30)
+        // };
 
-        await context.Subscriptions.AddAsync(subscription);
-        await context.SaveChangesAsync();
-        Console.WriteLine($"✅ Subscription seeded for user");
+        // await context.Subscriptions.AddAsync(subscription);
+        // await context.SaveChangesAsync();
+        Console.WriteLine($"⚠️ Subscription seeding skipped - needs SubscriptionPlan entity first");
     }
 
     private static async Task GenerateQRCodesAsync(List<Restaurant> restaurants, IQRCodeService qrCodeService)

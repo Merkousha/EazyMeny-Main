@@ -20,6 +20,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationIdentityUser, I
     // Domain DbSets
     public DbSet<ApplicationUser> ApplicationUsers => Set<ApplicationUser>();
     public DbSet<Restaurant> Restaurants => Set<Restaurant>();
+    public DbSet<SubscriptionPlan> SubscriptionPlans => Set<SubscriptionPlan>();
     public DbSet<Subscription> Subscriptions => Set<Subscription>();
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<Product> Products => Set<Product>();
