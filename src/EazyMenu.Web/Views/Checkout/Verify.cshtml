@@ -1,0 +1,307 @@
+@model EazyMenu.Application.Common.Models.Order.OrderDto
+
+@{
+    ViewData["Title"] = Model.IsPaid ? "پرداخت موفق" : "پرداخت ناموفق";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var isSuccess = Model.IsPaid;
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0">
+                @if (isSuccess)
+                {
+                    <!-- پرداخت موفق -->
+                    <div class="card-header bg-success text-white text-center py-4">
+                        <div class="mb-3">
+                            <i class="fas fa-check-circle fa-5x"></i>
+                        </div>
+                        <h2 class="mb-0">پرداخت با موفقیت انجام شد</h2>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="alert alert-success text-center mb-4">
+                            <i class="fas fa-info-circle me-2"></i>
+                            سفارش شما با موفقیت ثبت شد و به زودی آماده‌سازی خواهد شد.
+                        </div>
+
+                        <!-- اطلاعات سفارش -->
+                        <div class="order-details mb-4">
+                            <h5 class="mb-3">
+                                <i class="fas fa-receipt me-2"></i>
+                                اطلاعات سفارش
+                            </h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="info-box p-3 bg-light rounded">
+                                        <label class="text-muted small">شماره سفارش:</label>
+                                        <div class="fw-bold fs-5">@Model.OrderNumber</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-box p-3 bg-light rounded">
+                                        <label class="text-muted small">کد رهگیری پرداخت:</label>
+                                        <div class="fw-bold fs-5">@ViewBag.RefID</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-box p-3 bg-light rounded">
+                                        <label class="text-muted small">رستوران:</label>
+                                        <div class="fw-bold">@Model.RestaurantName</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-box p-3 bg-light rounded">
+                                        <label class="text-muted small">تاریخ ثبت:</label>
+                                        <div class="fw-bold">@Model.CreatedAt.ToString("yyyy/MM/dd HH:mm")</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- جزئیات محصولات -->
+                        <div class="order-items mb-4">
+                            <h5 class="mb-3">
+                                <i class="fas fa-shopping-bag me-2"></i>
+                                محصولات سفارش
+                            </h5>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>محصول</th>
+                                            <th class="text-center">تعداد</th>
+                                            <th class="text-end">قیمت واحد</th>
+                                            <th class="text-end">جمع</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.Items)
+                                        {
+                                            <tr>
+                                                <td>@item.ProductName</td>
+                                                <td class="text-center">@item.Quantity</td>
+                                                <td class="text-end">@item.UnitPrice.ToString("N0") تومان</td>
+                                                <td class="text-end fw-bold">@item.TotalPrice.ToString("N0") تومان</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- خلاصه مالی -->
+                        <div class="cost-summary p-3 bg-light rounded mb-4">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>جمع محصولات:</span>
+                                <span class="fw-bold">@(Model.TotalAmount - Model.DeliveryFee).ToString("N0") تومان</span>
+                            </div>
+                            @if (Model.DiscountAmount > 0)
+                            {
+                                <div class="d-flex justify-content-between mb-2 text-success">
+                                    <span>
+                                        <i class="fas fa-tag me-1"></i>
+                                        تخفیف:
+                                    </span>
+                                    <span class="fw-bold">-@Model.DiscountAmount.ToString("N0") تومان</span>
+                                </div>
+                            }
+                            @if (Model.DeliveryFee > 0)
+                            {
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>
+                                        <i class="fas fa-shipping-fast me-1"></i>
+                                        هزینه ارسال:
+                                    </span>
+                                    <span class="fw-bold">@Model.DeliveryFee.ToString("N0") تومان</span>
+                                </div>
+                            }
+                            <hr>
+                            <div class="d-flex justify-content-between fs-4">
+                                <span class="fw-bold">مبلغ پرداختی:</span>
+                                <span class="fw-bold text-success">@Model.TotalAmount.ToString("N0") تومان</span>
+                            </div>
+                        </div>
+
+                        <!-- دکمه‌های عملیات -->
+                        <div class="d-grid gap-2">
+                            <a asp-controller="Order" asp-action="Details" asp-route-id="@Model.Id" class="btn btn-primary btn-lg">
+                                <i class="fas fa-eye me-2"></i>
+                                مشاهده جزئیات سفارش
+                            </a>
+                            <a asp-controller="Order" asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-list me-2"></i>
+                                لیست سفارشات من
+                            </a>
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary">
+                                <i class="fas fa-home me-2"></i>
+                                بازگشت به صفحه اصلی
+                            </a>
+                        </div>
+
+                        <!-- پیام SMS -->
+                        <div class="alert alert-info mt-4 mb-0">
+                            <i class="fas fa-sms me-2"></i>
+                            جزئیات سفارش به شماره <strong>@Model.CustomerPhone</strong> پیامک شد.
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <!-- پرداخت ناموفق -->
+                    <div class="card-header bg-danger text-white text-center py-4">
+                        <div class="mb-3">
+                            <i class="fas fa-times-circle fa-5x"></i>
+                        </div>
+                        <h2 class="mb-0">پرداخت ناموفق</h2>
+                    </div>
+                    <div class="card-body p-4 text-center">
+                        <div class="alert alert-danger mb-4">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            متأسفانه پرداخت شما انجام نشد.
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+                        {
+                            <div class="alert alert-warning">
+                                <strong>دلیل خطا:</strong> @ViewBag.ErrorMessage
+                            </div>
+                        }
+
+                        <!-- اطلاعات سفارش -->
+                        <div class="order-info p-3 bg-light rounded mb-4">
+                            <label class="text-muted">شماره سفارش:</label>
+                            <div class="fw-bold fs-4">@Model.OrderNumber</div>
+                            <small class="text-muted">سفارش شما ثبت شده اما پرداخت نشده است</small>
+                        </div>
+
+                        <!-- دکمه‌های عملیات -->
+                        <div class="d-grid gap-2">
+                            <a asp-controller="Checkout" asp-action="Retry" asp-route-orderId="@Model.Id" class="btn btn-warning btn-lg">
+                                <i class="fas fa-redo me-2"></i>
+                                تلاش مجدد برای پرداخت
+                            </a>
+                            <a asp-controller="Order" asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-primary">
+                                <i class="fas fa-eye me-2"></i>
+                                مشاهده جزئیات سفارش
+                            </a>
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="fas fa-home me-2"></i>
+                                بازگشت به صفحه اصلی
+                            </a>
+                        </div>
+
+                        <!-- راهنما -->
+                        <div class="alert alert-light mt-4 mb-0">
+                            <i class="fas fa-info-circle me-2"></i>
+                            در صورت کسر وجه از حساب شما، مبلغ ظرف 72 ساعت به حساب شما بازگردانده می‌شود.
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- نظرسنجی (فقط برای پرداخت موفق) -->
+            @if (isSuccess)
+            {
+                <div class="card shadow-sm border-0 mt-4">
+                    <div class="card-body text-center">
+                        <h5 class="mb-3">تجربه شما از سفارش چطور بود؟</h5>
+                        <div class="rating d-flex justify-content-center gap-2">
+                            <button class="btn btn-outline-warning btn-lg" onclick="rateOrder(1)">
+                                <i class="far fa-star"></i>
+                            </button>
+                            <button class="btn btn-outline-warning btn-lg" onclick="rateOrder(2)">
+                                <i class="far fa-star"></i>
+                            </button>
+                            <button class="btn btn-outline-warning btn-lg" onclick="rateOrder(3)">
+                                <i class="far fa-star"></i>
+                            </button>
+                            <button class="btn btn-outline-warning btn-lg" onclick="rateOrder(4)">
+                                <i class="far fa-star"></i>
+                            </button>
+                            <button class="btn btn-outline-warning btn-lg" onclick="rateOrder(5)">
+                                <i class="far fa-star"></i>
+                            </button>
+                        </div>
+                        <small class="text-muted mt-2 d-block">امتیاز شما به ما در بهبود خدمات کمک می‌کند</small>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function rateOrder(rating) {
+            // می‌توانید این تابع را برای ارسال امتیاز به سرور پیاده‌سازی کنید
+            $('.rating button').each(function(index) {
+                if (index < rating) {
+                    $(this).removeClass('btn-outline-warning').addClass('btn-warning');
+                    $(this).find('i').removeClass('far').addClass('fas');
+                } else {
+                    $(this).removeClass('btn-warning').addClass('btn-outline-warning');
+                    $(this).find('i').removeClass('fas').addClass('far');
+                }
+            });
+            
+            // ارسال امتیاز به سرور
+            $.ajax({
+                url: '@Url.Action("RateOrder", "Order")',
+                method: 'POST',
+                data: {
+                    orderId: '@Model.Id',
+                    rating: rating
+                },
+                success: function() {
+                    // نمایش پیام موفقیت
+                    alert('با تشکر از امتیاز شما!');
+                }
+            });
+        }
+
+        // جلوگیری از بازگشت به صفحه قبل (درگاه پرداخت)
+        if (window.history && window.history.pushState) {
+            window.history.pushState(null, null, window.location.href);
+            window.onpopstate = function() {
+                window.history.pushState(null, null, window.location.href);
+            };
+        }
+    </script>
+}
+
+<style>
+    .info-box {
+        transition: transform 0.2s;
+    }
+
+    .info-box:hover {
+        transform: translateY(-2px);
+    }
+
+    .table th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+    }
+
+    .rating button {
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        transition: all 0.2s;
+    }
+
+    .rating button:hover {
+        transform: scale(1.1);
+    }
+
+    .cost-summary {
+        border: 2px dashed #dee2e6;
+    }
+
+    @@media print {
+        .btn, .rating, .alert-info {
+            display: none !important;
+        }
+    }
+</style>

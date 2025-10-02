@@ -1,5 +1,6 @@
 using AutoMapper;
 using EazyMenu.Application.Common.Models.Auth;
+using EazyMenu.Application.Common.Models.Order;
 using EazyMenu.Application.Common.Models.Restaurant;
 using EazyMenu.Domain.Entities;
 
@@ -18,6 +19,14 @@ public class MappingProfile : Profile
 
         CreateMap<Restaurant, RestaurantListDto>()
             .ForMember(dest => dest.OwnerName, opt => opt.Ignore()); // Set manually in handler
+
+        // Order Mappings
+        CreateMap<Order, OrderDto>()
+            .ForMember(dest => dest.RestaurantName, opt => opt.MapFrom(src => src.Restaurant.Name))
+            .ForMember(dest => dest.RestaurantPhone, opt => opt.MapFrom(src => src.Restaurant.PhoneNumber))
+            .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.OrderItems));
+
+        CreateMap<OrderItem, OrderItemDto>();
 
         // Commands mapping (if needed in future)
         // CreateMap<CreateRestaurantDto, CreateRestaurantCommand>();

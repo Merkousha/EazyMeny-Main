@@ -1,0 +1,359 @@
+@model EazyMenu.Application.Common.Models.Checkout.CheckoutDto
+
+@{
+    ViewData["Title"] = "تسویه حساب";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container my-5">
+    <div class="row">
+        <!-- فرم اطلاعات مشتری -->
+        <div class="col-lg-7 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-user-circle me-2"></i>
+                        اطلاعات تحویل‌گیرنده
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form id="checkoutForm">
+                        <input type="hidden" asp-for="RestaurantId" />
+
+                        <!-- نام و نام خانوادگی -->
+                        <div class="mb-3">
+                            <label asp-for="CustomerName" class="form-label">
+                                <i class="fas fa-user me-1"></i>
+                                نام و نام خانوادگی
+                            </label>
+                            <input asp-for="CustomerName" class="form-control" placeholder="نام کامل خود را وارد کنید" required />
+                            <span asp-validation-for="CustomerName" class="text-danger"></span>
+                        </div>
+
+                        <!-- شماره تماس -->
+                        <div class="mb-3">
+                            <label asp-for="CustomerPhone" class="form-label">
+                                <i class="fas fa-phone me-1"></i>
+                                شماره تماس
+                            </label>
+                            <input asp-for="CustomerPhone" class="form-control" placeholder="09xxxxxxxxx" pattern="09[0-9]{9}" required />
+                            <small class="form-text text-muted">فرمت: 09123456789</small>
+                            <span asp-validation-for="CustomerPhone" class="text-danger"></span>
+                        </div>
+
+                        <!-- نوع سفارش -->
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-shopping-bag me-1"></i>
+                                نوع دریافت سفارش
+                            </label>
+                            <div class="d-flex gap-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="IsTakeaway" id="deliveryOption" value="false" checked>
+                                    <label class="form-check-label" for="deliveryOption">
+                                        <i class="fas fa-motorcycle me-1"></i>
+                                        ارسال به آدرس
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="IsTakeaway" id="takeawayOption" value="true">
+                                    <label class="form-check-label" for="takeawayOption">
+                                        <i class="fas fa-store me-1"></i>
+                                        حضوری / تحویل در محل
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- آدرس تحویل (فقط برای ارسال) -->
+                        <div class="mb-3" id="addressField">
+                            <label asp-for="DeliveryAddress" class="form-label">
+                                <i class="fas fa-map-marker-alt me-1"></i>
+                                آدرس تحویل
+                            </label>
+                            <textarea asp-for="DeliveryAddress" class="form-control" rows="3" placeholder="آدرس کامل خود را وارد کنید"></textarea>
+                            <span asp-validation-for="DeliveryAddress" class="text-danger"></span>
+                        </div>
+
+                        <!-- زمان تحویل مورد نظر -->
+                        <div class="mb-3">
+                            <label asp-for="PreferredDeliveryTime" class="form-label">
+                                <i class="fas fa-clock me-1"></i>
+                                زمان تحویل مورد نظر (اختیاری)
+                            </label>
+                            <input asp-for="PreferredDeliveryTime" class="form-control" type="datetime-local" />
+                            <small class="form-text text-muted">زمان تقریبی که می‌خواهید سفارش تحویل شود</small>
+                        </div>
+
+                        <!-- یادداشت -->
+                        <div class="mb-3">
+                            <label asp-for="Note" class="form-label">
+                                <i class="fas fa-comment me-1"></i>
+                                یادداشت سفارش (اختیاری)
+                            </label>
+                            <textarea asp-for="Note" class="form-control" rows="2" placeholder="توضیحات اضافی برای رستوران..."></textarea>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- خلاصه سفارش -->
+        <div class="col-lg-5">
+            <div class="card shadow-sm sticky-top" style="top: 20px;">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-receipt me-2"></i>
+                        خلاصه سفارش
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- لیست محصولات -->
+                    <div class="order-items mb-3">
+                        <h6 class="mb-3">آیتم‌های سفارش:</h6>
+                        <div id="cartItemsList">
+                            <!-- جاوااسکریپت این قسمت را پر می‌کند -->
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- جزئیات هزینه -->
+                    <div class="cost-breakdown">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>جمع کل محصولات:</span>
+                            <span id="subtotalAmount">@Model.TotalAmount.ToString("N0") تومان</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2 text-success" id="discountRow" style="display: none !important;">
+                            <span>
+                                <i class="fas fa-tag me-1"></i>
+                                تخفیف:
+                            </span>
+                            <span id="discountAmount">-@Model.TotalDiscount.ToString("N0") تومان</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2" id="deliveryFeeRow">
+                            <span>
+                                <i class="fas fa-shipping-fast me-1"></i>
+                                هزینه ارسال:
+                            </span>
+                            <span id="deliveryFeeAmount">@Model.DeliveryFee.ToString("N0") تومان</span>
+                        </div>
+                        <hr class="my-2">
+                        <div class="d-flex justify-content-between fw-bold fs-5">
+                            <span>مبلغ نهایی:</span>
+                            <span class="text-primary" id="finalAmount">@Model.FinalAmount.ToString("N0") تومان</span>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- دکمه پرداخت -->
+                    <button type="button" class="btn btn-success btn-lg w-100" id="placeOrderBtn">
+                        <i class="fas fa-credit-card me-2"></i>
+                        ثبت سفارش و پرداخت
+                    </button>
+
+                    <!-- بازگشت به سبد خرید -->
+                    <a asp-controller="Cart" asp-action="Index" class="btn btn-outline-secondary w-100 mt-2">
+                        <i class="fas fa-arrow-right me-2"></i>
+                        بازگشت به سبد خرید
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- لودینگ مودال -->
+<div class="modal fade" id="loadingModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center">
+            <div class="modal-body py-5">
+                <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;" role="status">
+                    <span class="visually-hidden">در حال پردازش...</span>
+                </div>
+                <h5>در حال انتقال به درگاه پرداخت...</h5>
+                <p class="text-muted">لطفاً صبر کنید</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        $(document).ready(function() {
+            // بارگذاری سبد خرید
+            loadCartItems();
+
+            // Toggle آدرس بر اساس نوع سفارش
+            $('input[name="IsTakeaway"]').on('change', function() {
+                const isTakeaway = $(this).val() === 'true';
+                
+                if (isTakeaway) {
+                    $('#addressField').hide();
+                    $('#deliveryFeeRow').hide();
+                    $('#deliveryFeeAmount').text('0 تومان');
+                } else {
+                    $('#addressField').show();
+                    $('#deliveryFeeRow').show();
+                    loadDeliveryFee();
+                }
+                
+                updateFinalAmount();
+            });
+
+            // ثبت سفارش
+            $('#placeOrderBtn').on('click', function() {
+                if (!$('#checkoutForm')[0].checkValidity()) {
+                    $('#checkoutForm')[0].reportValidity();
+                    return;
+                }
+
+                placeOrder();
+            });
+        });
+
+        // بارگذاری آیتم‌های سبد خرید
+        function loadCartItems() {
+            $.ajax({
+                url: '@Url.Action("GetCart", "Cart")',
+                method: 'GET',
+                success: function(data) {
+                    if (data.items && data.items.length > 0) {
+                        let html = '';
+                        data.items.forEach(item => {
+                            html += `
+                                <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                                    <div>
+                                        <strong>${item.productName}</strong>
+                                        <br>
+                                        <small class="text-muted">${item.quantity} × ${item.discountedPrice.toLocaleString('fa-IR')} تومان</small>
+                                    </div>
+                                    <span class="fw-bold">${(item.quantity * item.discountedPrice).toLocaleString('fa-IR')} تومان</span>
+                                </div>
+                            `;
+                        });
+                        $('#cartItemsList').html(html);
+
+                        // بروزرسانی مبالغ
+                        $('#subtotalAmount').text(data.totalAmount.toLocaleString('fa-IR') + ' تومان');
+                        
+                        if (data.discount > 0) {
+                            $('#discountRow').show();
+                            $('#discountAmount').text('-' + data.discount.toLocaleString('fa-IR') + ' تومان');
+                        }
+
+                        updateFinalAmount();
+                    } else {
+                        window.location.href = '@Url.Action("Index", "Cart")';
+                    }
+                },
+                error: function() {
+                    alert('خطا در بارگذاری سبد خرید');
+                }
+            });
+        }
+
+        // بارگذاری هزینه ارسال
+        function loadDeliveryFee() {
+            const restaurantId = $('#RestaurantId').val();
+            
+            $.ajax({
+                url: `/api/restaurants/${restaurantId}/delivery-fee`,
+                method: 'GET',
+                success: function(data) {
+                    $('#deliveryFeeAmount').text(data.deliveryFee.toLocaleString('fa-IR') + ' تومان');
+                    updateFinalAmount();
+                },
+                error: function() {
+                    // در صورت خطا، مقدار پیش‌فرض را نگه دار
+                }
+            });
+        }
+
+        // بروزرسانی مبلغ نهایی
+        function updateFinalAmount() {
+            const subtotal = parseFloat($('#subtotalAmount').text().replace(/[^\d]/g, '')) || 0;
+            const discount = parseFloat($('#discountAmount').text().replace(/[^\d]/g, '')) || 0;
+            const deliveryFee = $('#deliveryFeeRow').is(':visible') 
+                ? parseFloat($('#deliveryFeeAmount').text().replace(/[^\d]/g, '')) || 0
+                : 0;
+
+            const finalAmount = subtotal - discount + deliveryFee;
+            $('#finalAmount').text(finalAmount.toLocaleString('fa-IR') + ' تومان');
+        }
+
+        // ثبت سفارش و انتقال به درگاه پرداخت
+        function placeOrder() {
+            const formData = {
+                restaurantId: $('#RestaurantId').val(),
+                customerName: $('#CustomerName').val(),
+                customerPhone: $('#CustomerPhone').val(),
+                deliveryAddress: $('#deliveryOption').is(':checked') ? $('#DeliveryAddress').val() : null,
+                note: $('#Note').val(),
+                preferredDeliveryTime: $('#PreferredDeliveryTime').val() || null,
+                isTakeaway: $('#takeawayOption').is(':checked')
+            };
+
+            // نمایش لودینگ
+            $('#loadingModal').modal('show');
+            $('#placeOrderBtn').prop('disabled', true);
+
+            $.ajax({
+                url: '@Url.Action("PlaceOrder", "Checkout")',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    if (response.success && response.paymentUrl) {
+                        // انتقال به درگاه پرداخت
+                        window.location.href = response.paymentUrl;
+                    } else {
+                        $('#loadingModal').modal('hide');
+                        $('#placeOrderBtn').prop('disabled', false);
+                        alert(response.message || 'خطا در ثبت سفارش');
+                    }
+                },
+                error: function(xhr) {
+                    $('#loadingModal').modal('hide');
+                    $('#placeOrderBtn').prop('disabled', false);
+                    
+                    const errorMessage = xhr.responseJSON?.message || 'خطا در ثبت سفارش. لطفاً دوباره تلاش کنید.';
+                    alert(errorMessage);
+                }
+            });
+        }
+    </script>
+}
+
+<style>
+    .sticky-top {
+        position: sticky;
+    }
+
+    .order-items {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .cost-breakdown .d-flex {
+        font-size: 0.95rem;
+    }
+
+    .form-check-input:checked {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+
+    .card-header {
+        font-weight: 600;
+    }
+
+    @@media (max-width: 991px) {
+        .sticky-top {
+            position: relative !important;
+        }
+    }
+</style>
