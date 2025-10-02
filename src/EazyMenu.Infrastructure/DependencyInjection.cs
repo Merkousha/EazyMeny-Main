@@ -26,6 +26,7 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         // Services
+        services.AddScoped<IUserService, UserService>();
         services.AddHttpClient<ISmsService, KavenegarSmsService>();
         services.AddHttpClient<IPaymentService, ZarinpalPaymentService>();
         services.AddScoped<IQRCodeService, QRCodeService>();

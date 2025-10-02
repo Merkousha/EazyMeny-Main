@@ -48,7 +48,8 @@ public class Restaurant : BaseEntity, IAggregateRoot
     
     // Relationships
     public Guid OwnerId { get; set; }
-    public virtual ApplicationUser Owner { get; set; } = null!;
+    // NOTE: Navigation property removed to maintain Clean Architecture
+    // Use OwnerId directly or query through IUserService
     
     public Guid? SubscriptionId { get; set; }
     public virtual Subscription? Subscription { get; set; }

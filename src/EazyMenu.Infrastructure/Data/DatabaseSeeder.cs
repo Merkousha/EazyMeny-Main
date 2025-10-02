@@ -73,9 +73,9 @@ public static class DatabaseSeeder
                 EmailConfirmed = true,
                 PhoneNumber = "09121234567",
                 PhoneNumberConfirmed = true,
-                FirstName = "مدیر",
-                LastName = "سیستم",
-                IsActive = true
+                FullName = "مدیر سیستم",
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
             };
             var result = await userManager.CreateAsync(adminUser, "Admin@123");
             if (result.Succeeded)
@@ -97,9 +97,9 @@ public static class DatabaseSeeder
                 EmailConfirmed = true,
                 PhoneNumber = "09121234568",
                 PhoneNumberConfirmed = true,
-                FirstName = "علی",
-                LastName = "احمدی",
-                IsActive = true
+                FullName = "علی احمدی",
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
             };
             var result = await userManager.CreateAsync(ownerUser, "Owner@123");
             if (result.Succeeded)
@@ -121,9 +121,9 @@ public static class DatabaseSeeder
                 EmailConfirmed = true,
                 PhoneNumber = "09121234569",
                 PhoneNumberConfirmed = true,
-                FirstName = "محمد",
-                LastName = "رضایی",
-                IsActive = true
+                FullName = "محمد رضایی",
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
             };
             var result = await userManager.CreateAsync(customerUser, "Customer@123");
             if (result.Succeeded)
@@ -353,7 +353,7 @@ public static class DatabaseSeeder
                 CategoryId = persianCategory.Id,
                 RestaurantId = persianCategory.RestaurantId,
                 Price = 180000,
-                ImageUrl = "/images/products/kebab-koobideh.jpg",
+                Image1Url = "/images/products/kebab-koobideh.jpg",
                 IsAvailable = true,
                 DisplayOrder = 1,
                 CreatedAt = DateTime.UtcNow
@@ -367,7 +367,7 @@ public static class DatabaseSeeder
                 CategoryId = persianCategory.Id,
                 RestaurantId = persianCategory.RestaurantId,
                 Price = 250000,
-                ImageUrl = "/images/products/kebab-barg.jpg",
+                Image1Url = "/images/products/kebab-barg.jpg",
                 IsAvailable = true,
                 DisplayOrder = 2,
                 CreatedAt = DateTime.UtcNow
@@ -381,7 +381,7 @@ public static class DatabaseSeeder
                 CategoryId = persianCategory.Id,
                 RestaurantId = persianCategory.RestaurantId,
                 Price = 150000,
-                ImageUrl = "/images/products/ghormeh-sabzi.jpg",
+                Image1Url = "/images/products/ghormeh-sabzi.jpg",
                 IsAvailable = true,
                 DisplayOrder = 3,
                 CreatedAt = DateTime.UtcNow
@@ -401,7 +401,7 @@ public static class DatabaseSeeder
                 CategoryId = burgerCategory.Id,
                 RestaurantId = burgerCategory.RestaurantId,
                 Price = 120000,
-                ImageUrl = "/images/products/special-burger.jpg",
+                Image1Url = "/images/products/special-burger.jpg",
                 IsAvailable = true,
                 DisplayOrder = 1,
                 CreatedAt = DateTime.UtcNow
@@ -415,7 +415,7 @@ public static class DatabaseSeeder
                 CategoryId = burgerCategory.Id,
                 RestaurantId = burgerCategory.RestaurantId,
                 Price = 90000,
-                ImageUrl = "/images/products/cheeseburger.jpg",
+                Image1Url = "/images/products/cheeseburger.jpg",
                 IsAvailable = true,
                 DisplayOrder = 2,
                 CreatedAt = DateTime.UtcNow
@@ -435,7 +435,7 @@ public static class DatabaseSeeder
                 CategoryId = coffeeCategory.Id,
                 RestaurantId = coffeeCategory.RestaurantId,
                 Price = 45000,
-                ImageUrl = "/images/products/cappuccino.jpg",
+                Image1Url = "/images/products/cappuccino.jpg",
                 IsAvailable = true,
                 DisplayOrder = 1,
                 CreatedAt = DateTime.UtcNow
@@ -449,7 +449,7 @@ public static class DatabaseSeeder
                 CategoryId = coffeeCategory.Id,
                 RestaurantId = coffeeCategory.RestaurantId,
                 Price = 40000,
-                ImageUrl = "/images/products/latte.jpg",
+                Image1Url = "/images/products/latte.jpg",
                 IsAvailable = true,
                 DisplayOrder = 2,
                 CreatedAt = DateTime.UtcNow
@@ -468,16 +468,32 @@ public static class DatabaseSeeder
             return;
         }
 
+        // Get first restaurant for the owner
+        var restaurant = await context.Restaurants.FirstOrDefaultAsync(r => r.OwnerId == userId);
+        if (restaurant == null)
+        {
+            Console.WriteLine("⚠️  No restaurant found for subscription seeding");
+            return;
+        }
+
         var subscription = new Subscription
         {
             Id = Guid.NewGuid(),
-            UserId = userId,
+            RestaurantId = restaurant.Id,
             Plan = SubscriptionPlan.Standard,
             Status = SubscriptionStatus.Active,
             StartDate = DateTime.UtcNow.AddDays(-30),
             EndDate = DateTime.UtcNow.AddDays(60),
-            Price = 500000,
-            IsTrial = false,
+            Amount = 500000,
+            IsYearly = false,
+            AutoRenew = true,
+            MaxProducts = 100,
+            MaxOrdersPerMonth = 1000,
+            HasReservationFeature = true,
+            HasWebsiteBuilder = true,
+            HasAdvancedReporting = false,
+            CurrentProductCount = 0,
+            CurrentMonthOrderCount = 0,
             CreatedAt = DateTime.UtcNow.AddDays(-30)
         };
 

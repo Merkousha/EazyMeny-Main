@@ -948,6 +948,55 @@ User → Dropdown menu → Logout button (POST with AntiForgery)
 
 ---
 
+## 2025-10-03 00:45 - Database Seeder Complete ✅
+
+### ✅ تکمیل شده:
+- **DatabaseSeeder.cs (485 lines)** - Seed کامل داده‌های تست
+- **Integration:** Program.cs (Auto-seed در Development)
+- **Documentation:** DatabaseSeeder-Guide.md (راهنمای کامل)
+- **Script:** ResetDatabase.ps1 برای Reset سریع دیتابیس
+
+### 📦 داده‌های Seed شده (26 records):
+
+**👥 Users (3):**
+- Admin: `admin@eazymenu.ir` / `Admin@123`
+- Owner: `owner@restaurant.com` / `Owner@123`
+- Customer: `customer@test.com` / `Customer@123`
+
+**🏪 Restaurants (3):**
+- رستوران زیتون (zeitoon) - غذای ایرانی
+- فست‌فود برگر استار (burger-star) - برگر
+- کافه‌رستوران نیلوفر (niloofar-cafe) - کافی‌شاپ
+
+**📂 Categories (8):** 3+3+2 برای هر رستوران
+
+**🍽️ Products (11):** کباب، قورمه سبزی، برگر، قهوه، ...
+
+**💳 Subscription (1):** Standard plan فعال (60 روز باقیمانده)
+
+### 🔧 مشکلات حل شده:
+- ❌ `FirstName/LastName` → ✅ `FullName`
+- ❌ `ImageUrl` → ✅ `Image1Url`
+- ❌ `UserId + Price` → ✅ `RestaurantId + Amount`
+- ✅ تمام فیلدهای الزامی پر شد
+
+### 📊 نتیجه:
+- Build: ✅ Success (4.4s)
+- Idempotent: ✅ فقط اگر داده نباشد
+- Console Output: ✅ گزارش دقیق Seed
+- Ready: ✅ آماده تست
+
+### 🚀 دستورات اجرا:
+```powershell
+# Auto-seed (Development)
+dotnet run --project src/EazyMenu.Web
+
+# Reset Database
+.\ResetDatabase.ps1
+```
+
+---
+
 **آخرین به‌روزرسانی توسط:** AI Agent  
-**تاریخ:** 2025-10-03 00:15  
-**نسخه:** 1.7
+**تاریخ:** 2025-10-03 00:45  
+**نسخه:** 1.8

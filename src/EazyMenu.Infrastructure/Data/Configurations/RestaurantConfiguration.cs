@@ -40,8 +40,9 @@ public class RestaurantConfiguration : IEntityTypeConfiguration<Restaurant>
             .HasMaxLength(500);
 
         // Relationships
-        builder.HasOne(r => r.Owner)
-            .WithMany(u => u.Restaurants)
+        // Owner relationship configured at DbContext level with ApplicationIdentityUser
+        builder.HasOne<EazyMenu.Infrastructure.Identity.ApplicationIdentityUser>()
+            .WithMany()
             .HasForeignKey(r => r.OwnerId)
             .OnDelete(DeleteBehavior.Restrict);
 

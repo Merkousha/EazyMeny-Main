@@ -8,6 +8,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace EazyMenu.Web.Controllers;
 
@@ -152,31 +153,29 @@ public class AccountController : Controller
             return View(model);
         }
 
-        // ورود کاربر با Identity
-        var user = await _userManager.FindByNameAsync(result.User!.PhoneNumber);
-        if (user == null)
+        // یافتن کاربر Identity برای SignIn
+        ApplicationIdentityUser? user = null;
+        
+        if (model.PhoneOrEmail.Contains("@"))
         {
-            // اگر کاربر Identity وجود نداشت، ایجاد می‌کنیم
-            user = new ApplicationIdentityUser
-            {
-                Id = result.User.Id,
-                UserName = result.User.PhoneNumber,
-                PhoneNumber = result.User.PhoneNumber,
-                Email = result.User.Email,
-                PhoneNumberConfirmed = true
-            };
-
-            var createResult = await _userManager.CreateAsync(user);
-            if (!createResult.Succeeded)
-            {
-                ModelState.AddModelError(string.Empty, "خطا در ورود به سیستم");
-                return View(model);
-            }
+            user = await _userManager.FindByEmailAsync(model.PhoneOrEmail);
+        }
+        else
+        {
+            user = await _userManager.Users
+                .FirstOrDefaultAsync(u => u.PhoneNumber == model.PhoneOrEmail);
         }
 
+        if (user == null)
+        {
+            ModelState.AddModelError(string.Empty, "خطا در ورود به سیستم");
+            return View(model);
+        }
+
+        // SignIn با Identity
         await _signInManager.SignInAsync(user, isPersistent: model.RememberMe);
         
-        TempData["Success"] = $"خوش آمدید، {result.User.FullName}!";
+        TempData["Success"] = $"خوش آمدید، {result.User!.FullName}!";
 
         if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
         {
