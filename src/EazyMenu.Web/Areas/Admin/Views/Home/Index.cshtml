@@ -1,0 +1,248 @@
+@model EazyMenu.Web.Areas.Admin.Models.DashboardViewModel
+@{
+    ViewData["Title"] = "داشبورد";
+}
+
+<!-- Content Header (Page header) -->
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">داشبورد</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-end">
+                    <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index">خانه</a></li>
+                    <li class="breadcrumb-item active">داشبورد</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        
+        <!-- Info boxes -->
+        <div class="row">
+            <!-- Total Restaurants -->
+            <div class="col-12 col-sm-6 col-md-3">
+                <div class="info-box">
+                    <span class="info-box-icon bg-info elevation-1">
+                        <i class="bi bi-building"></i>
+                    </span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">رستوران‌ها</span>
+                        <span class="info-box-number">
+                            @Model.Stats.TotalRestaurants
+                            <small>کل</small>
+                        </span>
+                        <small class="text-muted">@Model.Stats.ActiveRestaurants فعال</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Categories -->
+            <div class="col-12 col-sm-6 col-md-3">
+                <div class="info-box mb-3">
+                    <span class="info-box-icon bg-success elevation-1">
+                        <i class="bi bi-folder"></i>
+                    </span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">دسته‌بندی‌ها</span>
+                        <span class="info-box-number">@Model.Stats.TotalCategories</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Products -->
+            <div class="col-12 col-sm-6 col-md-3">
+                <div class="info-box mb-3">
+                    <span class="info-box-icon bg-warning elevation-1">
+                        <i class="bi bi-cart"></i>
+                    </span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">محصولات</span>
+                        <span class="info-box-number">
+                            @Model.Stats.TotalProducts
+                            <small>کل</small>
+                        </span>
+                        <small class="text-muted">@Model.Stats.ActiveProducts در دسترس</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Users -->
+            <div class="col-12 col-sm-6 col-md-3">
+                <div class="info-box mb-3">
+                    <span class="info-box-icon bg-danger elevation-1">
+                        <i class="bi bi-people"></i>
+                    </span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">کاربران</span>
+                        <span class="info-box-number">@Model.Stats.TotalUsers</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Growth Stats -->
+        <div class="row">
+            <div class="col-lg-4 col-6">
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>@Model.Stats.TodayRestaurants</h3>
+                        <p>رستوران‌های امروز</p>
+                    </div>
+                    <div class="icon">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-6">
+                <div class="small-box bg-primary">
+                    <div class="inner">
+                        <h3>@Model.Stats.WeekRestaurants</h3>
+                        <p>رستوران‌های این هفته</p>
+                    </div>
+                    <div class="icon">
+                        <i class="bi bi-calendar-week"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-6">
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>@Model.Stats.MonthRestaurants</h3>
+                        <p>رستوران‌های این ماه</p>
+                    </div>
+                    <div class="icon">
+                        <i class="bi bi-calendar-month"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Restaurants -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">آخرین رستوران‌های ثبت شده</h3>
+                        <div class="card-tools">
+                            <a asp-area="Admin" asp-controller="Restaurant" asp-action="Index" class="btn btn-sm btn-primary">
+                                <i class="bi bi-list-ul"></i>
+                                مشاهده همه
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        @if (Model.RecentRestaurants.Any())
+                        {
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>نام رستوران</th>
+                                        <th>مالک</th>
+                                        <th>تلفن</th>
+                                        <th>وضعیت</th>
+                                        <th>تاریخ ثبت</th>
+                                        <th>عملیات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var restaurant in Model.RecentRestaurants)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@restaurant.Name</strong>
+                                            </td>
+                                            <td>@restaurant.OwnerName</td>
+                                            <td>@restaurant.PhoneNumber</td>
+                                            <td>
+                                                @if (restaurant.IsActive)
+                                                {
+                                                    <span class="badge bg-success">فعال</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-danger">غیرفعال</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @restaurant.CreatedAt.ToString("yyyy/MM/dd HH:mm")
+                                            </td>
+                                            <td>
+                                                <a asp-area="Admin" asp-controller="Restaurant" asp-action="Details" asp-route-id="@restaurant.Id" 
+                                                   class="btn btn-sm btn-info" title="جزئیات">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                <a asp-area="Admin" asp-controller="Restaurant" asp-action="Edit" asp-route-id="@restaurant.Id" 
+                                                   class="btn btn-sm btn-warning" title="ویرایش">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                        else
+                        {
+                            <div class="text-center p-4">
+                                <p class="text-muted">هنوز رستورانی ثبت نشده است.</p>
+                                <a asp-area="Admin" asp-controller="Restaurant" asp-action="Create" class="btn btn-primary">
+                                    <i class="bi bi-plus-circle"></i>
+                                    افزودن اولین رستوران
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header bg-primary">
+                        <h3 class="card-title">عملیات سریع</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 col-6">
+                                <a asp-area="Admin" asp-controller="Restaurant" asp-action="Create" class="btn btn-app bg-success w-100">
+                                    <i class="bi bi-plus-circle"></i>
+                                    افزودن رستوران
+                                </a>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <a asp-area="Admin" asp-controller="Category" asp-action="Create" class="btn btn-app bg-warning w-100">
+                                    <i class="bi bi-folder-plus"></i>
+                                    افزودن دسته‌بندی
+                                </a>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <a asp-area="Admin" asp-controller="Product" asp-action="Create" class="btn btn-app bg-info w-100">
+                                    <i class="bi bi-cart-plus"></i>
+                                    افزودن محصول
+                                </a>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <a href="#" class="btn btn-app bg-secondary w-100" title="به زودی">
+                                    <i class="bi bi-file-earmark-bar-graph"></i>
+                                    گزارش‌ها
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>

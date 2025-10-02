@@ -2,14 +2,14 @@
 
 ## 📋 وضعیت کلی
 
-**تاریخ:** 3 اکتبر 2025 01:15  
+**تاریخ:** 3 اکتبر 2025 15:30  
 **کل کارها:** 97  
-**تکمیل شده:** 84 ✅ (+11 Product CRUD)  
+**تکمیل شده:** 85 ✅ (+1 Admin Dashboard)  
 **در حال انجام:** 0 🔵  
-**باقی‌مانده:** 13 ⬜
+**باقی‌مانده:** 12 ⬜
 
-**آخرین Task:** Product CRUD Complete (Backend + Frontend + 4 Views) ✅  
-**پیشرفت MVP:** 📊 87% (Authentication + Restaurant + Category + Product CRUD آماده)
+**آخرین Task:** Admin Dashboard Complete (Backend CQRS + Controller + Views) ✅  
+**پیشرفت MVP:** 📊 88% (Auth + Restaurant + Category + Product + Dashboard آماده)
 
 ---
 
@@ -745,10 +745,12 @@ dotnet run --project src/EazyMenu.Web
   - ⏱️ تخمین: 45 دقیقه
   - 📝 نکته: Info boxes, Cards, QR Code display
 
-- [ ] **Create Admin/Dashboard (Home)** ⬜ 2025-10-03
+- [x] **Create Admin/Dashboard (Home)** ✅ 2025-10-03 15:30
   - 👤 مسئول: AI Agent
-  - ⏱️ تخمین: 60 دقیقه
-  - 📝 نکته: Charts, Stats, Recent activities
+  - ⏱️ واقعی: 90 دقیقه (8 فایل)
+  - 📝 نکته: DashboardStatsDto (9 آمار) + 2 Query/Handler + HomeController + ViewModel + Index View
+  - 🎯 ویژگی‌ها: 4 Info Boxes (Total stats), 3 Small Boxes (Growth), Recent Restaurants Table, Quick Actions
+  - 🔗 مسیر: Application/Features/Dashboard/ + Web/Areas/Admin/Controllers/HomeController + Views/Home/Index
 
 ### 📦 AdminLTE CDN Resources:
 - ✅ Bootstrap 5.3.7
@@ -760,5 +762,29 @@ dotnet run --project src/EazyMenu.Web
 
 ---
 
-**آخرین بروزرسانی:** 2025-10-03 01:15  
-**بروزرسانی بعدی:** 2025-10-09
+## 🎯 پیشنهاد Task بعدی (Priority Order)
+
+### Option 1: Public Menu Page (US-009) - **پیشنهاد قوی** ⭐
+**چرا:** QR Codeها فعلاً به جایی لینک نمی‌دهند (Broken UX). این صفحه Critical Path MVP است.
+- ⏱️ تخمین: 4 ساعت
+- 📦 فایل‌ها: 7 (Query/Handler + Controller + View + CSS)
+- 🎯 خروجی: صفحه منوی عمومی Mobile-First برای مشتریان رستوران
+- 🔗 Route: /menu/{slug}
+- ⚡ تاثیر: QR Code → Menu Page (تکمیل چرخه MVP اصلی)
+
+### Option 2: Order System (US-009, US-010) - زمان‌بر
+- ⏱️ تخمین: 15 ساعت (Backend 6h + Cart 5h + Panel 4h)
+- 📦 فایل‌ها: ~40 فایل
+- 🎯 خروجی: سیستم سفارش آنلاین + سبد خرید + پنل مدیریت سفارش
+- ⚠️ نکته: پیش‌نیاز: Public Menu Page
+
+### Option 3: Authentication Frontend (Controllers + Views)
+- ⏱️ تخمین: 3 ساعت
+- 📦 فایل‌ها: 5 (Controller + 3 Views + CSS)
+- 🎯 خروجی: صفحات Login, Register, Forgot Password
+- ⚠️ نکته: Backend آماده است، فقط UI می‌خواهد
+
+---
+
+**آخرین بروزرسانی:** 2025-10-03 15:30  
+**بروزرسانی بعدی:** 2025-10-04

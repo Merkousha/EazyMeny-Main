@@ -3,20 +3,20 @@
 ## 📊 خلاصه وضعیت پروژه
 
 **تاریخ شروع:** 2 اکتبر 2025  
-**آخرین بروزرسانی:** 3 اکتبر 2025 01:15  
-**وضعیت کلی:** 🟢 پیشرفت عالی - Product CRUD Complete!
+**آخرین بروزرسانی:** 3 اکتبر 2025 15:30  
+**وضعیت کلی:** 🟢 پیشرفت عالی - Admin Dashboard Complete!
 
 ---
 
 ## 📈 پیشرفت کلی
 
 ```
-████████████████████████████░░░░ 85%
+████████████████████████████░░░░ 88%
 ```
 
-**کارهای انجام شده:** 7 از 8 فیچر MVP (Authentication + Restaurant + Category + Product CRUD ✅)  
+**کارهای انجام شده:** 8 از 10 فیچر MVP (Auth + Restaurant + Category + Product + Dashboard ✅)  
 **کارهای در حال انجام:** 0  
-**کارهای باقی‌مانده:** 1 (Category link fixes)
+**کارهای باقی‌مانده:** 2 (Public Menu Page + Order System)
 
 ---
 
@@ -208,6 +208,64 @@ Coverage:            0%
 
 ### 🔍 نکات:
 - [نکات مهم]
+```
+
+---
+
+## 📅 لاگ‌های پیشرفت
+
+---
+
+## [2025-10-03 15:30] - Admin Dashboard (HomeController + Views) Complete
+
+### ✅ تکمیل شده:
+- پیاده‌سازی کامل **Admin Dashboard** با CQRS Pattern
+- **Backend (CQRS):**
+  - `DashboardStatsDto` - مدل داده با 9 آمار (TotalRestaurants, ActiveRestaurants, TotalCategories, TotalProducts, ActiveProducts, TotalUsers, TodayRestaurants, WeekRestaurants, MonthRestaurants)
+  - `GetDashboardStatsQuery` + `GetDashboardStatsQueryHandler` - دریافت آمار کلی از 4 Repository (Restaurant, Category, Product, ApplicationUser)
+  - `GetRecentRestaurantsQuery` + `GetRecentRestaurantsQueryHandler` - دریافت 5 آخرین رستوران با AutoMapper
+  - `HomeController` (Admin Area) - Index action با MediatR
+  - `DashboardViewModel` - ترکیب Stats + RecentRestaurants
+- **Frontend (Views):**
+  - `Index.cshtml` (Admin/Home) با استایل AdminLTE 4.0 RTL
+  - 4 Info Boxes (رستوران‌ها، دسته‌بندی‌ها، محصولات، کاربران)
+  - 3 Small Boxes برای رشد زمانی (امروز، این هفته، این ماه)
+  - جدول آخرین رستوران‌ها با دکمه‌های Details و Edit
+  - کارت Quick Actions با 4 دکمه میانبر
+
+**فایل‌های ایجاد شده (8 فایل):**
+1. `src/EazyMenu.Application/Common/Models/Dashboard/DashboardStatsDto.cs`
+2. `src/EazyMenu.Application/Features/Dashboard/Queries/GetDashboardStats/GetDashboardStatsQuery.cs`
+3. `src/EazyMenu.Application/Features/Dashboard/Queries/GetDashboardStats/GetDashboardStatsQueryHandler.cs`
+4. `src/EazyMenu.Application/Features/Dashboard/Queries/GetRecentRestaurants/GetRecentRestaurantsQuery.cs`
+5. `src/EazyMenu.Application/Features/Dashboard/Queries/GetRecentRestaurants/GetRecentRestaurantsQueryHandler.cs`
+6. `src/EazyMenu.Web/Areas/Admin/Models/DashboardViewModel.cs`
+7. `src/EazyMenu.Web/Areas/Admin/Controllers/HomeController.cs`
+8. `src/EazyMenu.Web/Areas/Admin/Views/Home/Index.cshtml`
+
+**خطاهای رفع شده:**
+- خطای استفاده از `ApplicationIdentityUser` در Application layer (باید از `ApplicationUser` در Domain استفاده شود)
+- خطای `Count` بدون `()` در LINQ queries (4 موضع)
+- خطای `OwnerFullName` به جای `OwnerName` در View (1 موضع)
+
+### 📊 نتیجه:
+- Build: ✅ موفق (3.1s، 0 error، 4 warning)
+- Migration: ➖ مربوط نیست (تغییری در دیتابیس نبود)
+- Tests: ⏸️ تست دستی موفق - برنامه روی http://localhost:5125 اجرا شد
+- Application Status: 🟢 Running
+
+### 🔍 نکات:
+- Dashboard از 4 Repository استفاده می‌کند (Restaurant, Category, Product, ApplicationUser)
+- آمار زمانی با `DateTime.Today`, `AddDays(-7)`, `AddMonths(-1)` محاسبه می‌شود
+- View کاملاً Responsive و RTL است (AdminLTE 4.0 RTL)
+- Quick Actions شامل لینک‌های سریع به Create Restaurant/Category/Product
+- دکمه Reports فعلاً Placeholder است (فعال‌سازی در فاز بعد)
+- پیشرفت MVP: **85% → 88%** (3% افزایش)
+
+### 📈 Progress Update:
+**قبل:** 85% (7 فیچر تکمیل: Auth Backend + Restaurant + Category + Product + Links Fixed)
+**بعد:** 88% (8 فیچر تکمیل: + Admin Dashboard)
+**باقی‌مانده:** Public Menu Page (US-009) + Order System (US-009, US-010)
 - [مشکلات حل شده]
 - [Issues باقی‌مانده]
 
