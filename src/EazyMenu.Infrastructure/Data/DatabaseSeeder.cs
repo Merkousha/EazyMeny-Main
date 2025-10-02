@@ -1,3 +1,4 @@
+using EazyMenu.Application.Common.Interfaces;
 using EazyMenu.Domain.Entities;
 using EazyMenu.Domain.Enums;
 using EazyMenu.Infrastructure.Identity;
@@ -29,6 +30,10 @@ public static class DatabaseSeeder
 
         // Seed Restaurants
         var restaurants = await SeedRestaurantsAsync(context, ownerUser.Id);
+
+        // Generate QR Codes for restaurants
+        var qrCodeService = serviceProvider.GetRequiredService<IQRCodeService>();
+        await GenerateQRCodesAsync(restaurants, qrCodeService);
 
         // Seed Categories
         var categories = await SeedCategoriesAsync(context, restaurants);
@@ -500,5 +505,26 @@ public static class DatabaseSeeder
         await context.Subscriptions.AddAsync(subscription);
         await context.SaveChangesAsync();
         Console.WriteLine($"✅ Subscription seeded for user");
+    }
+
+    private static async Task GenerateQRCodesAsync(List<Restaurant> restaurants, IQRCodeService qrCodeService)
+    {
+        foreach (var restaurant in restaurants)
+        {
+            try
+            {
+                var qrCodeUrl = $"https://eazymenu.ir/menu/{restaurant.Slug}";
+                var savedPath = await qrCodeService.SaveQRCodeAsync(restaurant.Slug, qrCodeUrl, 300);
+                
+                // Update restaurant QRCodeUrl with the actual saved path
+                restaurant.QRCodeUrl = savedPath;
+                
+                Console.WriteLine($"✅ QR Code generated for {restaurant.Name}: {savedPath}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"⚠️ Failed to generate QR Code for {restaurant.Name}: {ex.Message}");
+            }
+        }
     }
 }
