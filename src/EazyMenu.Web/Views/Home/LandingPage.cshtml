@@ -2,7 +2,7 @@
 @inject SignInManager<EazyMenu.Infrastructure.Identity.ApplicationIdentityUser> SignInManager
 
 @{
-    ViewData["Title"] = "EazyMenu - سیستم مدیریت هوشمند رستوران";
+    ViewData["Title"] = "EazyMenu - مدیریت هوشمند رستوران";
     Layout = null; // No layout - this is a partial view
 }
 
@@ -12,292 +12,223 @@
     .hero-section {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        padding: 120px 0 80px;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .hero-section::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,144C960,149,1056,139,1152,128C1248,117,1344,107,1392,101.3L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') bottom center no-repeat;
-        background-size: cover;
-    }
-
-    .hero-content {
-        position: relative;
-        z-index: 1;
+        padding: 120px 0 100px;
+        text-align: center;
     }
 
     .hero-title {
-        font-size: 3.5rem;
-        font-weight: 800;
-        margin-bottom: 1.5rem;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 2rem;
     }
 
     .hero-subtitle {
-        font-size: 1.5rem;
-        font-weight: 300;
-        margin-bottom: 2rem;
+        font-size: 1.25rem;
+        margin-bottom: 3rem;
         opacity: 0.95;
+        line-height: 1.8;
     }
 
     .hero-buttons .btn {
-        padding: 15px 40px;
+        padding: 14px 40px;
         font-size: 1.1rem;
-        border-radius: 50px;
-        transition: all 0.3s ease;
+        margin: 0 10px 15px;
+        border-radius: 30px;
     }
 
-    .hero-buttons .btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    .btn-light {
+        background: white;
+        color: #667eea;
+        border: none;
+    }
+
+    .btn-outline-light {
+        border: 2px solid white;
+        color: white;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
     }
 
     /* Features Section */
     .features-section {
-        padding: 80px 0;
-        background-color: #f8f9fa;
+        padding: 100px 0;
+        background: #f8f9fa;
     }
 
     .feature-card {
+        text-align: center;
+        padding: 40px 30px;
         background: white;
         border-radius: 15px;
-        padding: 40px 30px;
-        text-align: center;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.08);
         transition: all 0.3s ease;
-        border: none;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
         height: 100%;
+        margin-bottom: 20px;
     }
 
     .feature-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        transform: translateY(-8px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
     }
 
     .feature-icon {
         font-size: 3.5rem;
         color: #667eea;
-        margin-bottom: 20px;
+        margin-bottom: 1.5rem;
     }
 
     .feature-title {
-        font-size: 1.5rem;
+        font-size: 1.3rem;
         font-weight: 600;
-        margin-bottom: 15px;
-        color: #2d3748;
+        margin-bottom: 1.2rem;
+        color: #2c3e50;
     }
 
-    .feature-description {
-        color: #718096;
-        line-height: 1.7;
+    .feature-text {
+        color: #6c757d;
+        line-height: 1.8;
     }
 
     /* Pricing Section */
     .pricing-section {
-        padding: 80px 0;
-        background: white;
+        padding: 100px 0;
+    }
+
+    .section-title {
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        color: #2c3e50;
+    }
+
+    .section-subtitle {
+        text-align: center;
+        color: #6c757d;
+        font-size: 1.1rem;
+        margin-bottom: 4rem;
+        line-height: 1.6;
     }
 
     .pricing-card {
         background: white;
-        border-radius: 20px;
-        padding: 40px 30px;
+        border-radius: 15px;
+        padding: 50px 35px;
         text-align: center;
-        border: 2px solid #e2e8f0;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.08);
         transition: all 0.3s ease;
+        position: relative;
         height: 100%;
+        margin-bottom: 30px;
     }
 
     .pricing-card:hover {
-        border-color: #667eea;
-        transform: scale(1.05);
-        box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.15);
     }
 
     .pricing-card.featured {
-        border-color: #667eea;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        transform: scale(1.08);
-        box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
-    }
-
-    .pricing-card.featured .pricing-price,
-    .pricing-card.featured .pricing-title,
-    .pricing-card.featured .pricing-features li {
-        color: white;
+        border: 2px solid #667eea;
+        transform: scale(1.05);
     }
 
     .pricing-badge {
-        background: #fbbf24;
-        color: #92400e;
-        padding: 5px 15px;
+        position: absolute;
+        top: -15px;
+        right: 50%;
+        transform: translateX(50%);
+        background: #667eea;
+        color: white;
+        padding: 5px 20px;
         border-radius: 20px;
-        font-size: 0.85rem;
+        font-size: 0.9rem;
         font-weight: 600;
-        display: inline-block;
-        margin-bottom: 15px;
     }
 
-    .pricing-title {
-        font-size: 1.8rem;
+    .pricing-plan {
+        font-size: 1.5rem;
         font-weight: 700;
-        margin-bottom: 10px;
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
     }
 
     .pricing-price {
-        font-size: 3rem;
-        font-weight: 800;
+        font-size: 2.5rem;
+        font-weight: 700;
         color: #667eea;
-        margin-bottom: 10px;
+        margin-bottom: 1rem;
     }
 
     .pricing-period {
-        color: #718096;
-        font-size: 1rem;
+        color: #6c757d;
+        margin-bottom: 2.5rem;
     }
 
     .pricing-features {
         list-style: none;
         padding: 0;
-        margin: 30px 0;
+        margin-bottom: 2.5rem;
     }
 
     .pricing-features li {
         padding: 12px 0;
-        border-bottom: 1px solid #e2e8f0;
-        color: #4a5568;
+        color: #6c757d;
+        border-bottom: 1px solid #f0f0f0;
     }
 
     .pricing-features li:last-child {
         border-bottom: none;
     }
 
-    .pricing-features li i {
-        color: #10b981;
-        margin-left: 10px;
-    }
-
-    /* Stats Section */
-    .stats-section {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 60px 0;
-    }
-
-    .stat-item {
-        text-align: center;
-    }
-
-    .stat-number {
-        font-size: 3rem;
-        font-weight: 800;
-        display: block;
-        margin-bottom: 10px;
-    }
-
-    .stat-label {
-        font-size: 1.1rem;
-        opacity: 0.9;
+    .pricing-features i {
+        color: #28a745;
+        margin-left: 8px;
     }
 
     /* CTA Section */
     .cta-section {
-        background: #f8f9fa;
-        padding: 80px 0;
-    }
-
-    .cta-box {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-radius: 20px;
-        padding: 60px 40px;
-        text-align: center;
         color: white;
+        padding: 100px 0;
+        text-align: center;
     }
 
     .cta-title {
         font-size: 2.5rem;
         font-weight: 700;
-        margin-bottom: 20px;
+        margin-bottom: 2rem;
     }
 
-    .cta-subtitle {
+    .cta-text {
         font-size: 1.2rem;
-        margin-bottom: 30px;
+        margin-bottom: 2.5rem;
         opacity: 0.95;
-    }
-
-    /* Testimonials Section */
-    .testimonials-section {
-        padding: 80px 0;
-        background: white;
-    }
-
-    .testimonial-card {
-        background: #f8f9fa;
-        border-radius: 15px;
-        padding: 30px;
-        text-align: center;
-        height: 100%;
-    }
-
-    .testimonial-text {
-        font-size: 1.1rem;
-        font-style: italic;
-        color: #4a5568;
-        margin-bottom: 20px;
-        line-height: 1.8;
-    }
-
-    .testimonial-author {
-        font-weight: 600;
-        color: #2d3748;
-    }
-
-    .testimonial-role {
-        color: #718096;
-        font-size: 0.9rem;
-    }
-
-    /* Section Titles */
-    .section-title {
-        font-size: 2.5rem;
-        font-weight: 700;
-        text-align: center;
-        margin-bottom: 15px;
-        color: #2d3748;
-    }
-
-    .section-subtitle {
-        text-align: center;
-        color: #718096;
-        font-size: 1.2rem;
-        margin-bottom: 50px;
+        line-height: 1.7;
     }
 
     /* Responsive */
     @@media (max-width: 768px) {
         .hero-title {
-            font-size: 2.5rem;
+            font-size: 2rem;
         }
-        
+
         .hero-subtitle {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
         }
-        
+
+        .section-title {
+            font-size: 1.8rem;
+        }
+
         .pricing-card.featured {
             transform: scale(1);
         }
-        
-        .pricing-card:hover {
-            transform: scale(1);
+
+        .hero-buttons .btn {
+            margin: 5px;
         }
     }
 </style>
@@ -306,51 +237,13 @@
 <!-- Hero Section -->
 <section class="hero-section">
     <div class="container">
-        <div class="row align-items-center hero-content">
-            <div class="col-lg-8 mx-auto text-center">
-                <h1 class="hero-title">رستوران خود را دیجیتال کنید</h1>
-                <p class="hero-subtitle">
-                    منوی دیجیتال، سفارش آنلاین، رزرو میز و مدیریت هوشمند رستوران - همه در یک پلتفرم
-                </p>
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h1 class="hero-title">مدیریت هوشمند رستوران شما</h1>
+                <p class="hero-subtitle">با ایزی‌منو، رستوران خود را دیجیتال کنید. منوی دیجیتال، سفارش آنلاین و مدیریت کامل در یک پلتفرم</p>
                 <div class="hero-buttons">
-                    <a asp-action="Register" asp-controller="Account" class="btn btn-light btn-lg me-3">
-                        <i class="bi bi-rocket-takeoff me-2"></i>شروع رایگان
-                    </a>
-                    <a href="#features" class="btn btn-outline-light btn-lg">
-                        <i class="bi bi-play-circle me-2"></i>مشاهده امکانات
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Stats Section -->
-<section class="stats-section">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-3 col-6 mb-4 mb-md-0">
-                <div class="stat-item">
-                    <span class="stat-number">500+</span>
-                    <span class="stat-label">رستوران فعال</span>
-                </div>
-            </div>
-            <div class="col-md-3 col-6 mb-4 mb-md-0">
-                <div class="stat-item">
-                    <span class="stat-number">50K+</span>
-                    <span class="stat-label">سفارش ماهانه</span>
-                </div>
-            </div>
-            <div class="col-md-3 col-6">
-                <div class="stat-item">
-                    <span class="stat-number">98%</span>
-                    <span class="stat-label">رضایت مشتریان</span>
-                </div>
-            </div>
-            <div class="col-md-3 col-6">
-                <div class="stat-item">
-                    <span class="stat-number">24/7</span>
-                    <span class="stat-label">پشتیبانی</span>
+                    <a href="/Account/Register" class="btn btn-light btn-lg">شروع رایگان</a>
+                    <a href="#features" class="btn btn-outline-light btn-lg">مشاهده امکانات</a>
                 </div>
             </div>
         </div>
@@ -358,81 +251,61 @@
 </section>
 
 <!-- Features Section -->
-<section class="features-section" id="features">
+<section id="features" class="features-section">
     <div class="container">
-        <h2 class="section-title">چرا EazyMenu؟</h2>
-        <p class="section-subtitle">تمام امکانات مورد نیاز رستوران شما در یک پلتفرم</p>
-        
-        <div class="row g-4">
-            <div class="col-md-6 col-lg-4">
-                <div class="card feature-card">
-                    <div class="feature-icon">
-                        <i class="bi bi-qr-code"></i>
-                    </div>
-                    <h3 class="feature-title">منوی دیجیتال با QR Code</h3>
-                    <p class="feature-description">
-                        مشتریان با اسکن یک QR Code به منوی دیجیتال شما دسترسی دارند. بهداشتی، سریع و بدون نیاز به چاپ
-                    </p>
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-8 text-center">
+                <h2 class="section-title">چرا ایزی‌منو؟</h2>
+                <p class="section-subtitle">همه چیز برای مدیریت بهتر رستوران شما</p>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-md-4 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3 class="feature-title">منوی دیجیتال</h3>
+                    <p class="feature-text">منوی زیبا و آنلاین با QR Code برای مشتریان. بدون نیاز به چاپ منو</p>
                 </div>
             </div>
 
-            <div class="col-md-6 col-lg-4">
-                <div class="card feature-card">
-                    <div class="feature-icon">
-                        <i class="bi bi-cart-check"></i>
-                    </div>
+            <div class="col-md-4 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">🛒</div>
                     <h3 class="feature-title">سفارش آنلاین</h3>
-                    <p class="feature-description">
-                        مشتریان می‌توانند به راحتی سفارش دهند و پرداخت کنند. شما تنها سفارش را آماده کنید
-                    </p>
+                    <p class="feature-text">مشتریان می‌توانند از طریق موبایل سفارش دهند. افزایش فروش تضمینی</p>
                 </div>
             </div>
 
-            <div class="col-md-6 col-lg-4">
-                <div class="card feature-card">
-                    <div class="feature-icon">
-                        <i class="bi bi-calendar-check"></i>
-                    </div>
+            <div class="col-md-4 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">مدیریت هوشمند</h3>
+                    <p class="feature-text">پنل کاربری ساده برای مدیریت منو، محصولات و سفارش‌ها</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">💳</div>
+                    <h3 class="feature-title">پرداخت آنلاین</h3>
+                    <p class="feature-text">درگاه پرداخت امن زرین‌پال برای دریافت آنلاین پول</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">📅</div>
                     <h3 class="feature-title">رزرو میز</h3>
-                    <p class="feature-description">
-                        سیستم رزرو هوشمند برای مدیریت بهتر میزها و کاهش شلوغی در ساعات پیک
-                    </p>
+                    <p class="feature-text">سیستم رزرو آنلاین میز برای مشتریان. مدیریت آسان رزروها</p>
                 </div>
             </div>
 
-            <div class="col-md-6 col-lg-4">
-                <div class="card feature-card">
-                    <div class="feature-icon">
-                        <i class="bi bi-graph-up-arrow"></i>
-                    </div>
-                    <h3 class="feature-title">گزارش‌گیری و تحلیل</h3>
-                    <p class="feature-description">
-                        داشبورد مدیریتی با گزارش‌های تحلیلی فروش، محصولات پرفروش و رفتار مشتریان
-                    </p>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4">
-                <div class="card feature-card">
-                    <div class="feature-icon">
-                        <i class="bi bi-phone-vibrate"></i>
-                    </div>
-                    <h3 class="feature-title">اعلان‌های هوشمند</h3>
-                    <p class="feature-description">
-                        اطلاع‌رسانی خودکار سفارش‌ها، رزروها و پرداخت‌ها از طریق پیامک و نوتیفیکیشن
-                    </p>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4">
-                <div class="card feature-card">
-                    <div class="feature-icon">
-                        <i class="bi bi-globe"></i>
-                    </div>
+            <div class="col-md-4 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
                     <h3 class="feature-title">وب‌سایت اختصاصی</h3>
-                    <p class="feature-description">
-                        وب‌سایت زیبا و حرفه‌ای برای رستوران شما با قالب‌های آماده و قابل سفارشی‌سازی
-                    </p>
+                    <p class="feature-text">وب‌سایت رستوران خود را در چند دقیقه بسازید. بدون نیاز به برنامه‌نویسی</p>
                 </div>
             </div>
         </div>
@@ -440,117 +313,61 @@
 </section>
 
 <!-- Pricing Section -->
-<section class="pricing-section" id="pricing">
+<section id="pricing" class="pricing-section">
     <div class="container">
-        <h2 class="section-title">پلن‌های اشتراک</h2>
-        <p class="section-subtitle">بهترین قیمت برای هر نوع کسب‌وکار</p>
-        
-        <div class="row g-4 justify-content-center">
-            <!-- Basic Plan -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card pricing-card">
-                    <div class="card-body">
-                        <h3 class="pricing-title">پایه</h3>
-                        <div class="pricing-price">500,000<small> تومان</small></div>
-                        <p class="pricing-period">ماهانه</p>
-                        <ul class="pricing-features">
-                            <li><i class="bi bi-check-circle-fill"></i> تا 50 محصول</li>
-                            <li><i class="bi bi-check-circle-fill"></i> 5 دسته‌بندی</li>
-                            <li><i class="bi bi-check-circle-fill"></i> تا 100 سفارش/ماه</li>
-                            <li><i class="bi bi-check-circle-fill"></i> منوی دیجیتال با QR Code</li>
-                            <li><i class="bi bi-check-circle-fill"></i> پشتیبانی ایمیل</li>
-                        </ul>
-                        <a asp-action="Register" asp-controller="Account" class="btn btn-outline-primary w-100">
-                            انتخاب پلن پایه
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Standard Plan (Featured) -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card pricing-card featured">
-                    <div class="card-body">
-                        <span class="pricing-badge">محبوب‌ترین</span>
-                        <h3 class="pricing-title">استاندارد</h3>
-                        <div class="pricing-price">1,000,000<small> تومان</small></div>
-                        <p class="pricing-period">ماهانه</p>
-                        <ul class="pricing-features">
-                            <li><i class="bi bi-check-circle-fill"></i> تا 200 محصول</li>
-                            <li><i class="bi bi-check-circle-fill"></i> 15 دسته‌بندی</li>
-                            <li><i class="bi bi-check-circle-fill"></i> سفارش نامحدود</li>
-                            <li><i class="bi bi-check-circle-fill"></i> سفارش آنلاین</li>
-                            <li><i class="bi bi-check-circle-fill"></i> رزرو میز</li>
-                            <li><i class="bi bi-check-circle-fill"></i> گزارش‌گیری پایه</li>
-                            <li><i class="bi bi-check-circle-fill"></i> پشتیبانی تلفنی</li>
-                        </ul>
-                        <a asp-action="Register" asp-controller="Account" class="btn btn-light w-100">
-                            شروع رایگان 14 روزه
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Premium Plan -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card pricing-card">
-                    <div class="card-body">
-                        <h3 class="pricing-title">حرفه‌ای</h3>
-                        <div class="pricing-price">2,000,000<small> تومان</small></div>
-                        <p class="pricing-period">ماهانه</p>
-                        <ul class="pricing-features">
-                            <li><i class="bi bi-check-circle-fill"></i> محصولات نامحدود</li>
-                            <li><i class="bi bi-check-circle-fill"></i> دسته‌بندی نامحدود</li>
-                            <li><i class="bi bi-check-circle-fill"></i> سفارش نامحدود</li>
-                            <li><i class="bi bi-check-circle-fill"></i> وب‌سایت اختصاصی</li>
-                            <li><i class="bi bi-check-circle-fill"></i> گزارش‌گیری پیشرفته</li>
-                            <li><i class="bi bi-check-circle-fill"></i> تحلیل رفتار مشتری</li>
-                            <li><i class="bi bi-check-circle-fill"></i> پشتیبانی اختصاصی 24/7</li>
-                        </ul>
-                        <a asp-action="Register" asp-controller="Account" class="btn btn-outline-primary w-100">
-                            انتخاب پلن حرفه‌ای
-                        </a>
-                    </div>
-                </div>
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-8 text-center">
+                <h2 class="section-title">قیمت‌گذاری شفاف</h2>
+                <p class="section-subtitle">پلن مناسب رستوران خود را انتخاب کنید</p>
             </div>
         </div>
-    </div>
-</section>
 
-<!-- Testimonials Section -->
-<section class="testimonials-section">
-    <div class="container">
-        <h2 class="section-title">نظر مشتریان</h2>
-        <p class="section-subtitle">رستوران‌هایی که به ما اعتماد کرده‌اند</p>
-        
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="testimonial-card">
-                    <p class="testimonial-text">
-                        "EazyMenu کسب‌وکار ما را متحول کرد. حالا می‌توانیم به راحتی سفارش‌ها را مدیریت کنیم و فروش ما 40% افزایش یافته است."
-                    </p>
-                    <p class="testimonial-author">رضا احمدی</p>
-                    <p class="testimonial-role">صاحب رستوران زیتون</p>
+        <div class="row g-5 justify-content-center">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="pricing-card">
+                    <h3 class="pricing-plan">پایه</h3>
+                    <div class="pricing-price">۵۰۰,۰۰۰ <small>تومان</small></div>
+                    <p class="pricing-period">ماهانه</p>
+                    <ul class="pricing-features">
+                        <li><i class="bi bi-check-circle-fill"></i> تا ۵۰ محصول</li>
+                        <li><i class="bi bi-check-circle-fill"></i> منوی دیجیتال</li>
+                        <li><i class="bi bi-check-circle-fill"></i> QR Code</li>
+                        <li><i class="bi bi-check-circle-fill"></i> پشتیبانی ایمیل</li>
+                    </ul>
+                    <a href="/Account/Register" class="btn btn-outline-primary btn-lg">شروع کنید</a>
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <div class="testimonial-card">
-                    <p class="testimonial-text">
-                        "منوی دیجیتال و سیستم QR Code عالی است! مشتریان ما از تجربه جدید بسیار راضی هستند و دیگر نیازی به چاپ منو نداریم."
-                    </p>
-                    <p class="testimonial-author">مریم کریمی</p>
-                    <p class="testimonial-role">مدیر کافه نیلوفر</p>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="pricing-card featured">
+                    <div class="pricing-badge">محبوب‌ترین</div>
+                    <h3 class="pricing-plan">استاندارد</h3>
+                    <div class="pricing-price">۱,۰۰۰,۰۰۰ <small>تومان</small></div>
+                    <p class="pricing-period">ماهانه</p>
+                    <ul class="pricing-features">
+                        <li><i class="bi bi-check-circle-fill"></i> تا ۲۰۰ محصول</li>
+                        <li><i class="bi bi-check-circle-fill"></i> سفارش آنلاین</li>
+                        <li><i class="bi bi-check-circle-fill"></i> رزرو میز</li>
+                        <li><i class="bi bi-check-circle-fill"></i> وب‌سایت اختصاصی</li>
+                        <li><i class="bi bi-check-circle-fill"></i> پشتیبانی ۲۴/۷</li>
+                    </ul>
+                    <a href="/Account/Register" class="btn btn-primary btn-lg">شروع کنید</a>
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <div class="testimonial-card">
-                    <p class="testimonial-text">
-                        "پنل مدیریت بسیار ساده و کاربرپسند است. حتی بدون تخصص فنی می‌توانم همه چیز را خودم تنظیم کنم. پشتیبانی هم عالی است!"
-                    </p>
-                    <p class="testimonial-author">علی محمدی</p>
-                    <p class="testimonial-role">صاحب فست‌فود برگر استار</p>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="pricing-card">
+                    <h3 class="pricing-plan">حرفه‌ای</h3>
+                    <div class="pricing-price">۲,۰۰۰,۰۰۰ <small>تومان</small></div>
+                    <p class="pricing-period">ماهانه</p>
+                    <ul class="pricing-features">
+                        <li><i class="bi bi-check-circle-fill"></i> محصولات نامحدود</li>
+                        <li><i class="bi bi-check-circle-fill"></i> تمام امکانات استاندارد</li>
+                        <li><i class="bi bi-check-circle-fill"></i> گزارش‌گیری پیشرفته</li>
+                        <li><i class="bi bi-check-circle-fill"></i> تیکت اولویت‌دار</li>
+                        <li><i class="bi bi-check-circle-fill"></i> مشاور اختصاصی</li>
+                    </ul>
+                    <a href="/Account/Register" class="btn btn-outline-primary btn-lg">شروع کنید</a>
                 </div>
             </div>
         </div>
@@ -560,12 +377,12 @@
 <!-- CTA Section -->
 <section class="cta-section">
     <div class="container">
-        <div class="cta-box">
-            <h2 class="cta-title">آماده شروع هستید؟</h2>
-            <p class="cta-subtitle">همین حالا رستوران خود را دیجیتال کنید. 14 روز رایگان، بدون نیاز به کارت اعتباری</p>
-            <a asp-action="Register" asp-controller="Account" class="btn btn-light btn-lg">
-                <i class="bi bi-rocket-takeoff me-2"></i>شروع رایگان
-            </a>
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h2 class="cta-title">آماده شروع هستید؟</h2>
+                <p class="cta-text">همین حالا رستوران خود را دیجیتال کنید و فروش خود را افزایش دهید</p>
+                <a href="/Account/Register" class="btn btn-light btn-lg">شروع رایگان - بدون نیاز به کارت بانکی</a>
+            </div>
         </div>
     </div>
 </section>

@@ -146,8 +146,10 @@ public static class DatabaseSeeder
 
     private static async Task<List<Restaurant>> SeedRestaurantsAsync(ApplicationDbContext context, Guid ownerId)
     {
+        // اگر رستوران‌ها وجود دارند، آنها را بازگردان (بدون seed جدید)
         if (await context.Restaurants.AnyAsync())
         {
+            Console.WriteLine("⚠️  Restaurants already exist, skipping seed");
             return await context.Restaurants.ToListAsync();
         }
 
@@ -619,6 +621,25 @@ public static class DatabaseSeeder
         {
             try
             {
+                // بررسی اگر QR Code قبلاً ساخته شده و فایل وجود دارد
+                if (!string.IsNullOrEmpty(restaurant.QRCodeUrl))
+                {
+                    // مسیر کامل فایل را بررسی می‌کنیم
+                    var wwwrootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                    var fullPath = Path.Combine(wwwrootPath, restaurant.QRCodeUrl.TrimStart('/'));
+                    
+                    if (File.Exists(fullPath))
+                    {
+                        Console.WriteLine($"⏭️  QR Code already exists for {restaurant.Name}: {restaurant.QRCodeUrl}");
+                        continue; // QR موجود است، رد شو
+                    }
+                    else
+                    {
+                        Console.WriteLine($"⚠️  QR Code path exists but file missing for {restaurant.Name}, regenerating...");
+                    }
+                }
+                
+                // ساخت QR Code جدید
                 var qrCodeUrl = $"https://eazymenu.ir/menu/{restaurant.Slug}";
                 var savedPath = await qrCodeService.SaveQRCodeAsync(restaurant.Slug, qrCodeUrl, 300);
                 
@@ -629,7 +650,7 @@ public static class DatabaseSeeder
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"⚠️ Failed to generate QR Code for {restaurant.Name}: {ex.Message}");
+                Console.WriteLine($"❌ Failed to generate QR Code for {restaurant.Name}: {ex.Message}");
             }
         }
     }
