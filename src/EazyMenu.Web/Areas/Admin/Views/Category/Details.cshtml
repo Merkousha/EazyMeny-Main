@@ -1,0 +1,259 @@
+@model EazyMenu.Application.Common.Models.Category.CategoryDto
+
+@{
+    ViewData["Title"] = $"جزئیات {Model.Name}";
+}
+
+<!-- Content Header -->
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">@ViewData["PageHeader"]</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-end">
+                    <li class="breadcrumb-item"><a href="/Admin">خانه</a></li>
+                    <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Category" asp-action="Index">دسته‌بندی‌ها</a></li>
+                    <li class="breadcrumb-item active">جزئیات</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+
+        @* Info Boxes - نمایش سریع اطلاعات *@
+        <div class="row mb-3">
+            <div class="col-12 col-sm-6 col-md-3">
+                <div class="info-box">
+                    <span class="info-box-icon bg-info">
+                        <i class="bi bi-shop"></i>
+                    </span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">رستوران</span>
+                        <span class="info-box-number">@Model.RestaurantName</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-md-3">
+                <div class="info-box">
+                    <span class="info-box-icon @(Model.IsActive ? "bg-success" : "bg-danger")">
+                        <i class="bi @(Model.IsActive ? "bi-check-circle" : "bi-x-circle")"></i>
+                    </span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">وضعیت</span>
+                        <span class="info-box-number">@(Model.IsActive ? "فعال" : "غیرفعال")</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-md-3">
+                <div class="info-box">
+                    <span class="info-box-icon bg-warning">
+                        <i class="bi bi-sort-numeric-down"></i>
+                    </span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">ترتیب نمایش</span>
+                        <span class="info-box-number">@Model.DisplayOrder</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-md-3">
+                <div class="info-box">
+                    <span class="info-box-icon bg-primary">
+                        <i class="bi bi-box-seam"></i>
+                    </span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">تاریخ ایجاد</span>
+                        <span class="info-box-number">@Model.CreatedAt.ToString("yyyy/MM/dd")</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- ستون چپ - اطلاعات اصلی -->
+            <div class="col-lg-8">
+                
+                <!-- کارت اطلاعات اصلی -->
+                <div class="card card-primary collapsed-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="bi bi-info-circle ms-1"></i>
+                            اطلاعات اصلی
+                        </h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body" style="display: none;">
+                        <dl class="row mb-0">
+                            <dt class="col-sm-4">نام فارسی:</dt>
+                            <dd class="col-sm-8"><strong>@Model.Name</strong></dd>
+
+                            <dt class="col-sm-4">نام انگلیسی:</dt>
+                            <dd class="col-sm-8" dir="ltr" style="text-align: left;">@Model.NameEn</dd>
+
+                            <dt class="col-sm-4">توضیحات:</dt>
+                            <dd class="col-sm-8">
+                                @if (!string.IsNullOrEmpty(Model.Description))
+                                {
+                                    @Model.Description
+                                }
+                                else
+                                {
+                                    <span class="text-muted">توضیحاتی ثبت نشده است</span>
+                                }
+                            </dd>
+
+                            <dt class="col-sm-4">شناسه:</dt>
+                            <dd class="col-sm-8">
+                                <code>@Model.Id</code>
+                            </dd>
+
+                            <dt class="col-sm-4">تاریخ ایجاد:</dt>
+                            <dd class="col-sm-8">
+                                @Model.CreatedAt.ToString("yyyy/MM/dd HH:mm")
+                            </dd>
+
+                            @if (Model.UpdatedAt.HasValue)
+                            {
+                                <dt class="col-sm-4">آخرین ویرایش:</dt>
+                                <dd class="col-sm-8">
+                                    @Model.UpdatedAt.Value.ToString("yyyy/MM/dd HH:mm")
+                                </dd>
+                            }
+                        </dl>
+                    </div>
+                </div>
+
+                <!-- کارت رستوران مربوطه -->
+                <div class="card card-info collapsed-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="bi bi-shop ms-1"></i>
+                            رستوران مربوطه
+                        </h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body" style="display: none;">
+                        <dl class="row mb-0">
+                            <dt class="col-sm-4">نام رستوران:</dt>
+                            <dd class="col-sm-8">
+                                <a href="/Admin/Restaurant/Details/@Model.RestaurantId" class="text-decoration-none">
+                                    <i class="bi bi-shop ms-1"></i>
+                                    @Model.RestaurantName
+                                </a>
+                            </dd>
+
+                            <dt class="col-sm-4">شناسه رستوران:</dt>
+                            <dd class="col-sm-8">
+                                <code>@Model.RestaurantId</code>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ستون راست - عملیات و تنظیمات -->
+            <div class="col-lg-4">
+                
+                <!-- کارت آیکون -->
+                @if (!string.IsNullOrEmpty(Model.IconUrl))
+                {
+                    <div class="card card-warning">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="bi bi-image ms-1"></i>
+                                آیکون دسته‌بندی
+                            </h3>
+                        </div>
+                        <div class="card-body text-center">
+                            <img src="@Model.IconUrl" alt="@Model.Name" class="img-fluid rounded" style="max-height: 150px;" 
+                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/150?text=No+Icon';">
+                            <p class="mt-2 mb-0">
+                                <small class="text-muted">@Model.IconUrl</small>
+                            </p>
+                        </div>
+                    </div>
+                }
+
+                <!-- کارت عملیات -->
+                <div class="card card-success">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="bi bi-gear ms-1"></i>
+                            عملیات
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <a asp-area="Admin" asp-controller="Category" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning w-100 mb-2">
+                            <i class="bi bi-pencil ms-1"></i>
+                            ویرایش دسته‌بندی
+                        </a>
+                        
+                        <a asp-area="Admin" asp-controller="Category" asp-action="Index" class="btn btn-secondary w-100 mb-3">
+                            <i class="bi bi-arrow-right ms-1"></i>
+                            بازگشت به لیست
+                        </a>
+
+                        <hr />
+
+                        <button type="button" class="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            <i class="bi bi-trash ms-1"></i>
+                            حذف دسته‌بندی
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- Modal حذف -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">تأیید حذف</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-0">
+                    آیا از حذف دسته‌بندی 
+                    <strong>"@Model.Name"</strong> 
+                    اطمینان دارید؟
+                </p>
+                <div class="alert alert-warning mt-3 mb-0">
+                    <i class="bi bi-exclamation-triangle ms-1"></i>
+                    این عملیات غیرقابل بازگشت است!
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+                <form asp-area="Admin" asp-controller="Category" asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash ms-1"></i>
+                        حذف قطعی
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

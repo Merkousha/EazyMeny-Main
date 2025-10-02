@@ -1,0 +1,166 @@
+@model EazyMenu.Application.Features.Categories.Commands.UpdateCategory.UpdateCategoryCommand
+
+@{
+    ViewData["Title"] = "ویرایش دسته‌بندی";
+}
+
+<!-- Content Header -->
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">@ViewData["PageHeader"]</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-end">
+                    <li class="breadcrumb-item"><a href="/Admin">خانه</a></li>
+                    <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Category" asp-action="Index">دسته‌بندی‌ها</a></li>
+                    <li class="breadcrumb-item active">ویرایش</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+
+        <form asp-area="Admin" asp-controller="Category" asp-action="Edit" method="post">
+            <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
+            <input type="hidden" asp-for="Id" />
+
+            <div class="row">
+                <!-- ستون چپ -->
+                <div class="col-lg-8">
+                    
+                    <!-- کارت اطلاعات اصلی -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="bi bi-info-circle ms-1"></i>
+                                اطلاعات اصلی
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <!-- نام فارسی -->
+                            <div class="mb-3">
+                                <label asp-for="Name" class="form-label">
+                                    <i class="bi bi-tag ms-1"></i>
+                                    نام فارسی
+                                </label>
+                                <input asp-for="Name" class="form-control" placeholder="مثال: نوشیدنی‌ها" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+
+                            <!-- نام انگلیسی -->
+                            <div class="mb-3">
+                                <label asp-for="NameEn" class="form-label">
+                                    <i class="bi bi-tag ms-1"></i>
+                                    نام انگلیسی
+                                </label>
+                                <input asp-for="NameEn" class="form-control" placeholder="Example: Beverages" dir="ltr" style="text-align: left;" />
+                                <span asp-validation-for="NameEn" class="text-danger"></span>
+                            </div>
+
+                            <!-- توضیحات -->
+                            <div class="mb-3">
+                                <label asp-for="Description" class="form-label">
+                                    <i class="bi bi-text-paragraph ms-1"></i>
+                                    توضیحات
+                                </label>
+                                <textarea asp-for="Description" class="form-control" rows="4" 
+                                          placeholder="توضیحات اختیاری درباره دسته‌بندی..."></textarea>
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                                <small class="form-text text-muted">حداکثر 500 کاراکتر</small>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ستون راست -->
+                <div class="col-lg-4">
+                    
+                    <!-- کارت تنظیمات -->
+                    <div class="card card-warning">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="bi bi-gear ms-1"></i>
+                                تنظیمات
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <!-- رستوران -->
+                            <div class="mb-3">
+                                <label asp-for="RestaurantId" class="form-label">
+                                    <i class="bi bi-shop ms-1"></i>
+                                    رستوران
+                                </label>
+                                <select asp-for="RestaurantId" asp-items="ViewBag.Restaurants" class="form-select">
+                                    <option value="">-- انتخاب رستوران --</option>
+                                </select>
+                                <span asp-validation-for="RestaurantId" class="text-danger"></span>
+                            </div>
+
+                            <!-- ترتیب نمایش -->
+                            <div class="mb-3">
+                                <label asp-for="DisplayOrder" class="form-label">
+                                    <i class="bi bi-sort-numeric-down ms-1"></i>
+                                    ترتیب نمایش
+                                </label>
+                                <input asp-for="DisplayOrder" type="number" class="form-control" min="0" />
+                                <span asp-validation-for="DisplayOrder" class="text-danger"></span>
+                                <small class="form-text text-muted">عدد کوچکتر = نمایش زودتر</small>
+                            </div>
+
+                            <!-- آدرس آیکون -->
+                            <div class="mb-3">
+                                <label asp-for="IconUrl" class="form-label">
+                                    <i class="bi bi-image ms-1"></i>
+                                    آدرس آیکون
+                                </label>
+                                <input asp-for="IconUrl" class="form-control" placeholder="https://example.com/icon.png" dir="ltr" style="text-align: left;" />
+                                <span asp-validation-for="IconUrl" class="text-danger"></span>
+                                <small class="form-text text-muted">URL آیکون دسته‌بندی (اختیاری)</small>
+                            </div>
+
+                            <!-- وضعیت فعال -->
+                            <div class="form-check form-switch">
+                                <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+                                <label asp-for="IsActive" class="form-check-label">
+                                    فعال
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- کارت دکمه‌ها -->
+                    <div class="card card-success">
+                        <div class="card-body">
+                            <button type="submit" class="btn btn-success w-100 mb-2">
+                                <i class="bi bi-check-circle ms-1"></i>
+                                ذخیره تغییرات
+                            </button>
+                            <a asp-area="Admin" asp-controller="Category" asp-action="Details" asp-route-id="@Model.Id" class="btn btn-info w-100 mb-2">
+                                <i class="bi bi-eye ms-1"></i>
+                                نمایش جزئیات
+                            </a>
+                            <a asp-area="Admin" asp-controller="Category" asp-action="Index" class="btn btn-secondary w-100">
+                                <i class="bi bi-x-circle ms-1"></i>
+                                انصراف
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

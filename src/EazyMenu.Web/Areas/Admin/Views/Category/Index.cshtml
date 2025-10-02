@@ -1,0 +1,203 @@
+@model IEnumerable<EazyMenu.Application.Common.Models.Category.CategoryListDto>
+
+@{
+    ViewData["Title"] = "مدیریت دسته‌بندی‌ها";
+}
+
+<!-- Content Header (Page header) -->
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">@ViewData["PageHeader"]</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-end">
+                    <li class="breadcrumb-item"><a href="/Admin">خانه</a></li>
+                    <li class="breadcrumb-item active">دسته‌بندی‌ها</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        
+        @* پیام‌های موفقیت و خطا *@
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                @TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                @TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <div class="row">
+            <div class="col-12">
+                <!-- Card -->
+                <div class="card card-outline card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="bi bi-list-ul ms-1"></i>
+                            لیست دسته‌بندی‌ها
+                        </h3>
+                        <div class="card-tools">
+                            <a asp-area="Admin" asp-controller="Category" asp-action="Create" class="btn btn-success btn-sm">
+                                <i class="bi bi-plus-circle ms-1"></i>
+                                افزودن دسته‌بندی جدید
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width: 50px;">#</th>
+                                        <th>نام دسته‌بندی</th>
+                                        <th>رستوران</th>
+                                        <th>ترتیب نمایش</th>
+                                        <th>تعداد محصولات</th>
+                                        <th>وضعیت</th>
+                                        <th>تاریخ ایجاد</th>
+                                        <th style="width: 200px;">عملیات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model != null && Model.Any())
+                                    {
+                                        var counter = 1;
+                                        foreach (var category in Model)
+                                        {
+                                            <tr>
+                                                <td>@counter</td>
+                                                <td>
+                                                    <strong>@category.Name</strong>
+                                                    <br />
+                                                    <small class="text-muted">@category.NameEn</small>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-info">
+                                                        <i class="bi bi-shop ms-1"></i>
+                                                        @category.RestaurantName
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-secondary">@category.DisplayOrder</span>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-primary">@category.ProductCount</span>
+                                                </td>
+                                                <td>
+                                                    @if (category.IsActive)
+                                                    {
+                                                        <span class="badge bg-success">فعال</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge bg-danger">غیرفعال</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <small>@category.CreatedAt.ToString("yyyy/MM/dd")</small>
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group btn-group-sm" role="group">
+                                                        <a asp-area="Admin" asp-controller="Category" asp-action="Details" asp-route-id="@category.Id" 
+                                                           class="btn btn-info" title="جزئیات">
+                                                            <i class="bi bi-eye"></i>
+                                                        </a>
+                                                        <a asp-area="Admin" asp-controller="Category" asp-action="Edit" asp-route-id="@category.Id" 
+                                                           class="btn btn-warning" title="ویرایش">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </a>
+                                                        <button type="button" class="btn btn-danger" 
+                                                                data-bs-toggle="modal" 
+                                                                data-bs-target="#deleteModal-@category.Id"
+                                                                title="حذف">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </div>
+
+                                                    <!-- Modal حذف -->
+                                                    <div class="modal fade" id="deleteModal-@category.Id" tabindex="-1">
+                                                        <div class="modal-dialog modal-dialog-centered">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header bg-danger text-white">
+                                                                    <h5 class="modal-title">تأیید حذف</h5>
+                                                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <p class="mb-0">
+                                                                        آیا از حذف دسته‌بندی 
+                                                                        <strong>"@category.Name"</strong> 
+                                                                        اطمینان دارید؟
+                                                                    </p>
+                                                                    @if (category.ProductCount > 0)
+                                                                    {
+                                                                        <div class="alert alert-warning mt-3 mb-0">
+                                                                            <i class="bi bi-exclamation-triangle ms-1"></i>
+                                                                            این دسته‌بندی دارای <strong>@category.ProductCount محصول</strong> است.
+                                                                        </div>
+                                                                    }
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+                                                                    <form asp-area="Admin" asp-controller="Category" asp-action="Delete" asp-route-id="@category.Id" method="post" class="d-inline">
+                                                                        @Html.AntiForgeryToken()
+                                                                        <button type="submit" class="btn btn-danger">
+                                                                            <i class="bi bi-trash ms-1"></i>
+                                                                            حذف قطعی
+                                                                        </button>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            counter++;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="8" class="text-center text-muted py-4">
+                                                <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+                                                <p class="mt-2 mb-0">هیچ دسته‌بندی یافت نشد</p>
+                                                <a asp-area="Admin" asp-controller="Category" asp-action="Create" class="btn btn-success btn-sm mt-2">
+                                                    <i class="bi bi-plus-circle ms-1"></i>
+                                                    افزودن اولین دسته‌بندی
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="card-footer">
+                        <div class="text-muted">
+                            <i class="bi bi-info-circle ms-1"></i>
+                            تعداد کل: <strong>@(Model?.Count() ?? 0)</strong> دسته‌بندی
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
