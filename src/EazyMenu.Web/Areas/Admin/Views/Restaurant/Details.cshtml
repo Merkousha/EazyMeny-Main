@@ -1,307 +1,313 @@
 @model EazyMenu.Application.Common.Models.Restaurant.RestaurantDto
 
 @{
-    ViewData["Title"] = "جزئیات رستوران";
+    ViewData["Title"] = "جزئیات رستوران - " + Model.Name;
+    ViewData["Breadcrumb"] = "<li class=\"breadcrumb-item\"><a href=\"/Admin\">پنل مدیریت</a></li><li class=\"breadcrumb-item\"><a href=\"/Admin/Restaurant\">رستوران‌ها</a></li><li class=\"breadcrumb-item active\">جزئیات</li>";
 }
 
-<div class="container-fluid mt-4">
-    <!-- Header -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <h2>
-                    <i class="bi bi-shop"></i>
-                    جزئیات رستوران
-                </h2>
-                <div>
-                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
-                        <i class="bi bi-pencil"></i>
-                        ویرایش
-                    </a>
-                    <a asp-action="Index" class="btn btn-secondary">
-                        <i class="bi bi-arrow-right"></i>
-                        بازگشت به لیست
-                    </a>
-                </div>
+<!--begin::Alert Messages-->
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle me-2"></i>
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+<!--end::Alert Messages-->
+
+<!--begin::Info Boxes Row-->
+<div class="row">
+    <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box">
+            <span class="info-box-icon bg-@(Model.IsActive ? "success" : "secondary") elevation-1">
+                <i class="bi bi-@(Model.IsActive ? "check-circle" : "x-circle")"></i>
+            </span>
+            <div class="info-box-content">
+                <span class="info-box-text">وضعیت رستوران</span>
+                <span class="info-box-number">@(Model.IsActive ? "فعال" : "غیرفعال")</span>
             </div>
         </div>
     </div>
 
-    <!-- Alert Messages -->
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle"></i>
-            @TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box">
+            <span class="info-box-icon bg-@(Model.AcceptOnlineOrders ? "primary" : "secondary") elevation-1">
+                <i class="bi bi-bag-check"></i>
+            </span>
+            <div class="info-box-content">
+                <span class="info-box-text">سفارش آنلاین</span>
+                <span class="info-box-number">@(Model.AcceptOnlineOrders ? "فعال" : "غیرفعال")</span>
+            </div>
         </div>
-    }
+    </div>
 
-    <!-- Restaurant Details -->
-    <div class="row">
-        <!-- اطلاعات اصلی -->
-        <div class="col-lg-8">
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">
-                        <i class="bi bi-info-circle"></i>
-                        اطلاعات اصلی
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <strong>نام رستوران:</strong>
-                            <p>@Model.Name</p>
-                        </div>
-                        <div class="col-md-6">
-                            <strong>نام انگلیسی:</strong>
-                            <p dir="ltr">@(Model.NameEn ?? "-")</p>
-                        </div>
-                    </div>
+    <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box">
+            <span class="info-box-icon bg-info elevation-1">
+                <i class="bi bi-qr-code"></i>
+            </span>
+            <div class="info-box-content">
+                <span class="info-box-text">اسکن QR Code</span>
+                <span class="info-box-number">@Model.QRCodeScanCount</span>
+            </div>
+        </div>
+    </div>
 
-                    <div class="mb-3">
-                        <strong>Slug:</strong>
-                        <p>
-                            <code>/@Model.Slug</code>
-                            <a href="https://eazymenu.ir/menu/@Model.Slug" target="_blank" class="btn btn-sm btn-outline-primary ms-2">
-                                <i class="bi bi-box-arrow-up-right"></i>
-                                مشاهده منو عمومی
-                            </a>
-                        </p>
-                    </div>
+    <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box">
+            <span class="info-box-icon bg-warning elevation-1">
+                <i class="bi bi-calendar-check"></i>
+            </span>
+            <div class="info-box-content">
+                <span class="info-box-text">رزرو میز</span>
+                <span class="info-box-number">@(Model.AcceptReservations ? "فعال" : "غیرفعال")</span>
+            </div>
+        </div>
+    </div>
+</div>
+<!--end::Info Boxes Row-->
 
-                    <div class="mb-3">
-                        <strong>توضیحات:</strong>
-                        <p>@(Model.Description ?? "-")</p>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <strong>صاحب رستوران:</strong>
-                            <p>@Model.OwnerName</p>
-                        </div>
-                        <div class="col-md-6">
-                            <strong>مدیر رستوران:</strong>
-                            <p>@(Model.ManagerName ?? "-")</p>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <strong>تاریخ ایجاد:</strong>
-                            <p>@Model.CreatedAt.ToString("yyyy/MM/dd HH:mm")</p>
-                        </div>
-                        <div class="col-md-6">
-                            <strong>آخرین بروزرسانی:</strong>
-                            <p>@(Model.UpdatedAt?.ToString("yyyy/MM/dd HH:mm") ?? "-")</p>
-                        </div>
-                    </div>
+<!--begin::Restaurant Details-->
+<div class="row">
+    <!--begin::Left Column-->
+    <div class="col-lg-8">
+        <!--begin::Basic Info Card-->
+        <div class="card card-primary card-outline mb-4">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="bi bi-info-circle me-2"></i>اطلاعات اصلی
+                </h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
                 </div>
             </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4 text-muted">
+                        <i class="bi bi-shop me-2"></i>نام رستوران:
+                    </dt>
+                    <dd class="col-sm-8 fw-bold">@Model.Name</dd>
 
-            <!-- اطلاعات تماس -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-info text-white">
-                    <h5 class="mb-0">
-                        <i class="bi bi-telephone"></i>
-                        اطلاعات تماس
-                    </h5>
+                    <dt class="col-sm-4 text-muted">
+                        <i class="bi bi-globe me-2"></i>نام انگلیسی:
+                    </dt>
+                    <dd class="col-sm-8" dir="ltr">@(Model.NameEn ?? "-")</dd>
+
+                    <dt class="col-sm-4 text-muted">
+                        <i class="bi bi-link-45deg me-2"></i>Slug:
+                    </dt>
+                    <dd class="col-sm-8">
+                        <code>/@Model.Slug</code>
+                        <a href="https://eazymenu.ir/menu/@Model.Slug" target="_blank" class="btn btn-xs btn-outline-primary ms-2">
+                            <i class="bi bi-box-arrow-up-right"></i>
+                        </a>
+                    </dd>
+
+                    <dt class="col-sm-4 text-muted">
+                        <i class="bi bi-card-text me-2"></i>توضیحات:
+                    </dt>
+                    <dd class="col-sm-8">@(Model.Description ?? "-")</dd>
+
+                    <dt class="col-sm-4 text-muted">
+                        <i class="bi bi-person-badge me-2"></i>صاحب رستوران:
+                    </dt>
+                    <dd class="col-sm-8">@Model.OwnerName</dd>
+
+                    <dt class="col-sm-4 text-muted">
+                        <i class="bi bi-person me-2"></i>مدیر رستوران:
+                    </dt>
+                    <dd class="col-sm-8">@(Model.ManagerName ?? "-")</dd>
+
+                    <dt class="col-sm-4 text-muted">
+                        <i class="bi bi-calendar-plus me-2"></i>تاریخ ایجاد:
+                    </dt>
+                    <dd class="col-sm-8">@Model.CreatedAt.ToString("yyyy/MM/dd HH:mm")</dd>
+
+                    <dt class="col-sm-4 text-muted">
+                        <i class="bi bi-arrow-clockwise me-2"></i>آخرین بروزرسانی:
+                    </dt>
+                    <dd class="col-sm-8">@(Model.UpdatedAt?.ToString("yyyy/MM/dd HH:mm") ?? "-")</dd>
+                </dl>
+            </div>
+        </div>
+        <!--end::Basic Info Card-->
+
+        <!--begin::Contact Info Card-->
+        <div class="card card-info card-outline mb-4">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="bi bi-telephone me-2"></i>اطلاعات تماس
+                </h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
                 </div>
-                <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <strong>شماره تماس:</strong>
-                            <p dir="ltr">
-                                <i class="bi bi-telephone"></i>
-                                @Model.PhoneNumber
-                            </p>
-                        </div>
-                        <div class="col-md-6">
-                            <strong>ایمیل:</strong>
-                            <p dir="ltr">
-                                <i class="bi bi-envelope"></i>
-                                @Model.Email
-                            </p>
-                        </div>
-                    </div>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4 text-muted">
+                        <i class="bi bi-telephone me-2"></i>شماره تماس:
+                    </dt>
+                    <dd class="col-sm-8" dir="ltr">
+                        <a href="tel:@Model.PhoneNumber" class="text-decoration-none">
+                            @Model.PhoneNumber
+                        </a>
+                    </dd>
 
-                    <div class="mb-3">
-                        <strong>آدرس:</strong>
-                        <p>
-                            <i class="bi bi-geo-alt"></i>
-                            @Model.Address
-                        </p>
-                    </div>
+                    <dt class="col-sm-4 text-muted">
+                        <i class="bi bi-envelope me-2"></i>ایمیل:
+                    </dt>
+                    <dd class="col-sm-8" dir="ltr">
+                        <a href="mailto:@Model.Email" class="text-decoration-none">
+                            @Model.Email
+                        </a>
+                    </dd>
+
+                    <dt class="col-sm-4 text-muted">
+                        <i class="bi bi-geo-alt me-2"></i>آدرس:
+                    </dt>
+                    <dd class="col-sm-8">@Model.Address</dd>
 
                     @if (!string.IsNullOrEmpty(Model.InstagramUrl) || !string.IsNullOrEmpty(Model.TelegramUrl) || !string.IsNullOrEmpty(Model.WhatsAppNumber))
                     {
-                        <div class="mb-3">
-                            <strong>شبکه‌های اجتماعی:</strong>
-                            <p>
-                                @if (!string.IsNullOrEmpty(Model.InstagramUrl))
-                                {
-                                    <a href="@Model.InstagramUrl" target="_blank" class="btn btn-sm btn-outline-danger me-2">
-                                        <i class="bi bi-instagram"></i>
-                                        Instagram
-                                    </a>
-                                }
-                                @if (!string.IsNullOrEmpty(Model.TelegramUrl))
-                                {
-                                    <a href="@Model.TelegramUrl" target="_blank" class="btn btn-sm btn-outline-info me-2">
-                                        <i class="bi bi-telegram"></i>
-                                        Telegram
-                                    </a>
-                                }
-                                @if (!string.IsNullOrEmpty(Model.WhatsAppNumber))
-                                {
-                                    <a href="https://wa.me/@Model.WhatsAppNumber" target="_blank" class="btn btn-sm btn-outline-success">
-                                        <i class="bi bi-whatsapp"></i>
-                                        WhatsApp
-                                    </a>
-                                }
-                            </p>
-                        </div>
+                        <dt class="col-sm-4 text-muted">
+                            <i class="bi bi-share me-2"></i>شبکه‌های اجتماعی:
+                        </dt>
+                        <dd class="col-sm-8">
+                            @if (!string.IsNullOrEmpty(Model.InstagramUrl))
+                            {
+                                <a href="@Model.InstagramUrl" target="_blank" class="btn btn-sm btn-outline-danger me-2">
+                                    <i class="bi bi-instagram"></i>
+                                </a>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.TelegramUrl))
+                            {
+                                <a href="@Model.TelegramUrl" target="_blank" class="btn btn-sm btn-outline-info me-2">
+                                    <i class="bi bi-telegram"></i>
+                                </a>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.WhatsAppNumber))
+                            {
+                                <a href="https://wa.me/@Model.WhatsAppNumber" target="_blank" class="btn btn-sm btn-outline-success">
+                                    <i class="bi bi-whatsapp"></i>
+                                </a>
+                            }
+                        </dd>
                     }
+                </dl>
+            </div>
+        </div>
+        <!--end::Contact Info Card-->
+
+        <!--begin::Settings & Financial Card-->
+        <div class="card card-success card-outline mb-4">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="bi bi-gear me-2"></i>تنظیمات و اطلاعات مالی
+                </h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
                 </div>
             </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4 text-muted">
+                        <i class="bi bi-truck me-2"></i>هزینه ارسال:
+                    </dt>
+                    <dd class="col-sm-8">
+                        <span class="badge bg-success">@Model.DeliveryFee.ToString("N0") تومان</span>
+                    </dd>
 
-            <!-- تنظیمات و اطلاعات مالی -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0">
-                        <i class="bi bi-gear"></i>
-                        تنظیمات و اطلاعات مالی
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <strong>وضعیت:</strong>
-                            <p>
-                                @if (Model.IsActive)
-                                {
-                                    <span class="badge bg-success">فعال</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-secondary">غیرفعال</span>
-                                }
-                            </p>
-                        </div>
-                        <div class="col-md-4">
-                            <strong>سفارش آنلاین:</strong>
-                            <p>
-                                @if (Model.AcceptOnlineOrders)
-                                {
-                                    <span class="badge bg-success">
-                                        <i class="bi bi-check-circle"></i>
-                                        فعال
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-secondary">
-                                        <i class="bi bi-x-circle"></i>
-                                        غیرفعال
-                                    </span>
-                                }
-                            </p>
-                        </div>
-                        <div class="col-md-4">
-                            <strong>رزرو میز:</strong>
-                            <p>
-                                @if (Model.AcceptReservations)
-                                {
-                                    <span class="badge bg-success">
-                                        <i class="bi bi-check-circle"></i>
-                                        فعال
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-secondary">
-                                        <i class="bi bi-x-circle"></i>
-                                        غیرفعال
-                                    </span>
-                                }
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <strong>هزینه ارسال:</strong>
-                            <p>@Model.DeliveryFee.ToString("N0") تومان</p>
-                        </div>
-                        <div class="col-md-6">
-                            <strong>حداقل مبلغ سفارش:</strong>
-                            <p>@Model.MinimumOrderAmount.ToString("N0") تومان</p>
-                        </div>
-                    </div>
+                    <dt class="col-sm-4 text-muted">
+                        <i class="bi bi-cash-stack me-2"></i>حداقل مبلغ سفارش:
+                    </dt>
+                    <dd class="col-sm-8">
+                        <span class="badge bg-info">@Model.MinimumOrderAmount.ToString("N0") تومان</span>
+                    </dd>
 
                     @if (!string.IsNullOrEmpty(Model.WorkingHours))
                     {
-                        <div class="mb-3">
-                            <strong>ساعات کاری:</strong>
-                            <pre class="bg-light p-2 rounded">@Model.WorkingHours</pre>
-                        </div>
+                        <dt class="col-sm-4 text-muted">
+                            <i class="bi bi-clock-history me-2"></i>ساعات کاری:
+                        </dt>
+                        <dd class="col-sm-8">
+                            <pre class="bg-light p-2 rounded small mb-0">@Model.WorkingHours</pre>
+                        </dd>
                     }
-                </div>
+                </dl>
             </div>
         </div>
+        <!--end::Settings & Financial Card-->
+    </div>
+    <!--end::Left Column-->
 
-        <!-- QR Code و اطلاعات جانبی -->
-        <div class="col-lg-4">
-            <!-- QR Code -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0">
-                        <i class="bi bi-qr-code"></i>
-                        QR Code منو
-                    </h5>
-                </div>
-                <div class="card-body text-center">
-                    @if (!string.IsNullOrEmpty(Model.QRCodeUrl))
-                    {
-                        <img src="@Model.QRCodeUrl" alt="QR Code" class="img-fluid mb-3" style="max-width: 250px;" />
-                        <p class="text-muted">
-                            <i class="bi bi-eye"></i>
-                            تعداد اسکن: @Model.QRCodeScanCount
-                        </p>
-                        <a href="@Model.QRCodeUrl" download class="btn btn-primary w-100">
-                            <i class="bi bi-download"></i>
-                            دانلود QR Code
-                        </a>
-                    }
-                    else
-                    {
-                        <p class="text-muted">QR Code موجود نیست</p>
-                    }
-                </div>
+    <!--begin::Right Column-->
+    <div class="col-lg-4">
+        <!--begin::QR Code Card-->
+        <div class="card card-dark card-outline mb-4">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="bi bi-qr-code me-2"></i>QR Code منو
+                </h3>
             </div>
-
-            <!-- وبسایت -->
-            @if (!string.IsNullOrEmpty(Model.WebsiteUrl))
-            {
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-warning">
-                        <h5 class="mb-0">
-                            <i class="bi bi-globe"></i>
-                            وبسایت اختصاصی
-                        </h5>
+            <div class="card-body text-center">
+                @if (!string.IsNullOrEmpty(Model.QRCodeUrl))
+                {
+                    <div class="p-3 bg-light rounded mb-3">
+                        <img src="@Model.QRCodeUrl" alt="QR Code" class="img-fluid" style="max-width: 220px;" />
                     </div>
-                    <div class="card-body">
-                        <p>
-                            <strong>آدرس:</strong>
-                            <a href="@Model.WebsiteUrl" target="_blank">@Model.WebsiteUrl</a>
-                        </p>
-                        <p>
-                            <strong>قالب:</strong>
+                    <div class="callout callout-info mb-3">
+                        <h5>
+                            <i class="bi bi-eye me-2"></i>تعداد اسکن
+                        </h5>
+                        <p class="mb-0 fs-4 fw-bold">@Model.QRCodeScanCount</p>
+                    </div>
+                    <a href="@Model.QRCodeUrl" download class="btn btn-dark w-100">
+                        <i class="bi bi-download me-2"></i>دانلود QR Code
+                    </a>
+                }
+                else
+                {
+                    <div class="alert alert-warning mb-0">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        QR Code موجود نیست
+                    </div>
+                }
+            </div>
+        </div>
+        <!--end::QR Code Card-->
+
+        <!--begin::Website Card-->
+        @if (!string.IsNullOrEmpty(Model.WebsiteUrl))
+        {
+            <div class="card card-warning card-outline mb-4">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="bi bi-globe me-2"></i>وبسایت اختصاصی
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 small text-muted">آدرس:</dt>
+                        <dd class="col-sm-8">
+                            <a href="@Model.WebsiteUrl" target="_blank" class="btn btn-xs btn-outline-primary">
+                                <i class="bi bi-box-arrow-up-right me-1"></i>باز کردن
+                            </a>
+                        </dd>
+
+                        <dt class="col-sm-4 small text-muted">قالب:</dt>
+                        <dd class="col-sm-8">
                             <code>@(Model.WebsiteTheme ?? "default")</code>
-                        </p>
-                        <p>
-                            <strong>وضعیت:</strong>
+                        </dd>
+
+                        <dt class="col-sm-4 small text-muted">وضعیت:</dt>
+                        <dd class="col-sm-8">
                             @if (Model.IsWebsitePublished)
                             {
                                 <span class="badge bg-success">منتشر شده</span>
@@ -315,46 +321,66 @@
                             {
                                 <span class="badge bg-secondary">پیش‌نویس</span>
                             }
-                        </p>
-                    </div>
+                        </dd>
+                    </dl>
                 </div>
-            }
+            </div>
+        }
+        <!--end::Website Card-->
 
-            <!-- Images -->
-            @if (!string.IsNullOrEmpty(Model.LogoUrl) || !string.IsNullOrEmpty(Model.CoverImageUrl))
-            {
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-secondary text-white">
-                        <h5 class="mb-0">
-                            <i class="bi bi-image"></i>
-                            تصاویر
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        @if (!string.IsNullOrEmpty(Model.LogoUrl))
-                        {
-                            <p>
-                                <strong>لوگو:</strong><br />
-                                <img src="@Model.LogoUrl" alt="Logo" class="img-thumbnail" style="max-width: 150px;" />
-                            </p>
-                        }
-                        @if (!string.IsNullOrEmpty(Model.CoverImageUrl))
-                        {
-                            <p>
-                                <strong>تصویر کاور:</strong><br />
-                                <img src="@Model.CoverImageUrl" alt="Cover" class="img-thumbnail" style="max-width: 100%;" />
-                            </p>
-                        }
-                    </div>
+        <!--begin::Images Card-->
+        @if (!string.IsNullOrEmpty(Model.LogoUrl) || !string.IsNullOrEmpty(Model.CoverImageUrl))
+        {
+            <div class="card card-secondary card-outline mb-4">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="bi bi-image me-2"></i>تصاویر
+                    </h3>
                 </div>
-            }
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(Model.LogoUrl))
+                    {
+                        <div class="mb-3 text-center">
+                            <label class="form-label fw-bold">لوگو</label>
+                            <div class="p-2 bg-light rounded">
+                                <img src="@Model.LogoUrl" alt="Logo" class="img-thumbnail" style="max-width: 150px;" />
+                            </div>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.CoverImageUrl))
+                    {
+                        <div class="text-center">
+                            <label class="form-label fw-bold">تصویر کاور</label>
+                            <div class="p-2 bg-light rounded">
+                                <img src="@Model.CoverImageUrl" alt="Cover" class="img-thumbnail" style="max-width: 100%;" />
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+        <!--end::Images Card-->
+
+        <!--begin::Action Buttons-->
+        <div class="card">
+            <div class="card-body">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning w-100 mb-2">
+                    <i class="bi bi-pencil me-2"></i>ویرایش رستوران
+                </a>
+                <a asp-action="Index" class="btn btn-secondary w-100">
+                    <i class="bi bi-arrow-right me-2"></i>بازگشت به لیست
+                </a>
+            </div>
         </div>
+        <!--end::Action Buttons-->
     </div>
+    <!--end::Right Column-->
 </div>
+<!--end::Restaurant Details-->
 
 @section Scripts {
     <script>
-        // Auto-dismiss alerts
+        // Auto-dismiss alerts after 5 seconds
         setTimeout(function() {
             $('.alert').alert('close');
         }, 5000);

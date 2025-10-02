@@ -2,175 +2,219 @@
 
 @{
     ViewData["Title"] = "ویرایش رستوران";
+    ViewData["Breadcrumb"] = "<li class=\"breadcrumb-item\"><a href=\"/Admin\">پنل مدیریت</a></li><li class=\"breadcrumb-item\"><a href=\"/Admin/Restaurant\">رستوران‌ها</a></li><li class=\"breadcrumb-item active\">ویرایش</li>";
 }
 
-<div class="container-fluid mt-4">
-    <!-- Header -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <h2>
-                    <i class="bi bi-pencil"></i>
-                    ویرایش رستوران
-                </h2>
-                <a asp-action="Index" class="btn btn-secondary">
-                    <i class="bi bi-arrow-right"></i>
-                    بازگشت به لیست
-                </a>
-            </div>
-        </div>
-    </div>
+<!--begin::Row-->
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
 
-    <!-- Form -->
-    <div class="row">
-        <div class="col-lg-10 mx-auto">
-            <div class="card shadow-sm">
+            <!--begin::Validation Summary-->
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h5 class="alert-heading">
+                        <i class="bi bi-exclamation-triangle me-2"></i>خطاهای اعتبارسنجی
+                    </h5>
+                    <div asp-validation-summary="ModelOnly" class="mb-0"></div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            <!--end::Validation Summary-->
+
+            <!--begin::Basic Info Card-->
+            <div class="card card-primary card-outline mb-4">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="bi bi-info-circle me-2"></i>اطلاعات اصلی
+                    </h3>
+                </div>
                 <div class="card-body">
-                    <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" asp-for="Id" />
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
-
-                        <!-- اطلاعات اصلی -->
-                        <h5 class="mb-3 border-bottom pb-2">
-                            <i class="bi bi-info-circle"></i>
-                            اطلاعات اصلی
-                        </h5>
-
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label asp-for="Name" class="form-label">نام رستوران <span class="text-danger">*</span></label>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Name" class="form-label">نام رستوران <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-shop"></i></span>
                                 <input asp-for="Name" class="form-control" />
-                                <span asp-validation-for="Name" class="text-danger"></span>
                             </div>
-                            <div class="col-md-6">
-                                <label asp-for="NameEn" class="form-label">نام انگلیسی</label>
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="NameEn" class="form-label">نام انگلیسی</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-globe"></i></span>
                                 <input asp-for="NameEn" class="form-control" dir="ltr" />
-                                <span asp-validation-for="NameEn" class="text-danger"></span>
                             </div>
+                            <span asp-validation-for="NameEn" class="text-danger small"></span>
                         </div>
+                    </div>
 
-                        <div class="mb-3">
-                            <label asp-for="Description" class="form-label">توضیحات</label>
-                            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
-                            <span asp-validation-for="Description" class="text-danger"></span>
-                            <small class="text-muted">حداکثر 1000 کاراکتر</small>
-                        </div>
-
-                        <!-- اطلاعات تماس -->
-                        <h5 class="mb-3 mt-4 border-bottom pb-2">
-                            <i class="bi bi-telephone"></i>
-                            اطلاعات تماس
-                        </h5>
-
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label asp-for="ManagerName" class="form-label">نام مدیر</label>
-                                <input asp-for="ManagerName" class="form-control" />
-                                <span asp-validation-for="ManagerName" class="text-danger"></span>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="PhoneNumber" class="form-label">شماره تماس <span class="text-danger">*</span></label>
-                                <input asp-for="PhoneNumber" class="form-control" dir="ltr" />
-                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                                <small class="text-muted">فرمت: 11 رقم با 0 شروع شود</small>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="Email" class="form-label">ایمیل <span class="text-danger">*</span></label>
-                            <input asp-for="Email" type="email" class="form-control" dir="ltr" />
-                            <span asp-validation-for="Email" class="text-danger"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="Address" class="form-label">آدرس <span class="text-danger">*</span></label>
-                            <textarea asp-for="Address" class="form-control" rows="2"></textarea>
-                            <span asp-validation-for="Address" class="text-danger"></span>
-                        </div>
-
-                        <!-- ساعات کاری -->
-                        <h5 class="mb-3 mt-4 border-bottom pb-2">
-                            <i class="bi bi-clock"></i>
-                            ساعات کاری
-                        </h5>
-
-                        <div class="mb-3">
-                            <label asp-for="WorkingHours" class="form-label">ساعات کاری</label>
-                            <textarea asp-for="WorkingHours" class="form-control" rows="2"></textarea>
-                            <span asp-validation-for="WorkingHours" class="text-danger"></span>
-                            <small class="text-muted">فرمت JSON - اختیاری</small>
-                        </div>
-
-                        <!-- تنظیمات -->
-                        <h5 class="mb-3 mt-4 border-bottom pb-2">
-                            <i class="bi bi-gear"></i>
-                            تنظیمات
-                        </h5>
-
-                        <div class="row mb-3">
-                            <div class="col-md-4">
-                                <div class="form-check form-switch">
-                                    <input asp-for="IsActive" class="form-check-input" type="checkbox" />
-                                    <label asp-for="IsActive" class="form-check-label">
-                                        رستوران فعال است
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-check form-switch">
-                                    <input asp-for="AcceptOnlineOrders" class="form-check-input" type="checkbox" />
-                                    <label asp-for="AcceptOnlineOrders" class="form-check-label">
-                                        پذیرش سفارش آنلاین
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-check form-switch">
-                                    <input asp-for="AcceptReservations" class="form-check-input" type="checkbox" />
-                                    <label asp-for="AcceptReservations" class="form-check-label">
-                                        پذیرش رزرو میز
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- اطلاعات مالی -->
-                        <h5 class="mb-3 mt-4 border-bottom pb-2">
-                            <i class="bi bi-cash"></i>
-                            اطلاعات مالی
-                        </h5>
-
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label asp-for="DeliveryFee" class="form-label">هزینه ارسال (تومان)</label>
-                                <input asp-for="DeliveryFee" type="number" class="form-control" dir="ltr" />
-                                <span asp-validation-for="DeliveryFee" class="text-danger"></span>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="MinimumOrderAmount" class="form-label">حداقل مبلغ سفارش (تومان)</label>
-                                <input asp-for="MinimumOrderAmount" type="number" class="form-control" dir="ltr" />
-                                <span asp-validation-for="MinimumOrderAmount" class="text-danger"></span>
-                            </div>
-                        </div>
-
-                        <!-- Buttons -->
-                        <div class="d-flex justify-content-end gap-2 mt-4">
-                            <a asp-action="Index" class="btn btn-secondary">
-                                <i class="bi bi-x-circle"></i>
-                                انصراف
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-check-circle"></i>
-                                ذخیره تغییرات
-                            </button>
-                        </div>
-                    </form>
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label">توضیحات</label>
+                        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                        <small class="form-text text-muted">حداکثر 1000 کاراکتر</small>
+                    </div>
                 </div>
             </div>
-        </div>
+            <!--end::Basic Info Card-->
+
+            <!--begin::Contact Info Card-->
+            <div class="card card-info card-outline mb-4">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="bi bi-telephone me-2"></i>اطلاعات تماس
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="ManagerName" class="form-label">نام مدیر</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                <input asp-for="ManagerName" class="form-control" />
+                            </div>
+                            <span asp-validation-for="ManagerName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="PhoneNumber" class="form-label">شماره تماس <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-phone"></i></span>
+                                <input asp-for="PhoneNumber" class="form-control" dir="ltr" />
+                            </div>
+                            <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                            <small class="form-text text-muted">فرمت: 11 رقم با 0 شروع شود</small>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label">ایمیل <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                            <input asp-for="Email" type="email" class="form-control" dir="ltr" />
+                        </div>
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Address" class="form-label">آدرس <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                            <textarea asp-for="Address" class="form-control" rows="2"></textarea>
+                        </div>
+                        <span asp-validation-for="Address" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+            <!--end::Contact Info Card-->
+
+            <!--begin::Working Hours & Settings Card-->
+            <div class="card card-warning card-outline mb-4">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="bi bi-clock me-2"></i>ساعات کاری و تنظیمات
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <label asp-for="WorkingHours" class="form-label">ساعات کاری</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-clock-history"></i></span>
+                            <textarea asp-for="WorkingHours" class="form-control" rows="2"></textarea>
+                        </div>
+                        <span asp-validation-for="WorkingHours" class="text-danger small"></span>
+                        <small class="form-text text-muted">فرمت JSON - اختیاری</small>
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <label class="form-label fw-bold mb-3">
+                        <i class="bi bi-toggles me-2"></i>تنظیمات فعال‌سازی
+                    </label>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="form-check form-switch">
+                                <input asp-for="IsActive" class="form-check-input" type="checkbox" role="switch" />
+                                <label asp-for="IsActive" class="form-check-label">
+                                    <i class="bi bi-check-circle text-success me-1"></i>رستوران فعال است
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="form-check form-switch">
+                                <input asp-for="AcceptOnlineOrders" class="form-check-input" type="checkbox" role="switch" />
+                                <label asp-for="AcceptOnlineOrders" class="form-check-label">
+                                    <i class="bi bi-bag-check text-primary me-1"></i>پذیرش سفارش آنلاین
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="form-check form-switch">
+                                <input asp-for="AcceptReservations" class="form-check-input" type="checkbox" role="switch" />
+                                <label asp-for="AcceptReservations" class="form-check-label">
+                                    <i class="bi bi-calendar-check text-info me-1"></i>پذیرش رزرو میز
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--end::Working Hours & Settings Card-->
+
+            <!--begin::Financial Info Card-->
+            <div class="card card-success card-outline mb-4">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="bi bi-cash me-2"></i>اطلاعات مالی
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="DeliveryFee" class="form-label">هزینه ارسال (تومان)</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-truck"></i></span>
+                                <input asp-for="DeliveryFee" type="number" class="form-control" dir="ltr" />
+                                <span class="input-group-text">تومان</span>
+                            </div>
+                            <span asp-validation-for="DeliveryFee" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="MinimumOrderAmount" class="form-label">حداقل مبلغ سفارش (تومان)</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-cash-stack"></i></span>
+                                <input asp-for="MinimumOrderAmount" type="number" class="form-control" dir="ltr" />
+                                <span class="input-group-text">تومان</span>
+                            </div>
+                            <span asp-validation-for="MinimumOrderAmount" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--end::Financial Info Card-->
+
+            <!--begin::Action Buttons-->
+            <div class="card">
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="bi bi-arrow-right me-2"></i>بازگشت به لیست
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-2"></i>ذخیره تغییرات
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!--end::Action Buttons-->
+
+        </form>
     </div>
 </div>
+<!--end::Row-->
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
