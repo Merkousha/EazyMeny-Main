@@ -1,0 +1,142 @@
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    bool IsActive(string controller, string? action = null)
+        => string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase)
+           && (action is null || string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase));
+}
+
+<nav class="mt-2">
+    <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false">
+        <!-- Dashboard -->
+        <li class="nav-item">
+            <a asp-area="Admin" asp-controller="Home" asp-action="Index"
+               class="nav-link @(IsActive("Home") ? "active" : string.Empty)">
+                <i class="nav-icon bi bi-speedometer"></i>
+                <p>داشبورد</p>
+            </a>
+        </li>
+
+        <!-- Restaurants -->
+        <li class="nav-item @(IsActive("Restaurant") ? "menu-open" : string.Empty)">
+            <a href="#" class="nav-link @(IsActive("Restaurant") ? "active" : string.Empty)">
+                <i class="nav-icon bi bi-shop"></i>
+                <p>
+                    رستوران‌ها
+                    <i class="nav-arrow bi bi-chevron-right"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a asp-area="Admin" asp-controller="Restaurant" asp-action="Index"
+                       class="nav-link @(IsActive("Restaurant", "Index") ? "active" : string.Empty)">
+                        <i class="nav-icon bi bi-circle"></i>
+                        <p>لیست رستوران‌ها</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a asp-area="Admin" asp-controller="Restaurant" asp-action="Create"
+                       class="nav-link @(IsActive("Restaurant", "Create") ? "active" : string.Empty)">
+                        <i class="nav-icon bi bi-circle"></i>
+                        <p>افزودن رستوران</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <!-- Menu Management -->
+        <li class="nav-item @((currentController is "Category" or "Product") ? "menu-open" : string.Empty)">
+            <a href="#" class="nav-link @((currentController is "Category" or "Product") ? "active" : string.Empty)">
+                <i class="nav-icon bi bi-list-ul"></i>
+                <p>
+                    مدیریت منو
+                    <i class="nav-arrow bi bi-chevron-right"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a asp-area="Admin" asp-controller="Category" asp-action="Index"
+                       class="nav-link @(IsActive("Category", "Index") ? "active" : string.Empty)">
+                        <i class="nav-icon bi bi-circle"></i>
+                        <p>دسته‌بندی‌ها</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a asp-area="Admin" asp-controller="Category" asp-action="Create"
+                       class="nav-link @(IsActive("Category", "Create") ? "active" : string.Empty)">
+                        <i class="nav-icon bi bi-circle"></i>
+                        <p>افزودن دسته‌بندی</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a asp-area="Admin" asp-controller="Product" asp-action="Index"
+                       class="nav-link @(IsActive("Product", "Index") ? "active" : string.Empty)">
+                        <i class="nav-icon bi bi-circle"></i>
+                        <p>محصولات</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a asp-area="Admin" asp-controller="Product" asp-action="Create"
+                       class="nav-link @(IsActive("Product", "Create") ? "active" : string.Empty)">
+                        <i class="nav-icon bi bi-circle"></i>
+                        <p>افزودن محصول</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <!-- Placeholder sections -->
+        <li class="nav-item">
+            <a href="#" class="nav-link disabled" aria-disabled="true">
+                <i class="nav-icon bi bi-bag-check"></i>
+                <p>
+                    سفارشات
+                    <span class="nav-badge badge text-bg-secondary me-3">به‌زودی</span>
+                </p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link disabled" aria-disabled="true">
+                <i class="nav-icon bi bi-calendar-check"></i>
+                <p>رزروها</p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link disabled" aria-disabled="true">
+                <i class="nav-icon bi bi-qr-code"></i>
+                <p>QR Code ها</p>
+            </a>
+        </li>
+
+        <li class="nav-header">تنظیمات</li>
+        <li class="nav-item">
+            <a href="#" class="nav-link disabled" aria-disabled="true">
+                <i class="nav-icon bi bi-credit-card"></i>
+                <p>اشتراک</p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link disabled" aria-disabled="true">
+                <i class="nav-icon bi bi-gear"></i>
+                <p>تنظیمات</p>
+            </a>
+        </li>
+
+        @if (User.IsInRole("Admin"))
+        {
+            <li class="nav-header">مدیریت سیستم</li>
+            <li class="nav-item">
+                <a href="#" class="nav-link disabled" aria-disabled="true">
+                    <i class="nav-icon bi bi-people"></i>
+                    <p>کاربران</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link disabled" aria-disabled="true">
+                    <i class="nav-icon bi bi-graph-up"></i>
+                    <p>گزارشات</p>
+                </a>
+            </li>
+        }
+    </ul>
+</nav>
