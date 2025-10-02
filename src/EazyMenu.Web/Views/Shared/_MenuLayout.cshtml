@@ -86,6 +86,29 @@
         </div>
     </div>
 
+    <!-- Header with Cart -->
+    <header class="bg-white shadow-sm sticky-top" style="z-index: 1000;">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center py-3">
+                <a href="/" class="text-decoration-none text-dark">
+                    <h4 class="mb-0">
+                        <i class="bi bi-arrow-right-circle me-2"></i>
+                        بازگشت
+                    </h4>
+                </a>
+                <a href="/Cart" class="btn btn-outline-primary position-relative">
+                    <i class="bi bi-cart3 fs-5"></i>
+                    <span class="badge bg-danger position-absolute top-0 start-0 translate-middle rounded-pill" 
+                          id="cart-badge" 
+                          style="display: none; font-size: 0.7rem;">
+                        0
+                    </span>
+                    <span class="d-none d-md-inline ms-2">سبد خرید</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
     <!-- Main Content -->
     <main>
         @RenderBody()
@@ -146,6 +169,24 @@
         window.addEventListener('load', function() {
             document.getElementById('loadingOverlay')?.classList.remove('show');
         });
+
+        // Load cart count on page load
+        async function loadCartCount() {
+            try {
+                const response = await fetch('/Cart/GetCartCount');
+                const result = await response.json();
+                const badge = document.querySelector('#cart-badge');
+                if (badge && result.count > 0) {
+                    badge.textContent = result.count;
+                    badge.style.display = 'inline-block';
+                }
+            } catch (error) {
+                console.error('Error loading cart count:', error);
+            }
+        }
+
+        // Load cart count when DOM is ready
+        document.addEventListener('DOMContentLoaded', loadCartCount);
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)

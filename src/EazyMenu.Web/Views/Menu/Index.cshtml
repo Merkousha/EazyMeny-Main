@@ -384,6 +384,27 @@
                                             <span class="discount-badge">@product.DiscountPercentage% تخفیف</span>
                                         }
                                     </div>
+
+                                    @if (product.IsAvailable)
+                                    {
+                                        <button type="button" 
+                                                class="btn btn-primary w-100 mt-3 btn-add-to-cart"
+                                                data-product-id="@product.Id"
+                                                data-product-name="@product.Name"
+                                                data-restaurant-id="@Model.Id"
+                                                data-restaurant-name="@Model.Name"
+                                                data-restaurant-slug="@Model.Slug">
+                                            <i class="bi bi-cart-plus me-1"></i>
+                                            افزودن به سبد خرید
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn btn-secondary w-100 mt-3" disabled>
+                                            <i class="bi bi-x-circle me-1"></i>
+                                            ناموجود
+                                        </button>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -456,6 +477,108 @@
             }, observerOptions);
 
             categorySections.forEach(section => observer.observe(section));
+
+            // Add to Cart functionality
+            const addToCartButtons = document.querySelectorAll('.btn-add-to-cart');
+            addToCartButtons.forEach(button => {
+                button.addEventListener('click', async function() {
+                    const productId = this.getAttribute('data-product-id');
+                    const productName = this.getAttribute('data-product-name');
+                    
+                    // Disable button temporarily
+                    this.disabled = true;
+                    const originalHTML = this.innerHTML;
+                    this.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> در حال افزودن...';
+
+                    try {
+                        const response = await fetch('/Cart/AddToCart', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: `productId=${productId}&quantity=1`
+                        });
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            // Update cart badge
+                            updateCartBadge(result.cartItemCount);
+                            
+                            // Show success toast
+                            showToast('success', result.message);
+                            
+                            // Button animation
+                            this.innerHTML = '<i class="bi bi-check-lg me-1"></i> اضافه شد';
+                            this.classList.remove('btn-primary');
+                            this.classList.add('btn-success');
+                            
+                            setTimeout(() => {
+                                this.innerHTML = originalHTML;
+                                this.classList.remove('btn-success');
+                                this.classList.add('btn-primary');
+                                this.disabled = false;
+                            }, 1500);
+                        } else {
+                            showToast('error', result.message);
+                            this.innerHTML = originalHTML;
+                            this.disabled = false;
+                        }
+                    } catch (error) {
+                        showToast('error', 'خطا در افزودن به سبد خرید');
+                        this.innerHTML = originalHTML;
+                        this.disabled = false;
+                    }
+                });
+            });
+
+            // Update cart badge
+            function updateCartBadge(count) {
+                const badge = document.querySelector('#cart-badge');
+                if (badge) {
+                    if (count > 0) {
+                        badge.textContent = count;
+                        badge.style.display = 'inline-block';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                }
+            }
+
+            // Show toast notification
+            function showToast(type, message) {
+                const bgClass = type === 'success' ? 'bg-success' : 'bg-danger';
+                const icon = type === 'success' ? 'check-circle' : 'exclamation-circle';
+
+                const toast = document.createElement('div');
+                toast.className = `toast align-items-center text-white ${bgClass} border-0`;
+                toast.setAttribute('role', 'alert');
+                toast.innerHTML = `
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <i class="bi bi-${icon} me-2"></i>${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                `;
+
+                let container = document.querySelector('#toast-container');
+                if (!container) {
+                    container = document.createElement('div');
+                    container.id = 'toast-container';
+                    container.className = 'toast-container position-fixed top-0 end-0 p-3';
+                    container.style.zIndex = '9999';
+                    document.body.appendChild(container);
+                }
+
+                container.appendChild(toast);
+                const bsToast = new bootstrap.Toast(toast);
+                bsToast.show();
+
+                toast.addEventListener('hidden.bs.toast', function() {
+                    toast.remove();
+                });
+            }
         });
     </script>
 }

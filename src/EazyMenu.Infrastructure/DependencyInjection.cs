@@ -32,9 +32,19 @@ public static class DependencyInjection
         services.AddScoped<IQRCodeService, QRCodeService>();
         services.AddScoped<IPasswordHasherService, PasswordHasherService>();
         services.AddScoped<IOtpService, OtpService>();
+        services.AddScoped<ICartService, SessionCartService>();
         
         // Memory Cache برای OTP
         services.AddMemoryCache();
+        
+        // Session Support برای Shopping Cart
+        services.AddHttpContextAccessor();
+        services.AddSession(options =>
+        {
+            options.IdleTimeout = TimeSpan.FromMinutes(30); // سبد خرید 30 دقیقه معتبر است
+            options.Cookie.HttpOnly = true;
+            options.Cookie.IsEssential = true;
+        });
 
         return services;
     }

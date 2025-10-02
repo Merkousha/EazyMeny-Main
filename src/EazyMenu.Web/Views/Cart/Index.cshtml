@@ -1,0 +1,379 @@
+@model EazyMenu.Application.Common.Models.Cart.CartDto
+@{
+    ViewData["Title"] = "سبد خرید";
+    ViewData["ShowNav"] = true;
+}
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="bi bi-cart-fill me-2"></i>
+                        سبد خرید
+                    </h4>
+                    @if (!string.IsNullOrEmpty(Model.RestaurantName))
+                    {
+                        <span class="badge bg-light text-dark">
+                            <i class="bi bi-shop me-1"></i>
+                            @Model.RestaurantName
+                        </span>
+                    }
+                </div>
+
+                <div class="card-body">
+                    @if (Model.Items.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>محصول</th>
+                                        <th class="text-center">قیمت واحد</th>
+                                        <th class="text-center">تعداد</th>
+                                        <th class="text-center">جمع</th>
+                                        <th class="text-center">عملیات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cart-items">
+                                    @foreach (var item in Model.Items)
+                                    {
+                                        <tr data-product-id="@item.ProductId">
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="@item.ImageUrl"
+                                                         alt="@item.ProductName"
+                                                         class="rounded"
+                                                         style="width: 60px; height: 60px; object-fit: cover;">
+                                                    <div class="ms-3">
+                                                        <h6 class="mb-1">@item.ProductName</h6>
+                                                        @if (item.DiscountPercentage > 0)
+                                                        {
+                                                            <span class="badge bg-danger">
+                                                                @item.DiscountPercentage% تخفیف
+                                                            </span>
+                                                        }
+                                                        <small class="text-muted d-block">
+                                                            <i class="bi bi-clock me-1"></i>
+                                                            زمان آماده‌سازی: @item.PreparationTime دقیقه
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                @if (item.DiscountedPrice.HasValue)
+                                                {
+                                                    <div>
+                                                        <span class="text-muted text-decoration-line-through d-block small">
+                                                            @item.Price.ToString("#,##0") ریال
+                                                        </span>
+                                                        <strong class="text-success">
+                                                            @item.FinalPrice.ToString("#,##0") ریال
+                                                        </strong>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <strong>@item.Price.ToString("#,##0") ریال</strong>
+                                                }
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="input-group input-group-sm justify-content-center" style="width: 120px; margin: 0 auto;">
+                                                    <button class="btn btn-outline-secondary btn-decrease-quantity"
+                                                            data-product-id="@item.ProductId"
+                                                            type="button">
+                                                        <i class="bi bi-dash"></i>
+                                                    </button>
+                                                    <input type="number"
+                                                           class="form-control text-center quantity-input"
+                                                           value="@item.Quantity"
+                                                           min="1"
+                                                           max="99"
+                                                           data-product-id="@item.ProductId">
+                                                    <button class="btn btn-outline-secondary btn-increase-quantity"
+                                                            data-product-id="@item.ProductId"
+                                                            type="button">
+                                                        <i class="bi bi-plus"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <strong class="item-subtotal">@item.Subtotal.ToString("#,##0") ریال</strong>
+                                            </td>
+                                            <td class="text-center">
+                                                <button class="btn btn-sm btn-outline-danger btn-remove-item"
+                                                        data-product-id="@item.ProductId"
+                                                        title="حذف از سبد">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Clear Cart Button -->
+                        <div class="text-end mt-3">
+                            <button class="btn btn-outline-danger btn-sm" id="btn-clear-cart">
+                                <i class="bi bi-trash me-1"></i>
+                                خالی کردن سبد خرید
+                            </button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5" id="empty-cart-message">
+                            <i class="bi bi-cart-x display-1 text-muted"></i>
+                            <h5 class="mt-3 text-muted">سبد خرید شما خالی است</h5>
+                            <p class="text-muted">برای افزودن محصول به سبد خرید، به منوی رستوران‌ها مراجعه کنید.</p>
+                            <a href="/" class="btn btn-primary mt-3">
+                                <i class="bi bi-shop me-2"></i>
+                                مشاهده رستوران‌ها
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary Sidebar -->
+        @if (Model.Items.Any())
+        {
+            <div class="col-lg-4">
+                <div class="card shadow-sm sticky-top" style="top: 20px;">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">
+                            <i class="bi bi-receipt me-2"></i>
+                            خلاصه سفارش
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mb-3">
+                            <li class="d-flex justify-content-between mb-2">
+                                <span>تعداد آیتم‌ها:</span>
+                                <strong id="summary-total-items">@Model.TotalItems</strong>
+                            </li>
+                            <li class="d-flex justify-content-between mb-2">
+                                <span>جمع قیمت:</span>
+                                <span id="summary-total-price">@Model.TotalPrice.ToString("#,##0") ریال</span>
+                            </li>
+                            @if (Model.TotalDiscount > 0)
+                            {
+                                <li class="d-flex justify-content-between mb-2 text-success">
+                                    <span>تخفیف:</span>
+                                    <strong id="summary-total-discount">-@Model.TotalDiscount.ToString("#,##0") ریال</strong>
+                                </li>
+                            }
+                            <hr>
+                            <li class="d-flex justify-content-between mb-3">
+                                <strong>مبلغ قابل پرداخت:</strong>
+                                <strong class="text-primary fs-5" id="summary-total-amount">
+                                    @Model.TotalAmount.ToString("#,##0") ریال
+                                </strong>
+                            </li>
+                            <li class="d-flex justify-content-between mb-2 text-muted small">
+                                <span>
+                                    <i class="bi bi-clock me-1"></i>
+                                    زمان تقریبی آماده‌سازی:
+                                </span>
+                                <span id="summary-prep-time">@Model.EstimatedPreparationTime دقیقه</span>
+                            </li>
+                        </ul>
+
+                        <a href="/Menu/@Model.RestaurantSlug" class="btn btn-outline-primary w-100 mb-2">
+                            <i class="bi bi-plus-circle me-2"></i>
+                            افزودن محصول بیشتر
+                        </a>
+
+                        <a href="/Checkout" class="btn btn-success w-100">
+                            <i class="bi bi-credit-card me-2"></i>
+                            ادامه و پرداخت
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // کاهش تعداد
+            $(document).on('click', '.btn-decrease-quantity', function () {
+                const productId = $(this).data('product-id');
+                const input = $(`.quantity-input[data-product-id="${productId}"]`);
+                let currentVal = parseInt(input.val());
+                if (currentVal > 1) {
+                    input.val(currentVal - 1);
+                    updateQuantity(productId, currentVal - 1);
+                }
+            });
+
+            // افزایش تعداد
+            $(document).on('click', '.btn-increase-quantity', function () {
+                const productId = $(this).data('product-id');
+                const input = $(`.quantity-input[data-product-id="${productId}"]`);
+                let currentVal = parseInt(input.val());
+                if (currentVal < 99) {
+                    input.val(currentVal + 1);
+                    updateQuantity(productId, currentVal + 1);
+                }
+            });
+
+            // تغییر مستقیم تعداد
+            $(document).on('change', '.quantity-input', function () {
+                const productId = $(this).data('product-id');
+                let quantity = parseInt($(this).val());
+
+                if (quantity < 1) quantity = 1;
+                if (quantity > 99) quantity = 99;
+
+                $(this).val(quantity);
+                updateQuantity(productId, quantity);
+            });
+
+            // حذف آیتم
+            $(document).on('click', '.btn-remove-item', function () {
+                const productId = $(this).data('product-id');
+                if (confirm('آیا از حذف این محصول از سبد خرید اطمینان دارید؟')) {
+                    removeFromCart(productId);
+                }
+            });
+
+            // خالی کردن سبد
+            $('#btn-clear-cart').on('click', function () {
+                if (confirm('آیا از خالی کردن سبد خرید اطمینان دارید؟')) {
+                    clearCart();
+                }
+            });
+
+            // به‌روزرسانی تعداد
+            function updateQuantity(productId, quantity) {
+                $.post('/Cart/UpdateQuantity', { productId, quantity })
+                    .done(function (response) {
+                        if (response.success) {
+                            // به‌روزرسانی جمع آیتم
+                            $(`tr[data-product-id="${productId}"] .item-subtotal`).text(response.subtotal.toLocaleString() + ' ریال');
+
+                            // به‌روزرسانی خلاصه سفارش
+                            $('#summary-total-items').text(response.cartItemCount);
+                            $('#summary-total-amount').text(response.totalAmount.toLocaleString() + ' ریال');
+                            $('#summary-total-discount').text('-' + response.totalDiscount.toLocaleString() + ' ریال');
+
+                            // به‌روزرسانی badge سبد خرید
+                            updateCartBadge(response.cartItemCount);
+
+                            showToast('success', response.message);
+                        } else {
+                            showToast('error', response.message);
+                        }
+                    })
+                    .fail(function () {
+                        showToast('error', 'خطا در به‌روزرسانی تعداد');
+                    });
+            }
+
+            // حذف از سبد
+            function removeFromCart(productId) {
+                $.post('/Cart/RemoveFromCart', { productId })
+                    .done(function (response) {
+                        if (response.success) {
+                            // حذف ردیف
+                            $(`tr[data-product-id="${productId}"]`).fadeOut(300, function () {
+                                $(this).remove();
+
+                                if (response.isEmpty) {
+                                    // نمایش پیام سبد خالی
+                                    $('#cart-items').parent().parent().parent().html(`
+                                        <div class="text-center py-5" id="empty-cart-message">
+                                            <i class="bi bi-cart-x display-1 text-muted"></i>
+                                            <h5 class="mt-3 text-muted">سبد خرید شما خالی است</h5>
+                                            <p class="text-muted">برای افزودن محصول به سبد خرید، به منوی رستوران‌ها مراجعه کنید.</p>
+                                            <a href="/" class="btn btn-primary mt-3">
+                                                <i class="bi bi-shop me-2"></i>
+                                                مشاهده رستوران‌ها
+                                            </a>
+                                        </div>
+                                    `);
+                                    // مخفی کردن خلاصه سفارش
+                                    $('.sticky-top').fadeOut();
+                                } else {
+                                    // به‌روزرسانی خلاصه
+                                    $('#summary-total-items').text(response.cartItemCount);
+                                    $('#summary-total-amount').text(response.totalAmount.toLocaleString() + ' ریال');
+                                    $('#summary-total-discount').text('-' + response.totalDiscount.toLocaleString() + ' ریال');
+                                }
+                            });
+
+                            // به‌روزرسانی badge
+                            updateCartBadge(response.cartItemCount);
+                            showToast('success', response.message);
+                        } else {
+                            showToast('error', response.message);
+                        }
+                    })
+                    .fail(function () {
+                        showToast('error', 'خطا در حذف محصول');
+                    });
+            }
+
+            // خالی کردن سبد
+            function clearCart() {
+                $.post('/Cart/ClearCart')
+                    .done(function (response) {
+                        if (response.success) {
+                            window.location.reload();
+                        } else {
+                            showToast('error', response.message);
+                        }
+                    })
+                    .fail(function () {
+                        showToast('error', 'خطا در خالی کردن سبد');
+                    });
+            }
+
+            // به‌روزرسانی badge سبد خرید در هدر
+            function updateCartBadge(count) {
+                const badge = $('#cart-badge');
+                if (count > 0) {
+                    badge.text(count).show();
+                } else {
+                    badge.hide();
+                }
+            }
+
+            // نمایش Toast
+            function showToast(type, message) {
+                const bgClass = type === 'success' ? 'bg-success' : 'bg-danger';
+                const icon = type === 'success' ? 'check-circle' : 'exclamation-circle';
+
+                const toast = $(`
+                    <div class="toast align-items-center text-white ${bgClass} border-0" role="alert">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <i class="bi bi-${icon} me-2"></i>${message}
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                        </div>
+                    </div>
+                `);
+
+                const container = $('#toast-container');
+                if (container.length === 0) {
+                    $('body').append('<div id="toast-container" class="toast-container position-fixed top-0 end-0 p-3"></div>');
+                }
+
+                $('#toast-container').append(toast);
+                const bsToast = new bootstrap.Toast(toast[0]);
+                bsToast.show();
+
+                toast.on('hidden.bs.toast', function () {
+                    $(this).remove();
+                });
+            }
+        });
+    </script>
+}
