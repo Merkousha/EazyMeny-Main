@@ -123,6 +123,49 @@
                 </div>
             </div>
             <div class="col-lg-4">
+                <!-- کارت تغییر وضعیت سفارش -->
+                <div class="card mb-3 border-primary">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="card-title mb-0">
+                            <i class="bi bi-arrow-repeat me-1"></i>
+                            تغییر وضعیت سفارش
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3 text-center">
+                            <span class="badge @Model.StatusText fs-6 px-3 py-2">
+                                @Model.StatusText
+                            </span>
+                        </div>
+                        
+                        <form asp-area="Admin" asp-controller="Order" asp-action="UpdateStatus" method="post">
+                            <input type="hidden" name="id" value="@Model.Id" />
+                            <div class="mb-3">
+                                <label class="form-label">وضعیت جدید:</label>
+                                <select name="newStatus" class="form-select" required>
+                                    <option value="">-- انتخاب کنید --</option>
+                                    <option value="@((int)OrderStatus.Pending)" selected="@(Model.Status == OrderStatus.Pending)">در انتظار تایید</option>
+                                    <option value="@((int)OrderStatus.Confirmed)" selected="@(Model.Status == OrderStatus.Confirmed)">تایید شده</option>
+                                    <option value="@((int)OrderStatus.Preparing)" selected="@(Model.Status == OrderStatus.Preparing)">در حال آماده‌سازی</option>
+                                    <option value="@((int)OrderStatus.Ready)" selected="@(Model.Status == OrderStatus.Ready)">آماده تحویل</option>
+                                    <option value="@((int)OrderStatus.Delivered)" selected="@(Model.Status == OrderStatus.Delivered)">تحویل داده شده</option>
+                                    <option value="@((int)OrderStatus.Cancelled)">لغو شده</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3" id="cancellationReasonDiv" style="display: none;">
+                                <label class="form-label">دلیل لغو:</label>
+                                <textarea name="cancellationReason" class="form-control" rows="3" placeholder="دلیل لغو سفارش را وارد کنید..."></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-check-circle me-1"></i>
+                                به‌روزرسانی وضعیت
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
                 <div class="card mb-3">
                     <div class="card-header">
                         <h3 class="card-title">وضعیت پرداخت</h3>
@@ -228,3 +271,24 @@
         </div>
     </div>
 </section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // نمایش/مخفی کردن فیلد دلیل لغو
+            $('select[name="newStatus"]').on('change', function() {
+                var selectedValue = $(this).val();
+                var cancelledValue = '@((int)OrderStatus.Cancelled)';
+                
+                if (selectedValue === cancelledValue) {
+                    $('#cancellationReasonDiv').slideDown();
+                    $('textarea[name="cancellationReason"]').prop('required', true);
+                } else {
+                    $('#cancellationReasonDiv').slideUp();
+                    $('textarea[name="cancellationReason"]').prop('required', false);
+                }
+            });
+        });
+    </script>
+}
+

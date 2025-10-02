@@ -1,5 +1,7 @@
+using EazyMenu.Application.Features.Orders.Commands.UpdateOrderStatus;
 using EazyMenu.Application.Features.Orders.Queries.GetAllOrders;
 using EazyMenu.Application.Features.Orders.Queries.GetOrderDetails;
+using EazyMenu.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -45,5 +47,27 @@ public class OrderController : Controller
         }
 
         return View(order);
+    }
+
+    /// <summary>
+    /// تغییر وضعیت سفارش
+    /// </summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UpdateStatus(Guid id, OrderStatus newStatus, string? cancellationReason = null)
+    {
+        var command = new UpdateOrderStatusCommand(id, newStatus, cancellationReason);
+        var result = await _mediator.Send(command);
+
+        if (result)
+        {
+            TempData["Success"] = "وضعیت سفارش با موفقیت به‌روزرسانی شد";
+        }
+        else
+        {
+            TempData["Error"] = "خطا در به‌روزرسانی وضعیت سفارش";
+        }
+
+        return RedirectToAction(nameof(Details), new { id });
     }
 }
