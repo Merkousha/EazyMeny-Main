@@ -1,0 +1,98 @@
+@{
+    ViewData["Title"] = "تنظیمات رستوران";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-3">
+                <i class="bi bi-gear me-2"></i>تنظیمات رستوران
+            </h2>
+            <p class="text-muted">مدیریت تنظیمات رستوران @ViewData["RestaurantName"]</p>
+        </div>
+    </div>
+
+    <!-- تنظیمات -->
+    <div class="row g-4">
+        <!-- تنظیمات عمومی -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 hover-card">
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="bi bi-building-gear fs-1 text-primary"></i>
+                    </div>
+                    <h5 class="card-title text-center">تنظیمات عمومی</h5>
+                    <p class="card-text text-center text-muted">
+                        نام، آدرس، شماره تماس، ساعات کاری
+                    </p>
+                    <div class="d-grid">
+                        <a href="/Restaurant/Settings/General" class="btn btn-primary">
+                            <i class="bi bi-arrow-left me-2"></i>ویرایش
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- تنظیمات پرداخت -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 hover-card">
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="bi bi-credit-card fs-1 text-success"></i>
+                    </div>
+                    <h5 class="card-title text-center">تنظیمات پرداخت</h5>
+                    <p class="card-text text-center text-muted">
+                        درگاه پرداخت، حداقل سفارش، هزینه ارسال
+                    </p>
+                    <div class="d-grid">
+                        <a href="/Restaurant/Settings/Payment" class="btn btn-success">
+                            <i class="bi bi-arrow-left me-2"></i>ویرایش
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- تنظیمات اعلان‌ها -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 hover-card">
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="bi bi-bell fs-1 text-warning"></i>
+                    </div>
+                    <h5 class="card-title text-center">تنظیمات اعلان‌ها</h5>
+                    <p class="card-text text-center text-muted">
+                        اعلان‌های SMS، ایمیل، تلگرام
+                    </p>
+                    <div class="d-grid">
+                        <a href="/Restaurant/Settings/Notifications" class="btn btn-warning">
+                            <i class="bi bi-arrow-left me-2"></i>ویرایش
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- پیام موقت -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="alert alert-info" role="alert">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>در حال توسعه:</strong> این بخش در حال توسعه است و به زودی تکمیل خواهد شد.
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15) !important;
+    }
+</style>

@@ -49,14 +49,23 @@ public class SelectTemplateCommandHandler : IRequestHandler<SelectTemplateComman
         var sections = await _sectionRepository.GetAllAsync(cancellationToken);
         var templateSections = sections.Where(s => s.TemplateId == request.TemplateId).ToList();
 
-        // حذف محتوای قبلی (اگر قالب جدید انتخاب شد)
-        var existingContents = await _contentRepository.GetAllAsync(cancellationToken);
-        var restaurantContents = existingContents.Where(c => c.RestaurantId == request.RestaurantId).ToList();
+        // حذف کامل محتوای قبلی (به جای soft delete از Remove استفاده می‌کنیم)
+        var existingContents = await _contentRepository.FindAsync(
+            c => c.RestaurantId == request.RestaurantId,
+            cancellationToken);
         
-        foreach (var content in restaurantContents)
+        if (existingContents.Any())
         {
-            await _contentRepository.DeleteAsync(content, cancellationToken);
+            foreach (var content in existingContents)
+            {
+                await _contentRepository.DeleteAsync(content, cancellationToken);
+            }
+            await _unitOfWork.SaveChangesAsync(cancellationToken); // ذخیره حذف قبل از افزودن جدید
         }
+
+        // به‌روزرسانی قالب رستوران
+        restaurant.WebsiteTheme = template.Name;
+        await _restaurantRepository.UpdateAsync(restaurant, cancellationToken);
 
         // ایجاد محتوای جدید بر اساس بخش‌های قالب
         foreach (var section in templateSections)

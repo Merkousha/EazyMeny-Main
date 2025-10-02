@@ -1,0 +1,195 @@
+@{
+    ViewData["Title"] = "گزارش مشتریان";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/Restaurant/Dashboard/Index">داشبورد</a></li>
+                    <li class="breadcrumb-item"><a href="/Restaurant/Analytics/Index">گزارش‌ها</a></li>
+                    <li class="breadcrumb-item active">گزارش مشتریان</li>
+                </ol>
+            </nav>
+            <h2 class="mb-3">
+                <i class="bi bi-people-fill me-2"></i>گزارش مشتریان
+            </h2>
+        </div>
+    </div>
+
+    <!-- آمار کلی -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">کل مشتریان</h6>
+                    <h3 class="mb-0">0</h3>
+                    <small class="text-success"><i class="bi bi-arrow-up"></i> 0 مشتری جدید این ماه</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">مشتریان فعال</h6>
+                    <h3 class="mb-0">0</h3>
+                    <small class="text-muted">خرید در 30 روز اخیر</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">مشتریان وفادار</h6>
+                    <h3 class="mb-0">0</h3>
+                    <small class="text-muted">بیش از 5 سفارش</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">میانگین خرید</h6>
+                    <h3 class="mb-0">0 تومان</h3>
+                    <small class="text-muted">به ازای هر مشتری</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- فیلتر -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <form class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">جستجو</label>
+                            <input type="text" class="form-control" placeholder="نام، موبایل، ایمیل...">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">دسته‌بندی</label>
+                            <select class="form-select">
+                                <option selected>همه مشتریان</option>
+                                <option>مشتریان فعال</option>
+                                <option>مشتریان وفادار</option>
+                                <option>مشتریان غیرفعال</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">مرتب‌سازی</label>
+                            <select class="form-select">
+                                <option>جدیدترین</option>
+                                <option>قدیمی‌ترین</option>
+                                <option>بیشترین خرید</option>
+                                <option>کمترین خرید</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100" disabled>
+                                <i class="bi bi-search me-2"></i>جستجو
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- جدول مشتریان -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">لیست مشتریان</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>نام مشتری</th>
+                                    <th>موبایل</th>
+                                    <th>ایمیل</th>
+                                    <th>تعداد سفارش</th>
+                                    <th>کل خرید</th>
+                                    <th>آخرین سفارش</th>
+                                    <th>وضعیت</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="8" class="text-center text-muted py-5">
+                                        <i class="bi bi-people fs-1 d-block mb-3"></i>
+                                        <h5 class="mb-2">هنوز مشتری‌ای ثبت نشده است</h5>
+                                        <p class="mb-0">
+                                            پس از ثبت اولین سفارش، اطلاعات مشتریان در اینجا نمایش داده می‌شود
+                                        </p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <nav class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1">قبلی</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">بعدی</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نمودار رشد مشتریان -->
+    <div class="row mt-4">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">رشد مشتریان در 6 ماه اخیر</h5>
+                    <div class="text-center py-5">
+                        <i class="bi bi-graph-up-arrow text-muted" style="font-size: 4rem;"></i>
+                        <p class="text-muted mt-3">نمودار در حال توسعه است</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">نکات کاربردی</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <i class="bi bi-star text-warning me-2"></i>
+                            <strong>مشتریان وفادار را تشویق کنید</strong><br>
+                            <small class="text-muted">کوپن تخفیف یا امتیاز هدیه بدهید</small>
+                        </li>
+                        <li class="mb-3">
+                            <i class="bi bi-star text-warning me-2"></i>
+                            <strong>با مشتریان غیرفعال تماس بگیرید</strong><br>
+                            <small class="text-muted">از دلیل عدم خرید آن‌ها با خبر شوید</small>
+                        </li>
+                        <li class="mb-3">
+                            <i class="bi bi-star text-warning me-2"></i>
+                            <strong>نظرسنجی انجام دهید</strong><br>
+                            <small class="text-muted">بازخورد مشتریان را جمع‌آوری کنید</small>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-info mt-4">
+        <i class="bi bi-info-circle me-2"></i>
+        <strong>توجه:</strong> این صفحه در حال توسعه است. برای نمایش داده‌های واقعی باید Query Handler مربوطه پیاده‌سازی شود.
+    </div>
+</div>

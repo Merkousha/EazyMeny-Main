@@ -1,0 +1,177 @@
+@{
+    ViewData["Title"] = "گزارش‌ها و آنالیز";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-3">
+                <i class="bi bi-graph-up me-2"></i>گزارش‌ها و آنالیز
+            </h2>
+            <p class="text-muted">آنالیز عملکرد رستوران @ViewData["RestaurantName"]</p>
+        </div>
+    </div>
+
+    <!-- آمار کلی -->
+    <div class="row g-4 mb-4">
+        <!-- فروش امروز -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-success bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-currency-dollar fs-2 text-success"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 me-3">
+                            <h6 class="text-muted mb-1">فروش امروز</h6>
+                            <h3 class="mb-0">0 تومان</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- فروش این ماه -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-primary bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-calendar-month fs-2 text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 me-3">
+                            <h6 class="text-muted mb-1">فروش این ماه</h6>
+                            <h3 class="mb-0">0 تومان</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- تعداد سفارشات -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-info bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-cart3 fs-2 text-info"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 me-3">
+                            <h6 class="text-muted mb-1">سفارشات این ماه</h6>
+                            <h3 class="mb-0">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- تعداد مشتریان -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-warning bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-people fs-2 text-warning"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 me-3">
+                            <h6 class="text-muted mb-1">مشتریان</h6>
+                            <h3 class="mb-0">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- گزارش‌های تفصیلی -->
+    <div class="row g-4">
+        <!-- گزارش فروش -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 hover-card">
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="bi bi-graph-up-arrow fs-1 text-success"></i>
+                    </div>
+                    <h5 class="card-title text-center">گزارش فروش</h5>
+                    <p class="card-text text-center text-muted">
+                        نمودار فروش، فروش به تفکیک روز/ماه/سال
+                    </p>
+                    <div class="d-grid">
+                        <a href="/Restaurant/Analytics/Sales" class="btn btn-success">
+                            <i class="bi bi-arrow-left me-2"></i>مشاهده
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- محصولات پرفروش -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 hover-card">
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="bi bi-award fs-1 text-warning"></i>
+                    </div>
+                    <h5 class="card-title text-center">محصولات پرفروش</h5>
+                    <p class="card-text text-center text-muted">
+                        لیست محصولات پرفروش، آمار هر محصول
+                    </p>
+                    <div class="d-grid">
+                        <a href="/Restaurant/Analytics/TopProducts" class="btn btn-warning">
+                            <i class="bi bi-arrow-left me-2"></i>مشاهده
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- گزارش مشتریان -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 hover-card">
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="bi bi-people-fill fs-1 text-primary"></i>
+                    </div>
+                    <h5 class="card-title text-center">گزارش مشتریان</h5>
+                    <p class="card-text text-center text-muted">
+                        مشتریان فعال، مشتریان وفادار، آمار خرید
+                    </p>
+                    <div class="d-grid">
+                        <a href="/Restaurant/Analytics/Customers" class="btn btn-primary">
+                            <i class="bi bi-arrow-left me-2"></i>مشاهده
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- پیام موقت -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="alert alert-info" role="alert">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>در حال توسعه:</strong> این بخش در حال توسعه است و به زودی تکمیل خواهد شد.
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15) !important;
+    }
+</style>

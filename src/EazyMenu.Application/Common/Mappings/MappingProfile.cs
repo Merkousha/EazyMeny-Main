@@ -20,6 +20,8 @@ public class MappingProfile : Profile
         CreateMap<Restaurant, RestaurantListDto>()
             .ForMember(dest => dest.OwnerName, opt => opt.Ignore()); // Set manually in handler
 
+        CreateMap<Restaurant, Common.Models.RestaurantBasicDto>();
+
         // Order Mappings
         CreateMap<Order, OrderDto>()
             .ForMember(dest => dest.RestaurantName, opt => opt.MapFrom(src => src.Restaurant.Name))

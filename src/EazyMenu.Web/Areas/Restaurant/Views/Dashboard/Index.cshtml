@@ -1,0 +1,173 @@
+@{
+    ViewData["Title"] = "داشبورد رستوران";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-3">
+                <i class="bi bi-speedometer2 me-2"></i>داشبورد @ViewBag.RestaurantName
+            </h2>
+            <p class="text-muted">خوش آمدید! از اینجا می‌توانید رستوران خود را مدیریت کنید.</p>
+        </div>
+    </div>
+
+    <!-- آمار سریع -->
+    <div class="row g-4 mb-4">
+        <!-- سفارشات امروز -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-primary bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-cart3 fs-2 text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 me-3">
+                            <h6 class="text-muted mb-1">سفارشات امروز</h6>
+                            <h3 class="mb-0">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- محصولات -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-success bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-card-list fs-2 text-success"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 me-3">
+                            <h6 class="text-muted mb-1">محصولات فعال</h6>
+                            <h3 class="mb-0">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- رزروها -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-warning bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-calendar-check fs-2 text-warning"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 me-3">
+                            <h6 class="text-muted mb-1">رزروهای امروز</h6>
+                            <h3 class="mb-0">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- درآمد امروز -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-info bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-currency-dollar fs-2 text-info"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 me-3">
+                            <h6 class="text-muted mb-1">درآمد امروز</h6>
+                            <h3 class="mb-0">0 تومان</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- دسترسی سریع -->
+    <div class="row g-4">
+        <div class="col-12">
+            <h4 class="mb-3">
+                <i class="bi bi-lightning-charge me-2"></i>دسترسی سریع
+            </h4>
+        </div>
+
+        <!-- وب‌سایت ساز -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 hover-card">
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="bi bi-globe fs-1 text-primary"></i>
+                    </div>
+                    <h5 class="card-title text-center">وب‌سایت ساز</h5>
+                    <p class="card-text text-center text-muted">
+                        ایجاد و مدیریت وب‌سایت رستوران خود
+                    </p>
+                    <div class="d-grid">
+                        <a href="/Restaurant/Website/Index" class="btn btn-primary">
+                            <i class="bi bi-arrow-left me-2"></i>مدیریت وب‌سایت
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- مدیریت منو -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 hover-card">
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="bi bi-card-list fs-1 text-success"></i>
+                    </div>
+                    <h5 class="card-title text-center">مدیریت منو</h5>
+                    <p class="card-text text-center text-muted">
+                        افزودن و ویرایش محصولات و دسته‌بندی‌ها
+                    </p>
+                    <div class="d-grid">
+                        <a href="/Restaurant/Product/Index" class="btn btn-success">
+                            <i class="bi bi-arrow-left me-2"></i>مدیریت محصولات
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- QR Code -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 hover-card">
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="bi bi-qr-code fs-1 text-info"></i>
+                    </div>
+                    <h5 class="card-title text-center">کد QR</h5>
+                    <p class="card-text text-center text-muted">
+                        دانلود و چاپ کد QR رستوران
+                    </p>
+                    <div class="d-grid">
+                        <a href="/Restaurant/QRCode/Index" class="btn btn-info">
+                            <i class="bi bi-arrow-left me-2"></i>مشاهده QR Code
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15) !important;
+    }
+</style>

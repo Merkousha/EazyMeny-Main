@@ -21,7 +21,7 @@
                         }
                     </p>
                 </div>
-                <a asp-action="Index" class="btn btn-outline-secondary">
+                <a href="/Restaurant/Website/Index" class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-right me-2"></i>
                     بازگشت
                 </a>
@@ -29,7 +29,8 @@
         </div>
     </div>
 
-    <form asp-action="EditContent" method="post" id="contentForm">
+    <form action="/Restaurant/Website/EditContent" method="post" id="contentForm">
+        @Html.AntiForgeryToken()
         <input type="hidden" asp-for="SectionType" />
         <input type="hidden" asp-for="SectionTitle" />
         <input type="hidden" asp-for="IsRequired" />
@@ -196,11 +197,11 @@
                                 <i class="bi bi-check-circle me-2"></i>
                                 ذخیره تغییرات
                             </button>
-                            <a asp-action="Index" class="btn btn-outline-secondary">
+                            <a href="/Restaurant/Website/Index" class="btn btn-outline-secondary">
                                 <i class="bi bi-x-circle me-2"></i>
                                 انصراف
                             </a>
-                            <a asp-action="Preview" target="_blank" class="btn btn-outline-info">
+                            <a href="/Restaurant/Website/Preview" target="_blank" class="btn btn-outline-info">
                                 <i class="bi bi-eye me-2"></i>
                                 پیش‌نمایش وب‌سایت
                             </a>
@@ -215,65 +216,59 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     
-    <!-- TinyMCE CDN -->
-    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <!-- Quill Editor CDN (Open Source) -->
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
     
     <script>
-        let editorInstance = null;
+        let quill = null;
         
-        // Initialize TinyMCE
+        // Initialize Quill Editor
         document.addEventListener('DOMContentLoaded', function() {
-            tinymce.init({
-                selector: '#customContentEditor',
-                height: 500,
-                menubar: false,
-                directionality: 'rtl', // RTL Support
-                language: 'fa_IR',
-                language_url: '/js/tinymce-lang-fa.js', // Optional: Persian language pack
-                plugins: [
-                    'advlist', 'autolink', 'lists', 'link', 'image', 'charmap',
-                    'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                    'insertdatetime', 'media', 'table', 'help', 'wordcount', 'directionality'
-                ],
-                toolbar: 'undo redo | formatselect | bold italic underline strikethrough | ' +
-                         'alignleft aligncenter alignright alignjustify | ' +
-                         'bullist numlist outdent indent | ltr rtl | ' +
-                         'link image media | table | forecolor backcolor | ' +
-                         'code fullscreen | removeformat help',
-                content_style: 'body { font-family:IRANSans,Tahoma,Arial,sans-serif; font-size:14px; direction:rtl; }',
-                
-                // Image Upload (Simple - you can enhance with actual upload endpoint)
-                images_upload_handler: function (blobInfo, success, failure) {
-                    // For now, convert to base64 (not recommended for production)
-                    var reader = new FileReader();
-                    reader.onload = function() {
-                        success(reader.result);
-                    };
-                    reader.readAsDataURL(blobInfo.blob());
+            const toolbarOptions = [
+                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                [{ 'font': [] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ 'color': [] }, { 'background': [] }],
+                [{ 'align': [] }],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                [{ 'direction': 'rtl' }],
+                ['link', 'image'],
+                ['blockquote', 'code-block'],
+                ['clean']
+            ];
+
+            quill = new Quill('#customContentEditor', {
+                theme: 'snow',
+                modules: {
+                    toolbar: toolbarOptions
                 },
-                
-                // Auto-save to textarea for form submission
-                setup: function(editor) {
-                    editorInstance = editor;
-                    
-                    editor.on('init', function() {
-                        updateCharCount();
-                        checkUseDefaultContent();
-                    });
-                    
-                    editor.on('change keyup', function() {
-                        editor.save(); // Save to textarea
-                        updateCharCount();
-                    });
-                }
+                placeholder: 'محتوای خود را وارد کنید...',
+                readOnly: document.getElementById('UseDefaultContent').checked
             });
+
+            // Load existing content
+            const existingContent = document.querySelector('textarea[name="CustomContent"]').value;
+            if (existingContent) {
+                quill.root.innerHTML = existingContent;
+            }
+
+            // Update hidden textarea on change
+            quill.on('text-change', function() {
+                document.querySelector('textarea[name="CustomContent"]').value = quill.root.innerHTML;
+                updateCharCount();
+            });
+            
+            // Initial setup
+            updateCharCount();
+            checkUseDefaultContent();
         });
 
         // شمارش کاراکترها
         function updateCharCount() {
-            if (editorInstance) {
-                const content = editorInstance.getContent({format: 'text'});
-                const length = content.length;
+            if (quill) {
+                const text = quill.getText();
+                const length = text.trim().length;
                 const charCount = document.getElementById('charCount');
                 
                 charCount.textContent = length.toLocaleString('fa-IR');
@@ -293,8 +288,8 @@
             const defaultContent = `@Html.Raw(Model.DefaultContent?.Replace("\r", "").Replace("\n", "\\n").Replace("'", "\\'"))`;
             
             if (confirm('آیا مطمئن هستید که می‌خواهید محتوای فعلی را با محتوای پیش‌فرض جایگزین کنید؟')) {
-                if (editorInstance) {
-                    editorInstance.setContent(defaultContent);
+                if (quill) {
+                    quill.root.innerHTML = defaultContent;
                 }
                 
                 // نمایش پیام موفقیت
@@ -316,16 +311,16 @@
 
         // غیرفعال کردن ویرایشگر اگر UseDefaultContent فعال باشد
         function checkUseDefaultContent() {
-            const useDefaultCheckbox = document.getElementById('useDefaultContent');
+            const useDefaultCheckbox = document.getElementById('UseDefaultContent');
             
             function toggleEditor() {
-                if (editorInstance) {
+                if (quill) {
                     if (useDefaultCheckbox.checked) {
-                        editorInstance.mode.set('readonly');
-                        document.querySelector('.tox-tinymce').style.opacity = '0.6';
+                        quill.enable(false);
+                        document.querySelector('.ql-container').style.opacity = '0.6';
                     } else {
-                        editorInstance.mode.set('design');
-                        document.querySelector('.tox-tinymce').style.opacity = '1';
+                        quill.enable(true);
+                        document.querySelector('.ql-container').style.opacity = '1';
                     }
                 }
             }
@@ -334,10 +329,10 @@
             toggleEditor();
         }
 
-        // Form Submit - Ensure TinyMCE content is saved
+        // Form Submit - Ensure Quill content is saved
         document.getElementById('contentForm').addEventListener('submit', function(e) {
-            if (editorInstance) {
-                editorInstance.save();
+            if (quill && !document.getElementById('UseDefaultContent').checked) {
+                document.querySelector('textarea[name="CustomContent"]').value = quill.root.innerHTML;
             }
         });
     </script>
@@ -355,22 +350,29 @@
             border: 1px solid #dee2e6;
         }
         
-        /* TinyMCE RTL Support */
-        .tox-tinymce {
+        /* Quill Editor RTL Support */
+        .ql-container {
+            font-family: IRANSans, Tahoma, Arial, sans-serif;
+            font-size: 14px;
+            direction: rtl;
+            text-align: right;
+        }
+        
+        .ql-editor {
+            min-height: 400px;
+            direction: rtl;
+            text-align: right;
+        }
+        
+        .ql-toolbar {
+            background: #f8f9fa;
             border: 1px solid #dee2e6;
-            border-radius: 0.375rem;
+            border-radius: 0.375rem 0.375rem 0 0;
         }
         
-        .tox .tox-toolbar__primary {
-            background: #f8f9fa !important;
-        }
-        
-        /* Loading State */
         #customContentEditor {
-            min-height: 500px;
             border: 1px solid #dee2e6;
             border-radius: 0.375rem;
-            padding: 10px;
         }
     </style>
 }

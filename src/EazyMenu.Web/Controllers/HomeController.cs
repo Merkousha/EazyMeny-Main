@@ -22,24 +22,36 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index()
     {
-        // اگر کاربر لاگین کرده و RestaurantOwner است، Slug رستوران را بگیر
-        if (User.Identity?.IsAuthenticated == true && User.IsInRole("RestaurantOwner"))
+        // اگر کاربر لاگین کرده است
+        if (User.Identity?.IsAuthenticated == true)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!string.IsNullOrEmpty(userId) && Guid.TryParse(userId, out var ownerGuid))
+            // Admin به داشبورد Admin می‌رود
+            if (User.IsInRole("Admin"))
             {
-                var restaurants = await _restaurantRepository.FindAsync(
-                    r => r.OwnerId == ownerGuid && !r.IsDeleted,
-                    CancellationToken.None);
-                
-                var restaurant = restaurants.FirstOrDefault();
-                if (restaurant != null)
+                return Redirect("/Admin/Home/Index");
+            }
+            
+            // RestaurantOwner به داشبورد Restaurant می‌رود
+            if (User.IsInRole("RestaurantOwner"))
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (!string.IsNullOrEmpty(userId) && Guid.TryParse(userId, out var ownerGuid))
                 {
-                    ViewBag.RestaurantSlug = restaurant.Slug;
+                    var restaurants = await _restaurantRepository.FindAsync(
+                        r => r.OwnerId == ownerGuid && !r.IsDeleted,
+                        CancellationToken.None);
+                    
+                    var restaurant = restaurants.FirstOrDefault();
+                    if (restaurant != null)
+                    {
+                        // Redirect به داشبورد اختصاصی RestaurantOwner
+                        return Redirect("/Restaurant/Home/Index");
+                    }
                 }
             }
         }
 
+        // کاربران Guest به صفحه اصلی می‌روند
         return View();
     }
 

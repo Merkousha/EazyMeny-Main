@@ -1,0 +1,147 @@
+@{
+    ViewData["Title"] = "تنظیمات پرداخت";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/Restaurant/Dashboard/Index">داشبورد</a></li>
+                    <li class="breadcrumb-item"><a href="/Restaurant/Settings/Index">تنظیمات</a></li>
+                    <li class="breadcrumb-item active">تنظیمات پرداخت</li>
+                </ol>
+            </nav>
+            <h2 class="mb-3">
+                <i class="bi bi-credit-card me-2"></i>تنظیمات پرداخت
+            </h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- درگاه پرداخت -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        <i class="bi bi-wallet2 me-2"></i>درگاه پرداخت زرین‌پال
+                    </h5>
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label">مرچنت کد (Merchant ID)</label>
+                            <input type="text" class="form-control" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
+                            <small class="form-text text-muted">مرچنت کد را از پنل زرین‌پال دریافت کنید</small>
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="enableOnlinePayment">
+                            <label class="form-check-label" for="enableOnlinePayment">
+                                فعال‌سازی پرداخت آنلاین
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" disabled>
+                            <i class="bi bi-check-lg me-2"></i>ذخیره تنظیمات
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- تنظیمات سفارش -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        <i class="bi bi-cart3 me-2"></i>تنظیمات سفارش
+                    </h5>
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label">حداقل مبلغ سفارش (تومان)</label>
+                            <input type="number" class="form-control" placeholder="50000" value="0">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">هزینه ارسال (تومان)</label>
+                            <input type="number" class="form-control" placeholder="15000" value="0">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">سقف رایگان ارسال (تومان)</label>
+                            <input type="number" class="form-control" placeholder="200000" value="0">
+                            <small class="form-text text-muted">اگر مبلغ سفارش بیشتر از این باشد، ارسال رایگان است</small>
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="acceptOnlineOrders">
+                            <label class="form-check-label" for="acceptOnlineOrders">
+                                پذیرش سفارش آنلاین
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" disabled>
+                            <i class="bi bi-check-lg me-2"></i>ذخیره تنظیمات
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- روش‌های پرداخت -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        <i class="bi bi-cash-stack me-2"></i>روش‌های پرداخت
+                    </h5>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="payOnline" checked disabled>
+                        <label class="form-check-label" for="payOnline">
+                            <strong>پرداخت آنلاین</strong><br>
+                            <small class="text-muted">پرداخت با کارت‌های بانکی از طریق درگاه زرین‌پال</small>
+                        </label>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="payOnDelivery" checked disabled>
+                        <label class="form-check-label" for="payOnDelivery">
+                            <strong>پرداخت در محل</strong><br>
+                            <small class="text-muted">پرداخت نقدی یا کارت‌خوان در هنگام تحویل</small>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" disabled>
+                        <i class="bi bi-check-lg me-2"></i>ذخیره تنظیمات
+                    </button>
+                </div>
+            </div>
+
+            <div class="alert alert-warning mt-4">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <strong>توجه:</strong> این فرم در حال توسعه است. برای ذخیره تغییرات باید CQRS Commands مربوطه پیاده‌سازی شوند.
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">راهنمای درگاه زرین‌پال</h5>
+                    <ol class="mb-0">
+                        <li class="mb-2">ابتدا در <a href="https://zarinpal.com" target="_blank">زرین‌پال</a> ثبت‌نام کنید</li>
+                        <li class="mb-2">پس از تأیید حساب، وارد پنل شوید</li>
+                        <li class="mb-2">از بخش "درگاه پرداخت" مرچنت کد دریافت کنید</li>
+                        <li class="mb-2">مرچنت کد را در فرم بالا وارد کنید</li>
+                        <li>درگاه پرداخت را فعال کنید</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">نکات مهم</h5>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>حداقل مبلغ را مناسب تنظیم کنید</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>هزینه ارسال را واقع‌بینانه در نظر بگیرید</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>با تعیین سقف، مشتریان را تشویق به خرید بیشتر کنید</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

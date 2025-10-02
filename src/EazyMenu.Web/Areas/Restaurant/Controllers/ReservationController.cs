@@ -15,37 +15,25 @@ namespace EazyMenu.Web.Areas.Restaurant.Controllers;
 /// کنترلر مدیریت رزروها در پنل رستوران
 /// </summary>
 [Area("Restaurant")]
-[Authorize(Roles = "RestaurantOwner")]
-[Route("Restaurant/Reservation")]
-public class ReservationController : Controller
+[Authorize(Roles = "RestaurantOwner,Admin")]
+public class ReservationController : BaseRestaurantController
 {
-    private readonly IMediator _mediator;
-
-    public ReservationController(IMediator mediator)
+    public ReservationController(IMediator mediator) : base(mediator)
     {
-        _mediator = mediator;
     }
 
     /// <summary>
     /// لیست رزروهای رستوران با فیلتر
-    /// Route: /Restaurant/Reservation/Index/{slug}
+    /// Route: /Restaurant/Reservation/Index
     /// </summary>
-    [HttpGet("Index/{slug}")]
-    public async Task<IActionResult> Index(string slug, DateTime? fromDate, DateTime? toDate, ReservationStatus? status)
+    public async Task<IActionResult> Index(DateTime? fromDate, DateTime? toDate, ReservationStatus? status)
     {
-        // Get restaurant by slug
-        var restaurantQuery = new GetRestaurantBySlugQuery { Slug = slug };
-        var restaurant = await _mediator.Send(restaurantQuery);
-
-        if (restaurant == null)
-        {
-            TempData["ErrorMessage"] = "رستوران یافت نشد.";
-            return RedirectToAction("Index", "Home", new { area = "Restaurant" });
-        }
+        // RestaurantId از BaseRestaurantController
+        var restaurantId = GetRestaurantId();
 
         var query = new GetReservationsByRestaurantQuery
         {
-            RestaurantId = restaurant.Id,
+            RestaurantId = restaurantId,
             FromDate = fromDate,
             ToDate = toDate,
             Status = status
@@ -53,9 +41,6 @@ public class ReservationController : Controller
 
         var reservations = await _mediator.Send(query);
 
-        ViewBag.RestaurantSlug = slug;
-        ViewBag.RestaurantId = restaurant.Id;
-        ViewBag.RestaurantName = restaurant.Name;
         ViewBag.FromDate = fromDate;
         ViewBag.ToDate = toDate;
         ViewBag.Status = status;
@@ -111,35 +96,24 @@ public class ReservationController : Controller
 
     /// <summary>
     /// نمایش کلندر روزانه رزروها
-    /// Route: /Restaurant/Reservation/Calendar/{slug}
+    /// Route: /Restaurant/Reservation/Calendar
     /// </summary>
-    [HttpGet("Calendar/{slug}")]
-    public async Task<IActionResult> Calendar(string slug)
+    public async Task<IActionResult> Calendar()
     {
-        // Get restaurant by slug
-        var restaurantQuery = new GetRestaurantBySlugQuery { Slug = slug };
-        var restaurant = await _mediator.Send(restaurantQuery);
-
-        if (restaurant == null)
-        {
-            TempData["ErrorMessage"] = "رستوران یافت نشد.";
-            return RedirectToAction("Index", "Home", new { area = "Restaurant" });
-        }
+        // RestaurantId از BaseRestaurantController
+        var restaurantId = GetRestaurantId();
 
         // Default to today
         var selectedDate = DateTime.Today;
 
         var query = new GetReservationsByDateQuery
         {
-            RestaurantId = restaurant.Id,
+            RestaurantId = restaurantId,
             Date = selectedDate
         };
 
         var reservations = await _mediator.Send(query);
 
-        ViewBag.RestaurantSlug = slug;
-        ViewBag.RestaurantId = restaurant.Id;
-        ViewBag.RestaurantName = restaurant.Name;
         ViewBag.SelectedDate = selectedDate;
 
         return View(reservations);
@@ -148,21 +122,15 @@ public class ReservationController : Controller
     /// <summary>
     /// دریافت رزروهای یک تاریخ خاص (AJAX)
     /// </summary>
-    [HttpGet("Calendar/{slug}/GetByDate")]
-    public async Task<IActionResult> GetReservationsByDate(string slug, DateTime date)
+    [HttpGet]
+    public async Task<IActionResult> GetReservationsByDate(DateTime date)
     {
-        // Get restaurant by slug
-        var restaurantQuery = new GetRestaurantBySlugQuery { Slug = slug };
-        var restaurant = await _mediator.Send(restaurantQuery);
-
-        if (restaurant == null)
-        {
-            return NotFound(new { success = false, message = "رستوران یافت نشد." });
-        }
+        // RestaurantId از BaseRestaurantController
+        var restaurantId = GetRestaurantId();
 
         var query = new GetReservationsByDateQuery
         {
-            RestaurantId = restaurant.Id,
+            RestaurantId = restaurantId,
             Date = date
         };
 

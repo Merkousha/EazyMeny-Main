@@ -1,4 +1,3 @@
-using EazyMenu.Application.Features.Restaurants.Queries.GetRestaurantBySlug;
 using EazyMenu.Application.Features.Website.Commands.PublishWebsite;
 using EazyMenu.Application.Features.Website.Commands.SelectTemplate;
 using EazyMenu.Application.Features.Website.Commands.UpdateContent;
@@ -6,26 +5,22 @@ using EazyMenu.Application.Features.Website.Commands.UpdateCustomization;
 using EazyMenu.Application.Features.Website.Queries.GetAllTemplates;
 using EazyMenu.Application.Features.Website.Queries.GetRestaurantWebsite;
 using EazyMenu.Domain.Enums;
+using EazyMenu.Web.Areas.Restaurant.Models;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace EazyMenu.Web.Areas.Restaurant.Controllers;
 
 /// <summary>
-/// کنترلر مدیریت وب‌سایت رستوران
+/// کنترلر مدیریت وب‌سایت رستوران - امن با بررسی Owner
 /// </summary>
-[Area("Restaurant")]
-[Authorize(Roles = "RestaurantOwner,Admin")]
-public class WebsiteController : Controller
+public class WebsiteController : BaseRestaurantController
 {
-    private readonly IMediator _mediator;
     private readonly ILogger<WebsiteController> _logger;
 
-    public WebsiteController(IMediator mediator, ILogger<WebsiteController> logger)
+    public WebsiteController(IMediator mediator, ILogger<WebsiteController> logger) 
+        : base(mediator)
     {
-        _mediator = mediator;
         _logger = logger;
     }
 
@@ -33,28 +28,26 @@ public class WebsiteController : Controller
     /// داشبورد وب‌سایت - نمای کلی
     /// </summary>
     [HttpGet]
-    public async Task<IActionResult> Index(string slug)
+    public async Task<IActionResult> Index()
     {
         try
         {
-            // دریافت RestaurantId از Slug
-            var restaurantId = await GetRestaurantIdFromSlugAsync(slug);
+            var restaurantId = GetRestaurantId();
+            
             if (restaurantId == Guid.Empty)
             {
-                TempData["Error"] = "رستوران یافت نشد";
+                TempData["Error"] = "رستورانی برای شما یافت نشد";
                 return RedirectToAction("Index", "Dashboard", new { area = "Restaurant" });
             }
 
-            // دریافت اطلاعات وب‌سایت
             var query = new GetRestaurantWebsiteQuery
             {
                 RestaurantId = restaurantId,
-                OnlyPublished = false // نمایش حتی اگر منتشر نشده
+                OnlyPublished = false
             };
 
             var website = await _mediator.Send(query);
 
-            ViewBag.RestaurantSlug = slug;
             ViewBag.HasWebsite = website != null;
             ViewBag.IsPublished = website?.IsPublished ?? false;
 
@@ -62,7 +55,7 @@ public class WebsiteController : Controller
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error loading website dashboard for slug: {Slug}", slug);
+            _logger.LogError(ex, "Error loading website dashboard");
             TempData["Error"] = "خطا در بارگذاری داشبورد وب‌سایت";
             return RedirectToAction("Index", "Dashboard", new { area = "Restaurant" });
         }
@@ -72,18 +65,18 @@ public class WebsiteController : Controller
     /// گالری قالب‌ها
     /// </summary>
     [HttpGet]
-    public async Task<IActionResult> Templates(string slug)
+    public async Task<IActionResult> Templates()
     {
         try
         {
-            var restaurantId = await GetRestaurantIdFromSlugAsync(slug);
+            var restaurantId = GetRestaurantId();
+            
             if (restaurantId == Guid.Empty)
             {
-                TempData["Error"] = "رستوران یافت نشد";
-                return RedirectToAction("Index", new { slug });
+                TempData["Error"] = "رستورانی برای شما یافت نشد";
+                return Redirect("/Restaurant/Website/Index");
             }
 
-            // دریافت تمام قالب‌های فعال
             var query = new GetAllTemplatesQuery
             {
                 OnlyActive = true,
@@ -92,16 +85,13 @@ public class WebsiteController : Controller
 
             var templates = await _mediator.Send(query);
 
-            ViewBag.RestaurantSlug = slug;
-            ViewBag.RestaurantId = restaurantId;
-
             return View(templates);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error loading templates for slug: {Slug}", slug);
+            _logger.LogError(ex, "Error loading templates");
             TempData["Error"] = "خطا در بارگذاری قالب‌ها";
-            return RedirectToAction("Index", new { slug });
+            return Redirect("/Restaurant/Website/Index");
         }
     }
 
@@ -110,15 +100,16 @@ public class WebsiteController : Controller
     /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SelectTemplate(string slug, Guid templateId)
+    public async Task<IActionResult> SelectTemplate(Guid templateId)
     {
         try
         {
-            var restaurantId = await GetRestaurantIdFromSlugAsync(slug);
+            var restaurantId = GetRestaurantId();
+            
             if (restaurantId == Guid.Empty)
             {
-                TempData["Error"] = "رستوران یافت نشد";
-                return RedirectToAction("Index", new { slug });
+                TempData["Error"] = "رستورانی برای شما یافت نشد";
+                return Redirect("/Restaurant/Website/Index");
             }
 
             var command = new SelectTemplateCommand
@@ -129,33 +120,33 @@ public class WebsiteController : Controller
 
             await _mediator.Send(command);
 
-            TempData["Success"] = "قالب با موفقیت انتخاب شد! حالا می‌توانید آن را سفارشی‌سازی کنید";
-            return RedirectToAction("Customize", new { slug });
+            TempData["Success"] = "قالب با موفقیت انتخاب شد!";
+            return Redirect("/Restaurant/Website/Customize");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error selecting template for slug: {Slug}, TemplateId: {TemplateId}", slug, templateId);
+            _logger.LogError(ex, "Error selecting template: {TemplateId}", templateId);
             TempData["Error"] = $"خطا در انتخاب قالب: {ex.Message}";
-            return RedirectToAction("Templates", new { slug });
+            return Redirect("/Restaurant/Website/Templates");
         }
     }
 
     /// <summary>
-    /// صفحه سفارشی‌سازی (رنگ، فونت، لوگو، SEO)
+    /// صفحه سفارشی‌سازی
     /// </summary>
     [HttpGet]
-    public async Task<IActionResult> Customize(string slug)
+    public async Task<IActionResult> Customize()
     {
         try
         {
-            var restaurantId = await GetRestaurantIdFromSlugAsync(slug);
+            var restaurantId = GetRestaurantId();
+            
             if (restaurantId == Guid.Empty)
             {
-                TempData["Error"] = "رستوران یافت نشد";
-                return RedirectToAction("Index", new { slug });
+                TempData["Error"] = "رستورانی برای شما یافت نشد";
+                return RedirectToAction("Index");
             }
 
-            // دریافت تنظیمات فعلی
             var query = new GetRestaurantWebsiteQuery
             {
                 RestaurantId = restaurantId,
@@ -167,19 +158,16 @@ public class WebsiteController : Controller
             if (website == null || website.Template == null)
             {
                 TempData["Warning"] = "ابتدا یک قالب انتخاب کنید";
-                return RedirectToAction("Templates", new { slug });
+                return RedirectToAction("Templates");
             }
-
-            ViewBag.RestaurantSlug = slug;
-            ViewBag.RestaurantId = restaurantId;
 
             return View(website.Customization);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error loading customize page for slug: {Slug}", slug);
+            _logger.LogError(ex, "Error loading customize page");
             TempData["Error"] = "خطا در بارگذاری صفحه سفارشی‌سازی";
-            return RedirectToAction("Index", new { slug });
+            return Redirect("/Restaurant/Website/Index");
         }
     }
 
@@ -188,15 +176,16 @@ public class WebsiteController : Controller
     /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Customize(string slug, UpdateCustomizationCommand command)
+    public async Task<IActionResult> Customize(UpdateCustomizationCommand command)
     {
         try
         {
-            var restaurantId = await GetRestaurantIdFromSlugAsync(slug);
+            var restaurantId = GetRestaurantId();
+            
             if (restaurantId == Guid.Empty)
             {
-                TempData["Error"] = "رستوران یافت نشد";
-                return RedirectToAction("Index", new { slug });
+                TempData["Error"] = "رستورانی برای شما یافت نشد";
+                return Redirect("/Restaurant/Website/Index");
             }
 
             command.RestaurantId = restaurantId;
@@ -209,11 +198,11 @@ public class WebsiteController : Controller
             await _mediator.Send(command);
 
             TempData["Success"] = "تنظیمات سفارشی‌سازی با موفقیت ذخیره شد";
-            return RedirectToAction("Index", new { slug });
+            return Redirect("/Restaurant/Website/Index");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error saving customization for slug: {Slug}", slug);
+            _logger.LogError(ex, "Error saving customization");
             TempData["Error"] = $"خطا در ذخیره تنظیمات: {ex.Message}";
             return View(command);
         }
@@ -223,18 +212,18 @@ public class WebsiteController : Controller
     /// صفحه ویرایش محتوای یک بخش
     /// </summary>
     [HttpGet]
-    public async Task<IActionResult> EditContent(string slug, SectionType sectionType)
+    public async Task<IActionResult> EditContent(SectionType sectionType)
     {
         try
         {
-            var restaurantId = await GetRestaurantIdFromSlugAsync(slug);
+            var restaurantId = GetRestaurantId();
+            
             if (restaurantId == Guid.Empty)
             {
-                TempData["Error"] = "رستوران یافت نشد";
-                return RedirectToAction("Index", new { slug });
+                TempData["Error"] = "رستورانی برای شما یافت نشد";
+                return Redirect("/Restaurant/Website/Index");
             }
 
-            // دریافت محتوای فعلی
             var query = new GetRestaurantWebsiteQuery
             {
                 RestaurantId = restaurantId,
@@ -246,25 +235,33 @@ public class WebsiteController : Controller
             if (website == null || website.Template == null)
             {
                 TempData["Warning"] = "ابتدا یک قالب انتخاب کنید";
-                return RedirectToAction("Templates", new { slug });
+                return Redirect("/Restaurant/Website/Templates");
             }
 
             var content = website.Contents.FirstOrDefault(c => c.SectionType == sectionType);
             var section = website.Template.Sections.FirstOrDefault(s => s.SectionType == sectionType);
 
-            ViewBag.RestaurantSlug = slug;
-            ViewBag.RestaurantId = restaurantId;
-            ViewBag.SectionType = sectionType;
-            ViewBag.SectionTitle = section?.Title ?? sectionType.ToString();
-            ViewBag.IsEditable = section?.IsEditable ?? true;
+            var viewModel = new EditContentViewModel
+            {
+                RestaurantId = restaurantId,
+                ContentId = content?.Id,
+                SectionType = sectionType,
+                SectionTitle = section?.Title ?? sectionType.ToString(),
+                IsRequired = section?.IsRequired ?? false,
+                IsEditable = section?.IsEditable ?? true,
+                CustomContent = content?.Content,
+                DefaultContent = null, // Template sections don't store default content in DTO
+                UseDefaultContent = content?.UseDefaultContent ?? true,
+                IsVisible = content?.IsVisible ?? true
+            };
 
-            return View(content);
+            return View(viewModel);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error loading edit content page for slug: {Slug}, Section: {Section}", slug, sectionType);
+            _logger.LogError(ex, "Error loading edit content page for section: {Section}", sectionType);
             TempData["Error"] = "خطا در بارگذاری صفحه ویرایش";
-            return RedirectToAction("Index", new { slug });
+            return Redirect("/Restaurant/Website/Index");
         }
     }
 
@@ -273,22 +270,22 @@ public class WebsiteController : Controller
     /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> EditContent(string slug, UpdateContentCommand command)
+    public async Task<IActionResult> EditContent(UpdateContentCommand command)
     {
         try
         {
-            var restaurantId = await GetRestaurantIdFromSlugAsync(slug);
+            var restaurantId = GetRestaurantId();
+            
             if (restaurantId == Guid.Empty)
             {
-                TempData["Error"] = "رستوران یافت نشد";
-                return RedirectToAction("Index", new { slug });
+                TempData["Error"] = "رستورانی برای شما یافت نشد";
+                return Redirect("/Restaurant/Website/Index");
             }
 
             command.RestaurantId = restaurantId;
 
             if (!ModelState.IsValid)
             {
-                ViewBag.RestaurantSlug = slug;
                 ViewBag.SectionType = command.SectionType;
                 return View(command);
             }
@@ -296,13 +293,12 @@ public class WebsiteController : Controller
             await _mediator.Send(command);
 
             TempData["Success"] = "محتوا با موفقیت ذخیره شد";
-            return RedirectToAction("Index", new { slug });
+            return Redirect("/Restaurant/Website/Index");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error saving content for slug: {Slug}, Section: {Section}", slug, command.SectionType);
+            _logger.LogError(ex, "Error saving content for section: {Section}", command.SectionType);
             TempData["Error"] = $"خطا در ذخیره محتوا: {ex.Message}";
-            ViewBag.RestaurantSlug = slug;
             ViewBag.SectionType = command.SectionType;
             return View(command);
         }
@@ -313,15 +309,16 @@ public class WebsiteController : Controller
     /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Publish(string slug)
+    public async Task<IActionResult> Publish()
     {
         try
         {
-            var restaurantId = await GetRestaurantIdFromSlugAsync(slug);
+            var restaurantId = GetRestaurantId();
+            
             if (restaurantId == Guid.Empty)
             {
-                TempData["Error"] = "رستوران یافت نشد";
-                return RedirectToAction("Index", new { slug });
+                TempData["Error"] = "رستورانی برای شما یافت نشد";
+                return Redirect("/Restaurant/Website/Index");
             }
 
             var command = new PublishWebsiteCommand
@@ -333,13 +330,13 @@ public class WebsiteController : Controller
             await _mediator.Send(command);
 
             TempData["Success"] = "🎉 وب‌سایت شما با موفقیت منتشر شد!";
-            return RedirectToAction("Index", new { slug });
+            return Redirect("/Restaurant/Website/Index");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error publishing website for slug: {Slug}", slug);
+            _logger.LogError(ex, "Error publishing website");
             TempData["Error"] = $"خطا در انتشار وب‌سایت: {ex.Message}";
-            return RedirectToAction("Index", new { slug });
+            return Redirect("/Restaurant/Website/Index");
         }
     }
 
@@ -348,15 +345,16 @@ public class WebsiteController : Controller
     /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Unpublish(string slug)
+    public async Task<IActionResult> Unpublish()
     {
         try
         {
-            var restaurantId = await GetRestaurantIdFromSlugAsync(slug);
+            var restaurantId = GetRestaurantId();
+            
             if (restaurantId == Guid.Empty)
             {
-                TempData["Error"] = "رستوران یافت نشد";
-                return RedirectToAction("Index", new { slug });
+                TempData["Error"] = "رستورانی برای شما یافت نشد";
+                return Redirect("/Restaurant/Website/Index");
             }
 
             var command = new PublishWebsiteCommand
@@ -368,13 +366,13 @@ public class WebsiteController : Controller
             await _mediator.Send(command);
 
             TempData["Success"] = "وب‌سایت از حالت انتشار خارج شد";
-            return RedirectToAction("Index", new { slug });
+            return Redirect("/Restaurant/Website/Index");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error unpublishing website for slug: {Slug}", slug);
+            _logger.LogError(ex, "Error unpublishing website");
             TempData["Error"] = $"خطا در لغو انتشار: {ex.Message}";
-            return RedirectToAction("Index", new { slug });
+            return Redirect("/Restaurant/Website/Index");
         }
     }
 
@@ -382,46 +380,26 @@ public class WebsiteController : Controller
     /// پیش‌نمایش وب‌سایت
     /// </summary>
     [HttpGet]
-    public async Task<IActionResult> Preview(string slug)
+    public IActionResult Preview()
     {
         try
         {
-            var restaurantId = await GetRestaurantIdFromSlugAsync(slug);
-            if (restaurantId == Guid.Empty)
+            var slug = ViewData["RestaurantSlug"]?.ToString();
+            
+            if (string.IsNullOrEmpty(slug))
             {
-                TempData["Error"] = "رستوران یافت نشد";
-                return RedirectToAction("Index", new { slug });
+                TempData["Error"] = "رستورانی برای شما یافت نشد";
+                return Redirect("/Restaurant/Website/Index");
             }
 
-            // Redirect to public website controller (will create in next task)
+            // Redirect to public website controller
             return RedirectToAction("Index", "Website", new { area = "", slug });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error previewing website for slug: {Slug}", slug);
+            _logger.LogError(ex, "Error previewing website");
             TempData["Error"] = "خطا در نمایش پیش‌نمایش";
-            return RedirectToAction("Index", new { slug });
+            return Redirect("/Restaurant/Website/Index");
         }
     }
-
-    #region Helper Methods
-
-    /// <summary>
-    /// دریافت RestaurantId از Slug
-    /// </summary>
-    private async Task<Guid> GetRestaurantIdFromSlugAsync(string slug)
-    {
-        try
-        {
-            var query = new GetRestaurantBySlugQuery { Slug = slug };
-            var restaurant = await _mediator.Send(query);
-            return restaurant?.Id ?? Guid.Empty;
-        }
-        catch
-        {
-            return Guid.Empty;
-        }
-    }
-
-    #endregion
 }

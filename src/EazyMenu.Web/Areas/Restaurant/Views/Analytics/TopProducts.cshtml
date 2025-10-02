@@ -1,0 +1,193 @@
+@{
+    ViewData["Title"] = "محصولات پرفروش";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/Restaurant/Dashboard/Index">داشبورد</a></li>
+                    <li class="breadcrumb-item"><a href="/Restaurant/Analytics/Index">گزارش‌ها</a></li>
+                    <li class="breadcrumb-item active">محصولات پرفروش</li>
+                </ol>
+            </nav>
+            <h2 class="mb-3">
+                <i class="bi bi-award me-2"></i>محصولات پرفروش
+            </h2>
+        </div>
+    </div>
+
+    <!-- فیلتر -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <form class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">بازه زمانی</label>
+                            <select class="form-select">
+                                <option>امروز</option>
+                                <option>هفته جاری</option>
+                                <option selected>ماه جاری</option>
+                                <option>3 ماه اخیر</option>
+                                <option>سال جاری</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">دسته‌بندی</label>
+                            <select class="form-select">
+                                <option selected>همه دسته‌ها</option>
+                                <option>پیتزا</option>
+                                <option>برگر</option>
+                                <option>نوشیدنی</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100" disabled>
+                                <i class="bi bi-search me-2"></i>جستجو
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- آمار کلی -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">پرفروش‌ترین محصول</h6>
+                    <h4 class="mb-0">-</h4>
+                    <small class="text-muted">0 عدد فروش</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">پردرآمدترین محصول</h6>
+                    <h4 class="mb-0">-</h4>
+                    <small class="text-muted">0 تومان درآمد</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">کل محصولات فروخته شده</h6>
+                    <h4 class="mb-0">0</h4>
+                    <small class="text-muted">در ماه جاری</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- جدول محصولات -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">رتبه‌بندی محصولات</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">رتبه</th>
+                                    <th>نام محصول</th>
+                                    <th>دسته‌بندی</th>
+                                    <th>تعداد فروش</th>
+                                    <th>درآمد کل</th>
+                                    <th>قیمت واحد</th>
+                                    <th>سهم از فروش</th>
+                                    <th style="width: 100px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Sample Data - در حالت واقعی باید از دیتابیس بیاید -->
+                                <tr>
+                                    <td>
+                                        <span class="badge bg-warning text-dark fs-6">1</span>
+                                    </td>
+                                    <td>
+                                        <i class="bi bi-dash-circle text-muted"></i>
+                                        <span class="text-muted">داده نمونه</span>
+                                    </td>
+                                    <td><span class="badge bg-secondary">-</span></td>
+                                    <td class="text-muted">0</td>
+                                    <td class="text-muted">0 تومان</td>
+                                    <td class="text-muted">0 تومان</td>
+                                    <td>
+                                        <div class="progress" style="height: 20px;">
+                                            <div class="progress-bar" role="progressbar" style="width: 0%;">0%</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <a href="/Restaurant/Product/Index" class="btn btn-sm btn-outline-primary" disabled>
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="8" class="text-center text-muted py-4">
+                                        <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                                        داده‌ای برای نمایش وجود ندارد
+                                        <br>
+                                        <small>پس از ثبت سفارشات، آمار محصولات در اینجا نمایش داده می‌شود</small>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نمودار دایره‌ای -->
+    <div class="row mt-4">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">توزیع فروش به تفکیک دسته‌بندی</h5>
+                    <div class="text-center py-5">
+                        <i class="bi bi-pie-chart text-muted" style="font-size: 4rem;"></i>
+                        <p class="text-muted mt-3">نمودار در حال توسعه است</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">نکات</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <i class="bi bi-lightbulb text-warning me-2"></i>
+                            <strong>محصولات پرفروش را در منوی اصلی قرار دهید</strong><br>
+                            <small class="text-muted">مشتریان بیشتر این محصولات را می‌بینند</small>
+                        </li>
+                        <li class="mb-3">
+                            <i class="bi bi-lightbulb text-warning me-2"></i>
+                            <strong>محصولات کم‌فروش را بررسی کنید</strong><br>
+                            <small class="text-muted">شاید نیاز به تغییر قیمت یا توضیحات داشته باشند</small>
+                        </li>
+                        <li class="mb-3">
+                            <i class="bi bi-lightbulb text-warning me-2"></i>
+                            <strong>بسته‌های ترکیبی ایجاد کنید</strong><br>
+                            <small class="text-muted">محصولات پرفروش را با کم‌فروش ترکیب کنید</small>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-info mt-4">
+        <i class="bi bi-info-circle me-2"></i>
+        <strong>توجه:</strong> این صفحه در حال توسعه است. برای نمایش داده‌های واقعی باید Query Handler مربوطه پیاده‌سازی شود.
+    </div>
+</div>

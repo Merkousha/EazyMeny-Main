@@ -1,0 +1,181 @@
+@{
+    ViewData["Title"] = "تنظیمات اعلان‌ها";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/Restaurant/Dashboard/Index">داشبورد</a></li>
+                    <li class="breadcrumb-item"><a href="/Restaurant/Settings/Index">تنظیمات</a></li>
+                    <li class="breadcrumb-item active">اعلان‌ها</li>
+                </ol>
+            </nav>
+            <h2 class="mb-3">
+                <i class="bi bi-bell me-2"></i>تنظیمات اعلان‌ها
+            </h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- اعلان‌های SMS -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        <i class="bi bi-phone me-2"></i>اعلان‌های پیامکی (کاوه‌نگار)
+                    </h5>
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label">API Key</label>
+                            <input type="text" class="form-control" placeholder="کلید API کاوه‌نگار">
+                            <small class="form-text text-muted">کلید API را از پنل کاوه‌نگار دریافت کنید</small>
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="enableSMS">
+                            <label class="form-check-label" for="enableSMS">
+                                فعال‌سازی ارسال پیامک
+                            </label>
+                        </div>
+
+                        <hr>
+
+                        <h6 class="mb-3">انواع پیامک‌ها</h6>
+                        
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="smsNewOrder" checked disabled>
+                            <label class="form-check-label" for="smsNewOrder">
+                                سفارش جدید به رستوران
+                            </label>
+                        </div>
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="smsOrderConfirm" checked disabled>
+                            <label class="form-check-label" for="smsOrderConfirm">
+                                تأیید سفارش به مشتری
+                            </label>
+                        </div>
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="smsOrderReady" checked disabled>
+                            <label class="form-check-label" for="smsOrderReady">
+                                آماده‌سازی سفارش به مشتری
+                            </label>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="smsReservation" checked disabled>
+                            <label class="form-check-label" for="smsReservation">
+                                تأیید رزرو میز
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" disabled>
+                            <i class="bi bi-check-lg me-2"></i>ذخیره تنظیمات
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- اعلان‌های ایمیل -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        <i class="bi bi-envelope me-2"></i>اعلان‌های ایمیل
+                    </h5>
+                    <form>
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="enableEmail" disabled>
+                            <label class="form-check-label" for="enableEmail">
+                                فعال‌سازی ارسال ایمیل
+                            </label>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">ایمیل رستوران</label>
+                            <input type="email" class="form-control" placeholder="info@restaurant.com" disabled>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" disabled>
+                            <i class="bi bi-check-lg me-2"></i>ذخیره تنظیمات
+                        </button>
+
+                        <div class="alert alert-info mt-3 mb-0">
+                            <i class="bi bi-info-circle me-2"></i>
+                            ارسال ایمیل در نسخه‌های بعدی فعال خواهد شد
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- اعلان‌های تلگرام -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        <i class="bi bi-telegram me-2"></i>اعلان‌های تلگرام
+                    </h5>
+                    <form>
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="enableTelegram" disabled>
+                            <label class="form-check-label" for="enableTelegram">
+                                فعال‌سازی ارسال به تلگرام
+                            </label>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Bot Token</label>
+                            <input type="text" class="form-control" placeholder="123456:ABC-DEF1234..." disabled>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Chat ID</label>
+                            <input type="text" class="form-control" placeholder="123456789" disabled>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" disabled>
+                            <i class="bi bi-check-lg me-2"></i>ذخیره تنظیمات
+                        </button>
+
+                        <div class="alert alert-info mt-3 mb-0">
+                            <i class="bi bi-info-circle me-2"></i>
+                            ارسال به تلگرام در نسخه‌های بعدی فعال خواهد شد
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="alert alert-warning mt-4">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <strong>توجه:</strong> این فرم در حال توسعه است. برای ذخیره تغییرات باید CQRS Commands مربوطه پیاده‌سازی شوند.
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">راهنمای کاوه‌نگار</h5>
+                    <ol class="mb-0">
+                        <li class="mb-2">در <a href="https://kavenegar.com" target="_blank">کاوه‌نگار</a> ثبت‌نام کنید</li>
+                        <li class="mb-2">از بخش "تنظیمات" کلید API دریافت کنید</li>
+                        <li class="mb-2">کلید را در فرم بالا وارد کنید</li>
+                        <li>سرویس پیامک را فعال کنید</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">مزایای اعلان‌ها</h5>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>اطلاع‌رسانی سریع به مشتری</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>کاهش تماس‌های تلفنی</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>افزایش رضایت مشتری</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>مدیریت بهتر سفارشات</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

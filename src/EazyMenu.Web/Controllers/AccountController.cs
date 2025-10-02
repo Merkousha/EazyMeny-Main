@@ -194,12 +194,20 @@ public class AccountController : Controller
             return Redirect(returnUrl);
         }
 
-        // هدایت ادمین به داشبورد
-        if (await IsUserAdminAsync(user))
+        // هدایت بر اساس نقش کاربر
+        var roles = await _userManager.GetRolesAsync(user);
+        
+        if (roles.Contains("Admin"))
         {
-            return RedirectToAction("Index", "Home", new { area = "Admin" });
+            return Redirect("/Admin/Home/Index");
+        }
+        
+        if (roles.Contains("RestaurantOwner"))
+        {
+            return Redirect("/Restaurant/Dashboard/Index");
         }
 
+        // کاربر عادی به صفحه اصلی
         return RedirectToAction("Index", "Home");
     }
 

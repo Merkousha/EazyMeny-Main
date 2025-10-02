@@ -93,16 +93,16 @@ app.UseAuthorization();
 
 app.MapStaticAssets();
 
-// Area routing
-app.MapControllerRoute(
-    name: "areas",
-    pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}")
-    .WithStaticAssets();
-
-// Default routing
+// Default routing (باید قبل از Area routing باشد)
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
+    .WithStaticAssets();
+
+// Area routing - Default (برای تمام Area ها به جز Restaurant)
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}")
     .WithStaticAssets();
 
 app.Run();

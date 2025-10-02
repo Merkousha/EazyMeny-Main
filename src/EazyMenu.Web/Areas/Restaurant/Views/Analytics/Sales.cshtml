@@ -1,0 +1,148 @@
+@{
+    ViewData["Title"] = "گزارش فروش";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/Restaurant/Dashboard/Index">داشبورد</a></li>
+                    <li class="breadcrumb-item"><a href="/Restaurant/Analytics/Index">گزارش‌ها</a></li>
+                    <li class="breadcrumb-item active">گزارش فروش</li>
+                </ol>
+            </nav>
+            <h2 class="mb-3">
+                <i class="bi bi-graph-up-arrow me-2"></i>گزارش فروش
+            </h2>
+        </div>
+    </div>
+
+    <!-- فیلترها -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <form class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">از تاریخ</label>
+                            <input type="date" class="form-control">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">تا تاریخ</label>
+                            <input type="date" class="form-control">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">بازه زمانی</label>
+                            <select class="form-select">
+                                <option>امروز</option>
+                                <option>هفته جاری</option>
+                                <option>ماه جاری</option>
+                                <option selected>3 ماه اخیر</option>
+                                <option>سال جاری</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100" disabled>
+                                <i class="bi bi-search me-2"></i>جستجو
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- آمار کلی -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">کل فروش</h6>
+                    <h3 class="mb-0">0 تومان</h3>
+                    <small class="text-muted">3 ماه اخیر</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">تعداد سفارشات</h6>
+                    <h3 class="mb-0">0</h3>
+                    <small class="text-success"><i class="bi bi-arrow-up"></i> 0% نسبت به ماه قبل</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">میانگین سفارش</h6>
+                    <h3 class="mb-0">0 تومان</h3>
+                    <small class="text-muted">به ازای هر سفارش</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">بیشترین فروش</h6>
+                    <h3 class="mb-0">0 تومان</h3>
+                    <small class="text-muted">در یک روز</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نمودار فروش -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">نمودار فروش روزانه</h5>
+                    <div class="text-center py-5">
+                        <i class="bi bi-graph-up text-muted" style="font-size: 4rem;"></i>
+                        <p class="text-muted mt-3">نمودار در حال توسعه است</p>
+                        <small class="text-muted">برای نمایش نمودار باید داده‌های واقعی از دیتابیس دریافت شود</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- جدول فروش روزانه -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">جزئیات فروش روزانه</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>تاریخ</th>
+                                    <th>تعداد سفارشات</th>
+                                    <th>مبلغ فروش</th>
+                                    <th>میانگین سفارش</th>
+                                    <th>وضعیت</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4">
+                                        <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                                        داده‌ای برای نمایش وجود ندارد
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-info mt-4">
+        <i class="bi bi-info-circle me-2"></i>
+        <strong>توجه:</strong> این صفحه در حال توسعه است. برای نمایش داده‌های واقعی باید Query Handler مربوطه پیاده‌سازی شود.
+    </div>
+</div>
