@@ -80,6 +80,38 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- کارت منوی عمومی - جدید! 🌟 -->
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card shadow-sm h-100 border-info">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0"><i class="bi bi-qr-code me-2"></i>منوی دیجیتال</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted mb-3">
+                                مشتریان شما می‌توانند منوی رستوران را به صورت آنلاین مشاهده کنند
+                            </p>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-info" onclick="viewPublicMenu()" title="مشاهده منوی عمومی">
+                                    <i class="bi bi-eye me-2"></i>
+                                    مشاهده منو
+                                </button>
+                                <button class="btn btn-outline-info" onclick="copyMenuLink()" title="کپی لینک منو">
+                                    <i class="bi bi-link-45deg me-2"></i>
+                                    کپی لینک منو
+                                </button>
+                                <a asp-area="Restaurant" asp-controller="QRCode" asp-action="Index" class="btn btn-outline-info">
+                                    <i class="bi bi-qr-code me-2"></i>
+                                    دانلود QR Code
+                                </a>
+                            </div>
+                            <small class="text-muted mt-2 d-block" id="menuLinkDisplay">
+                                <i class="bi bi-info-circle me-1"></i>
+                                لینک منو: <span class="fw-bold" id="restaurantSlugDisplay">در حال بارگذاری...</span>
+                            </small>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="row mt-4">
@@ -90,6 +122,99 @@
                     </div>
                 </div>
             </div>
+
+            @section Scripts {
+                <script>
+                    // دریافت Slug رستوران از سرور
+                    let restaurantSlug = '@ViewBag.RestaurantSlug';
+
+                    // اگر Slug موجود نبود، از API دریافت می‌کنیم
+                    if (!restaurantSlug || restaurantSlug === '') {
+                        fetch('/api/restaurant/my-slug', {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.slug) {
+                                restaurantSlug = data.slug;
+                                updateSlugDisplay();
+                            }
+                        })
+                        .catch(() => {
+                            document.getElementById('restaurantSlugDisplay').textContent = 'رستورانی یافت نشد';
+                        });
+                    } else {
+                        updateSlugDisplay();
+                    }
+
+                    function updateSlugDisplay() {
+                        const menuUrl = window.location.origin + '/menu/' + restaurantSlug;
+                        document.getElementById('restaurantSlugDisplay').textContent = menuUrl;
+                    }
+
+                    function viewPublicMenu() {
+                        if (!restaurantSlug || restaurantSlug === '') {
+                            alert('لطفاً ابتدا رستوران خود را ایجاد کنید');
+                            return;
+                        }
+                        window.open('/menu/' + restaurantSlug, '_blank');
+                    }
+
+                    function copyMenuLink() {
+                        if (!restaurantSlug || restaurantSlug === '') {
+                            alert('لطفاً ابتدا رستوران خود را ایجاد کنید');
+                            return;
+                        }
+
+                        const menuUrl = window.location.origin + '/menu/' + restaurantSlug;
+                        
+                        // کپی کردن به کلیپبورد
+                        if (navigator.clipboard && navigator.clipboard.writeText) {
+                            navigator.clipboard.writeText(menuUrl)
+                                .then(() => {
+                                    // نمایش پیام موفقیت
+                                    const btn = event.target.closest('button');
+                                    const originalText = btn.innerHTML;
+                                    btn.innerHTML = '<i class="bi bi-check-circle me-2"></i>کپی شد!';
+                                    btn.classList.remove('btn-outline-info');
+                                    btn.classList.add('btn-success');
+                                    
+                                    setTimeout(() => {
+                                        btn.innerHTML = originalText;
+                                        btn.classList.remove('btn-success');
+                                        btn.classList.add('btn-outline-info');
+                                    }, 2000);
+                                })
+                                .catch(() => {
+                                    fallbackCopyToClipboard(menuUrl);
+                                });
+                        } else {
+                            fallbackCopyToClipboard(menuUrl);
+                        }
+                    }
+
+                    function fallbackCopyToClipboard(text) {
+                        const textarea = document.createElement('textarea');
+                        textarea.value = text;
+                        textarea.style.position = 'fixed';
+                        textarea.style.opacity = '0';
+                        document.body.appendChild(textarea);
+                        textarea.select();
+                        
+                        try {
+                            document.execCommand('copy');
+                            alert('لینک منو کپی شد:\n' + text);
+                        } catch (err) {
+                            alert('خطا در کپی کردن. لینک منو:\n' + text);
+                        }
+                        
+                        document.body.removeChild(textarea);
+                    }
+                </script>
+            }
         }
         else
         {
