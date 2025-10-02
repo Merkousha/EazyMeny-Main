@@ -58,4 +58,6 @@ public class Restaurant : BaseEntity, IAggregateRoot
     public virtual ICollection<Product> Products { get; set; } = new List<Product>();
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
     public virtual ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
+    public virtual ICollection<WebsiteContent> WebsiteContents { get; set; } = new List<WebsiteContent>();
+    public virtual WebsiteCustomization? WebsiteCustomization { get; set; }
 }

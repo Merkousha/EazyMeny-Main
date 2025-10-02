@@ -29,6 +29,12 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationIdentityUser, I
     public DbSet<Reservation> Reservations => Set<Reservation>();
     public DbSet<Payment> Payments => Set<Payment>();
     public DbSet<Notification> Notifications => Set<Notification>();
+    
+    // Website Builder DbSets
+    public DbSet<WebsiteTemplate> WebsiteTemplates => Set<WebsiteTemplate>();
+    public DbSet<TemplateSection> TemplateSections => Set<TemplateSection>();
+    public DbSet<WebsiteContent> WebsiteContents => Set<WebsiteContent>();
+    public DbSet<WebsiteCustomization> WebsiteCustomizations => Set<WebsiteCustomization>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

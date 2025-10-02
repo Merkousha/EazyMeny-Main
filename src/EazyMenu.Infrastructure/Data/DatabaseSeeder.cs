@@ -47,6 +47,9 @@ public static class DatabaseSeeder
         // Seed Subscriptions
         await SeedSubscriptionsAsync(context, ownerUser.Id, plans);
 
+        // Seed Website Templates
+        await SeedWebsiteTemplatesAsync(context);
+
         await context.SaveChangesAsync();
 
         Console.WriteLine("✅ Database seeded successfully!");
@@ -653,5 +656,196 @@ public static class DatabaseSeeder
                 Console.WriteLine($"❌ Failed to generate QR Code for {restaurant.Name}: {ex.Message}");
             }
         }
+    }
+
+    private static async Task SeedWebsiteTemplatesAsync(ApplicationDbContext context)
+    {
+        // بررسی وجود قالب‌ها
+        if (await context.WebsiteTemplates.AnyAsync())
+        {
+            Console.WriteLine("⏭️  Website Templates already exist, skipping seed");
+            return;
+        }
+
+        var templates = new List<WebsiteTemplate>
+        {
+            // 1. Modern Template
+            new WebsiteTemplate
+            {
+                Name = "مدرن",
+                NameEn = "Modern",
+                Description = "قالبی مدرن با انیمیشن‌های جذاب و طراحی پویا - مناسب رستوران‌های مدرن",
+                Type = TemplateType.Modern,
+                TemplatePath = "/templates/modern/style.css",
+                ThumbnailUrl = "/images/templates/modern-thumb.jpg",
+                PreviewImageUrl = "/images/templates/modern-preview.jpg",
+                DefaultColors = @"{""primary"":""#FF6B35"",""secondary"":""#004E89"",""text"":""#333333"",""background"":""#FFFFFF""}",
+                DefaultFonts = @"{""primary"":""IRANSans"",""secondary"":""Tahoma""}",
+                IsActive = true,
+                DisplayOrder = 1,
+                IsFree = true,
+                CreatedAt = DateTime.UtcNow
+            },
+            
+            // 2. Classic Template
+            new WebsiteTemplate
+            {
+                Name = "کلاسیک",
+                NameEn = "Classic",
+                Description = "قالبی ساده و سنتی با ظاهر کلاسیک - مناسب رستوران‌های سنتی",
+                Type = TemplateType.Classic,
+                TemplatePath = "/templates/classic/style.css",
+                ThumbnailUrl = "/images/templates/classic-thumb.jpg",
+                PreviewImageUrl = "/images/templates/classic-preview.jpg",
+                DefaultColors = @"{""primary"":""#8B4513"",""secondary"":""#2C1810"",""text"":""#333333"",""background"":""#FFF8F0""}",
+                DefaultFonts = @"{""primary"":""IRANSans"",""secondary"":""Tahoma""}",
+                IsActive = true,
+                DisplayOrder = 2,
+                IsFree = true,
+                CreatedAt = DateTime.UtcNow
+            },
+            
+            // 3. Elegant Template
+            new WebsiteTemplate
+            {
+                Name = "الگانت",
+                NameEn = "Elegant",
+                Description = "قالبی شیک و لوکس با طراحی مینیمال - مناسب رستوران‌های لوکس",
+                Type = TemplateType.Elegant,
+                TemplatePath = "/templates/elegant/style.css",
+                ThumbnailUrl = "/images/templates/elegant-thumb.jpg",
+                PreviewImageUrl = "/images/templates/elegant-preview.jpg",
+                DefaultColors = @"{""primary"":""#D4AF37"",""secondary"":""#1C1C1C"",""text"":""#2C2C2C"",""background"":""#F5F5F0""}",
+                DefaultFonts = @"{""primary"":""IRANSans"",""secondary"":""Georgia""}",
+                IsActive = true,
+                DisplayOrder = 3,
+                IsFree = true,
+                CreatedAt = DateTime.UtcNow
+            },
+            
+            // 4. Minimal Template
+            new WebsiteTemplate
+            {
+                Name = "مینیمال",
+                NameEn = "Minimal",
+                Description = "قالبی ساده و تمیز با فوکوس بر محتوا - مناسب کافه‌ها",
+                Type = TemplateType.Minimal,
+                TemplatePath = "/templates/minimal/style.css",
+                ThumbnailUrl = "/images/templates/minimal-thumb.jpg",
+                PreviewImageUrl = "/images/templates/minimal-preview.jpg",
+                DefaultColors = @"{""primary"":""#000000"",""secondary"":""#FFFFFF"",""text"":""#333333"",""background"":""#FAFAFA""}",
+                DefaultFonts = @"{""primary"":""IRANSans"",""secondary"":""Helvetica""}",
+                IsActive = true,
+                DisplayOrder = 4,
+                IsFree = true,
+                CreatedAt = DateTime.UtcNow
+            },
+            
+            // 5. Colorful Template
+            new WebsiteTemplate
+            {
+                Name = "رنگارنگ",
+                NameEn = "Colorful",
+                Description = "قالبی پر رنگ و شاد با طراحی فان - مناسب فست‌فودها",
+                Type = TemplateType.Colorful,
+                TemplatePath = "/templates/colorful/style.css",
+                ThumbnailUrl = "/images/templates/colorful-thumb.jpg",
+                PreviewImageUrl = "/images/templates/colorful-preview.jpg",
+                DefaultColors = @"{""primary"":""#FF1744"",""secondary"":""#00BCD4"",""text"":""#212121"",""background"":""#FFFFFF""}",
+                DefaultFonts = @"{""primary"":""IRANSans"",""secondary"":""Arial""}",
+                IsActive = true,
+                DisplayOrder = 5,
+                IsFree = true,
+                CreatedAt = DateTime.UtcNow
+            }
+        };
+
+        await context.WebsiteTemplates.AddRangeAsync(templates);
+        await context.SaveChangesAsync();
+
+        // ایجاد بخش‌های پیش‌فرض برای هر قالب
+        foreach (var template in templates)
+        {
+            var sections = new List<TemplateSection>
+            {
+                new TemplateSection
+                {
+                    TemplateId = template.Id,
+                    SectionType = SectionType.Hero,
+                    Title = "سربرگ",
+                    TitleEn = "Hero Section",
+                    DefaultContent = $"<div class=\"hero-section\"><div class=\"hero-content\"><h1>به {template.Name} خوش آمدید</h1><p>بهترین غذاها را با ما تجربه کنید</p><a href=\"#menu\" class=\"hero-btn\">مشاهده منو</a></div></div>",
+                    IsRequired = true,
+                    IsEditable = true,
+                    DisplayOrder = 1,
+                    CreatedAt = DateTime.UtcNow
+                },
+                new TemplateSection
+                {
+                    TemplateId = template.Id,
+                    SectionType = SectionType.About,
+                    Title = "درباره ما",
+                    TitleEn = "About Us",
+                    DefaultContent = "<div class=\"about-section\"><div class=\"container\"><h2 class=\"section-title\">درباره رستوران ما</h2><div class=\"about-content\"><p>ما با بیش از 10 سال تجربه در صنعت رستوران‌داری، بهترین خدمات را به شما ارائه می‌دهیم.</p></div></div></div>",
+                    IsRequired = false,
+                    IsEditable = true,
+                    DisplayOrder = 2,
+                    CreatedAt = DateTime.UtcNow
+                },
+                new TemplateSection
+                {
+                    TemplateId = template.Id,
+                    SectionType = SectionType.Menu,
+                    Title = "منو",
+                    TitleEn = "Menu",
+                    DefaultContent = "<div class=\"menu-section\"><div class=\"container\"><h2 class=\"section-title\">منوی غذاها</h2><div class=\"menu-grid\"><!-- محصولات به صورت خودکار از دیتابیس لود می‌شوند --></div></div></div>",
+                    IsRequired = false,
+                    IsEditable = true,
+                    DisplayOrder = 3,
+                    CreatedAt = DateTime.UtcNow
+                },
+                new TemplateSection
+                {
+                    TemplateId = template.Id,
+                    SectionType = SectionType.Gallery,
+                    Title = "گالری تصاویر",
+                    TitleEn = "Gallery",
+                    DefaultContent = "<div class=\"gallery-section\"><div class=\"container\"><h2 class=\"section-title\">گالری</h2><div class=\"gallery-grid\"><!-- تصاویر --></div></div></div>",
+                    IsRequired = false,
+                    IsEditable = true,
+                    DisplayOrder = 4,
+                    CreatedAt = DateTime.UtcNow
+                },
+                new TemplateSection
+                {
+                    TemplateId = template.Id,
+                    SectionType = SectionType.Contact,
+                    Title = "تماس با ما",
+                    TitleEn = "Contact",
+                    DefaultContent = "<div class=\"contact-section\"><div class=\"container\"><h2 class=\"section-title\">تماس با ما</h2><div class=\"contact-grid\"><div class=\"contact-card\"><i class=\"icon\">📞</i><h3>تلفن</h3><p>021-12345678</p></div></div></div></div>",
+                    IsRequired = true,
+                    IsEditable = true,
+                    DisplayOrder = 5,
+                    CreatedAt = DateTime.UtcNow
+                },
+                new TemplateSection
+                {
+                    TemplateId = template.Id,
+                    SectionType = SectionType.Footer,
+                    Title = "پاورقی",
+                    TitleEn = "Footer",
+                    DefaultContent = "<div class=\"footer-section\"><div class=\"container\"><p>&copy; 2025 تمامی حقوق محفوظ است</p></div></div>",
+                    IsRequired = true,
+                    IsEditable = false,
+                    DisplayOrder = 6,
+                    CreatedAt = DateTime.UtcNow
+                }
+            };
+
+            await context.TemplateSections.AddRangeAsync(sections);
+        }
+
+        await context.SaveChangesAsync();
+        Console.WriteLine($"✅ {templates.Count} Website Templates and their sections seeded successfully!");
     }
 }
