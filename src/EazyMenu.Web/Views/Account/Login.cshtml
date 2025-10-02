@@ -1,0 +1,174 @@
+@model EazyMenu.Application.Common.Models.Auth.LoginDto
+
+@{
+    ViewData["Title"] = "ورود";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row justify-content-center" dir="rtl">
+    <div class="col-12 col-md-6 col-lg-5">
+        <div class="card shadow-sm border-0 mt-4">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold text-primary">ایزی‌منو</h2>
+                    <p class="text-muted">ورود به سیستم</p>
+                </div>
+
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        @TempData["Success"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="بستن"></button>
+                    </div>
+                }
+
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        @TempData["Error"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="بستن"></button>
+                    </div>
+                }
+
+                <!-- Tabs for Password/OTP Login -->
+                <ul class="nav nav-tabs mb-4" id="loginTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="password-tab" data-bs-toggle="tab" data-bs-target="#password" type="button" role="tab">
+                            <i class="bi bi-key"></i> رمز عبور
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="otp-tab" data-bs-toggle="tab" data-bs-target="#otp" type="button" role="tab">
+                            <i class="bi bi-phone"></i> کد یکبار مصرف
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="loginTabsContent">
+                    <!-- Password Login Tab -->
+                    <div class="tab-pane fade show active" id="password" role="tabpanel">
+                        <form asp-action="Login" method="post">
+                            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                            <div class="mb-3">
+                                <label asp-for="PhoneOrEmail" class="form-label">شماره موبایل یا ایمیل <span class="text-danger">*</span></label>
+                                <input asp-for="PhoneOrEmail" class="form-control" placeholder="09123456789 یا example@email.com" dir="ltr" autofocus />
+                                <span asp-validation-for="PhoneOrEmail" class="text-danger small"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Password" class="form-label">رمز عبور <span class="text-danger">*</span></label>
+                                <input asp-for="Password" type="password" class="form-control" placeholder="رمز عبور خود را وارد کنید" />
+                                <span asp-validation-for="Password" class="text-danger small"></span>
+                            </div>
+
+                            <div class="mb-3 form-check">
+                                <input asp-for="RememberMe" type="checkbox" class="form-check-input" id="rememberMe" />
+                                <label class="form-check-label" for="rememberMe">
+                                    مرا به خاطر بسپار (30 روز)
+                                </label>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100 py-2 mb-3">
+                                <i class="bi bi-box-arrow-in-right"></i> ورود
+                            </button>
+
+                            <div class="text-center mb-3">
+                                <a href="#" class="text-decoration-none small">رمز عبور خود را فراموش کرده‌اید؟</a>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- OTP Login Tab -->
+                    <div class="tab-pane fade" id="otp" role="tabpanel">
+                        <div id="otp-form">
+                            <div class="mb-3">
+                                <label for="otpPhoneNumber" class="form-label">شماره موبایل <span class="text-danger">*</span></label>
+                                <input type="text" id="otpPhoneNumber" class="form-control" placeholder="09123456789" dir="ltr" />
+                                <small class="form-text text-danger d-none" id="otpPhoneError"></small>
+                            </div>
+
+                            <button type="button" id="sendOtpBtn" class="btn btn-success w-100 py-2">
+                                <i class="bi bi-send"></i> ارسال کد تایید
+                            </button>
+
+                            <div id="otpMessage" class="alert mt-3 d-none" role="alert"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-4" />
+
+                <div class="text-center">
+                    <span class="text-muted">حساب کاربری ندارید؟</span>
+                    <a asp-action="Register" class="text-decoration-none fw-bold">ثبت‌نام کنید</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-3 text-muted small">
+            <p>با ورود به ایزی‌منو، مدیریت رستوران در دستان شماست</p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        $(document).ready(function() {
+            $('#sendOtpBtn').click(function() {
+                var phoneNumber = $('#otpPhoneNumber').val().trim();
+                var btn = $(this);
+                var message = $('#otpMessage');
+                var error = $('#otpPhoneError');
+
+                // Reset
+                error.addClass('d-none').text('');
+                message.addClass('d-none').removeClass('alert-success alert-danger');
+
+                // Validation
+                if (!phoneNumber) {
+                    error.removeClass('d-none').text('شماره موبایل الزامی است');
+                    return;
+                }
+
+                if (!/^09\d{9}$/.test(phoneNumber)) {
+                    error.removeClass('d-none').text('شماره موبایل باید 11 رقم و با 09 شروع شود');
+                    return;
+                }
+
+                // Disable button
+                btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> در حال ارسال...');
+
+                // Send AJAX request
+                $.ajax({
+                    url: '@Url.Action("SendOtp", "Account")',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ phoneNumber: phoneNumber }),
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            message.removeClass('d-none alert-danger').addClass('alert-success').text(response.message);
+                            
+                            // Redirect to verify page
+                            setTimeout(function() {
+                                window.location.href = '@Url.Action("VerifyOtp", "Account")?phoneNumber=' + encodeURIComponent(phoneNumber);
+                            }, 1500);
+                        } else {
+                            message.removeClass('d-none alert-success').addClass('alert-danger').text(response.message);
+                            btn.prop('disabled', false).html('<i class="bi bi-send"></i> ارسال کد تایید');
+                        }
+                    },
+                    error: function() {
+                        message.removeClass('d-none alert-success').addClass('alert-danger').text('خطا در ارسال کد. لطفاً مجدداً تلاش کنید');
+                        btn.prop('disabled', false).html('<i class="bi bi-send"></i> ارسال کد تایید');
+                    }
+                });
+            });
+        });
+    </script>
+}

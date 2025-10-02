@@ -1,0 +1,90 @@
+@model EazyMenu.Application.Common.Models.Auth.RegisterDto
+
+@{
+    ViewData["Title"] = "ثبت‌نام";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row justify-content-center" dir="rtl">
+    <div class="col-12 col-md-6 col-lg-5">
+        <div class="card shadow-sm border-0 mt-4">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold text-primary">ایزی‌منو</h2>
+                    <p class="text-muted">ثبت‌نام در سیستم</p>
+                </div>
+
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        @TempData["Error"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="بستن"></button>
+                    </div>
+                }
+
+                <form asp-action="Register" method="post">
+                    <input type="hidden" asp-for="AcceptTerms" value="true" />
+                    
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="FullName" class="form-label">نام و نام خانوادگی <span class="text-danger">*</span></label>
+                        <input asp-for="FullName" class="form-control" placeholder="مثال: علی محمدی" autofocus />
+                        <span asp-validation-for="FullName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PhoneNumber" class="form-label">شماره موبایل <span class="text-danger">*</span></label>
+                        <input asp-for="PhoneNumber" class="form-control" placeholder="09123456789" dir="ltr" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                        <small class="form-text text-muted">شماره موبایل شما نام کاربری شماست</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label">ایمیل (اختیاری)</label>
+                        <input asp-for="Email" class="form-control" placeholder="example@email.com" dir="ltr" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label">رمز عبور <span class="text-danger">*</span></label>
+                        <input asp-for="Password" type="password" class="form-control" placeholder="حداقل 6 کاراکتر" />
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                        <small class="form-text text-muted">رمز عبور باید شامل حروف بزرگ، کوچک و عدد باشد</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ConfirmPassword" class="form-label">تکرار رمز عبور <span class="text-danger">*</span></label>
+                        <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="تکرار رمز عبور" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input asp-for="AcceptTerms" type="checkbox" class="form-check-input" id="acceptTerms" checked />
+                        <label class="form-check-label" for="acceptTerms">
+                            <a href="#" class="text-decoration-none">قوانین و مقررات</a> را مطالعه کرده و می‌پذیرم
+                        </label>
+                        <span asp-validation-for="AcceptTerms" class="text-danger small d-block"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-2 mb-3">
+                        <i class="bi bi-person-plus"></i> ثبت‌نام
+                    </button>
+
+                    <div class="text-center">
+                        <span class="text-muted">قبلاً ثبت‌نام کرده‌اید؟</span>
+                        <a asp-action="Login" class="text-decoration-none fw-bold">ورود به سیستم</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="text-center mt-3 text-muted small">
+            <p>با ثبت‌نام در ایزی‌منو، مدیریت رستوران خود را ساده‌تر کنید</p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

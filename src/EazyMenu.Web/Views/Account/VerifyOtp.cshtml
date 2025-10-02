@@ -1,0 +1,164 @@
+@model EazyMenu.Application.Common.Models.Auth.OtpVerifyDto
+
+@{
+    ViewData["Title"] = "تایید کد یکبار مصرف";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var phoneNumber = ViewData["PhoneNumber"] as string ?? Model?.PhoneNumber ?? "";
+}
+
+<div class="row justify-content-center" dir="rtl">
+    <div class="col-12 col-md-6 col-lg-5">
+        <div class="card shadow-sm border-0 mt-4">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <div class="mb-3">
+                        <i class="bi bi-phone-vibrate display-3 text-primary"></i>
+                    </div>
+                    <h2 class="fw-bold">تایید کد</h2>
+                    <p class="text-muted">کد 5 رقمی ارسال شده به شماره زیر را وارد کنید:</p>
+                    <p class="fw-bold text-primary" dir="ltr">@phoneNumber</p>
+                </div>
+
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        @TempData["Error"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="بستن"></button>
+                    </div>
+                }
+
+                <form asp-action="VerifyOtp" method="post">
+                    <input type="hidden" asp-for="PhoneNumber" value="@phoneNumber" />
+                    
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <div class="mb-4">
+                        <label asp-for="Code" class="form-label text-center w-100">کد 5 رقمی <span class="text-danger">*</span></label>
+                        <input asp-for="Code" class="form-control form-control-lg text-center" 
+                               placeholder="_ _ _ _ _" 
+                               maxlength="5" 
+                               dir="ltr" 
+                               style="letter-spacing: 10px; font-size: 1.5rem;"
+                               autofocus />
+                        <span asp-validation-for="Code" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input asp-for="RememberMe" type="checkbox" class="form-check-input" id="rememberMe" />
+                        <label class="form-check-label" for="rememberMe">
+                            مرا به خاطر بسپار (30 روز)
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-2 mb-3" id="verifyBtn">
+                        <i class="bi bi-check-circle"></i> تایید و ورود
+                    </button>
+
+                    <div class="text-center">
+                        <p class="text-muted small mb-2">کد را دریافت نکردید؟</p>
+                        <button type="button" class="btn btn-link text-decoration-none" id="resendOtpBtn">
+                            ارسال مجدد کد (<span id="timer">120</span> ثانیه)
+                        </button>
+                    </div>
+
+                    <hr class="my-3" />
+
+                    <div class="text-center">
+                        <a asp-action="Login" class="text-decoration-none">
+                            <i class="bi bi-arrow-right"></i> بازگشت به صفحه ورود
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="text-center mt-3">
+            <div class="alert alert-info" role="alert">
+                <small>
+                    <i class="bi bi-info-circle"></i>
+                    کد تایید فقط برای 2 دقیقه معتبر است
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        $(document).ready(function() {
+            var timeLeft = 120; // 2 minutes
+            var phoneNumber = '@phoneNumber';
+            var timerInterval;
+
+            // Auto-focus and format code input
+            $('#Code').on('input', function() {
+                var value = $(this).val().replace(/\D/g, ''); // Only digits
+                $(this).val(value);
+            });
+
+            // Timer countdown
+            function startTimer() {
+                $('#resendOtpBtn').prop('disabled', true);
+                
+                timerInterval = setInterval(function() {
+                    timeLeft--;
+                    $('#timer').text(timeLeft);
+
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        $('#resendOtpBtn').prop('disabled', false).html('ارسال مجدد کد');
+                    }
+                }, 1000);
+            }
+
+            startTimer();
+
+            // Resend OTP
+            $('#resendOtpBtn').click(function() {
+                if (timeLeft > 0) return;
+
+                var btn = $(this);
+                btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> در حال ارسال...');
+
+                $.ajax({
+                    url: '@Url.Action("SendOtp", "Account")',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ phoneNumber: phoneNumber }),
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            timeLeft = 120;
+                            startTimer();
+                            
+                            // Show success message
+                            $('<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+                              response.message +
+                              '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>' +
+                              '</div>').insertBefore('form').delay(3000).fadeOut();
+                        } else {
+                            btn.prop('disabled', false).html('ارسال مجدد کد');
+                            alert(response.message);
+                        }
+                    },
+                    error: function() {
+                        btn.prop('disabled', false).html('ارسال مجدد کد');
+                        alert('خطا در ارسال کد. لطفاً مجدداً تلاش کنید');
+                    }
+                });
+            });
+
+            // Auto-submit when 5 digits entered
+            $('#Code').on('input', function() {
+                if ($(this).val().length === 5) {
+                    // Optional: auto-submit
+                    // $('form').submit();
+                }
+            });
+        });
+    </script>
+}

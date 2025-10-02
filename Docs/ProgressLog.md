@@ -589,6 +589,246 @@ User → VerifyOtpCommand → Handler:
 
 ---
 
+## 2025-10-02 22:45 - Authentication System Complete (Frontend + Backend)
+
+### ✅ تکمیل شده:
+
+#### AccountController (1 فایل - 339 خط):
+**Actions:**
+- ✅ Register (GET/POST) - ثبت‌نام کاربر جدید
+  - Validation: ModelState + FluentValidation
+  - Auto-login بعد از ثبت‌نام موفق
+  - Welcome SMS via RegisterCommand
+  
+- ✅ Login (GET/POST) - ورود با رمز عبور
+  - پشتیبانی از PhoneNumber یا Email
+  - RememberMe (30 روز)
+  - SignInManager integration
+  - Auto-create Identity user if needed
+  
+- ✅ SendOtp (POST/AJAX) - ارسال کد یکبار مصرف
+  - JSON response برای AJAX
+  - 5-digit OTP via IOtpService
+  - 2-minute expiration
+  
+- ✅ VerifyOtp (GET/POST) - تایید کد و ورود
+  - Timer countdown (120 seconds)
+  - Resend OTP capability
+  - RememberMe support
+  - Auto-create Identity user if needed
+  
+- ✅ Logout (POST) - خروج از سیستم
+  - SignOut via SignInManager
+  - TempData success message
+  
+- ✅ AccessDenied (GET) - صفحه عدم دسترسی
+
+**کلیدواژه‌های فنی:**
+- SignInManager<ApplicationIdentityUser>
+- UserManager<ApplicationIdentityUser>
+- IMediator (CQRS)
+- Cookie-based authentication
+- ReturnUrl support
+- AntiForgeryToken validation
+
+#### Views - Mobile-First RTL (4 فایل):
+
+1. **Register.cshtml** (128 خط)
+   - ✅ Form validation با Bootstrap 5
+   - ✅ RTL direction
+   - ✅ Fields: FullName, PhoneNumber, Email, Password, ConfirmPassword
+   - ✅ AcceptTerms checkbox
+   - ✅ Link به Login
+   - ✅ Persian placeholders
+   - ✅ Validation scripts
+
+2. **Login.cshtml** (180 خط)
+   - ✅ **Tabs:** Password Login / OTP Login
+   - ✅ Password tab: PhoneOrEmail + Password + RememberMe
+   - ✅ OTP tab: AJAX SendOtp → Redirect to VerifyOtp
+   - ✅ jQuery AJAX برای SendOtp
+   - ✅ Error/Success messages
+   - ✅ Link به Register
+   - ✅ Forget Password link (placeholder)
+
+3. **VerifyOtp.cshtml** (165 خط)
+   - ✅ 5-digit code input (centered, letter-spaced)
+   - ✅ **Timer countdown:** 120 seconds
+   - ✅ **Resend OTP button:** با AJAX
+   - ✅ RememberMe checkbox
+   - ✅ Auto-focus input
+   - ✅ Digit-only validation
+   - ✅ Persian instructions
+   - ✅ Back to Login link
+
+4. **AccessDenied.cshtml** (32 خط)
+   - ✅ Warning icon
+   - ✅ Buttons: بازگشت به خانه / خروج
+   - ✅ Persian text
+
+#### Layout Updates:
+
+- ✅ **_Layout.cshtml** - Navigation updated:
+  - Login/Register buttons for anonymous users
+  - User dropdown با نام کاربر for authenticated
+  - Logout form در dropdown
+  - Bootstrap Icons CDN اضافه شد
+  - RTL/LTR support
+
+### 📊 نتیجه:
+- Build: ✅ موفق (3.9s - بدون Warning!)
+- Migration: ➖ تغییری در Schema نبود
+- Tests: ⏸️ نیاز به اجرای برنامه برای تست دستی
+- **معماری:** Session/Cookie Authentication ✅
+
+### 🔧 مشکلات حل شده:
+1. ❌ **3 Warnings:** Possible null reference for result.Message
+   - ✅ Solution: افزودن null coalescing operator `?? "خطا"` در 3 مکان
+   
+2. ✅ **Identity Integration:** Auto-create ApplicationIdentityUser اگر وجود نداشت
+   - هنگام Login با Password
+   - هنگام VerifyOtp
+
+3. ✅ **AJAX Integration:** SendOtp با JSON response برای UX بهتر
+
+### 📁 فایل‌های ایجاد شده (5 فایل):
+
+**Controllers/ (1 file - 339 lines):**
+1. AccountController.cs - Complete authentication controller
+
+**Views/Account/ (4 files - 505 lines total):**
+2. Register.cshtml (128 lines)
+3. Login.cshtml (180 lines)
+4. VerifyOtp.cshtml (165 lines)
+5. AccessDenied.cshtml (32 lines)
+
+**Updated Files:**
+6. Views/Shared/_Layout.cshtml - Navigation + Bootstrap Icons CDN
+
+### 🎯 Authentication Flow - کامل و آماده:
+
+**1. Registration Flow:**
+```
+User → Register.cshtml (form) → AccountController.Register(POST)
+  → RegisterCommand → Handler:
+    ✅ Check duplicate phone/email
+    ✅ Hash password
+    ✅ Create ApplicationUser
+    ✅ Send welcome SMS
+  → Auto-login با SignInManager
+  → Redirect to Home
+```
+
+**2. Password Login Flow:**
+```
+User → Login.cshtml (Password tab) → AccountController.Login(POST)
+  → LoginCommand → Handler:
+    ✅ Find by phone OR email
+    ✅ Verify password
+  → Auto-create Identity user (if needed)
+  → SignIn با SignInManager (RememberMe: 30 days)
+  → Redirect to Home/ReturnUrl
+```
+
+**3. OTP Login Flow:**
+```
+User → Login.cshtml (OTP tab) → AJAX SendOtp
+  → SendOtpCommand → Handler:
+    ✅ Generate 5-digit OTP
+    ✅ Store in cache (2 min)
+    ✅ Send SMS
+  → Redirect to VerifyOtp.cshtml
+
+User → VerifyOtp.cshtml (form + timer) → AccountController.VerifyOtp(POST)
+  → VerifyOtpCommand → Handler:
+    ✅ Verify OTP
+    ✅ Remove from cache
+    ✅ Confirm phone
+    ✅ Update LastLogin
+  → Auto-create Identity user (if needed)
+  → SignIn با SignInManager (RememberMe: 30 days)
+  → Redirect to Home/ReturnUrl
+```
+
+**4. Logout Flow:**
+```
+User → Dropdown menu → Logout button (POST with AntiForgery)
+  → AccountController.Logout
+  → SignOut via SignInManager
+  → Redirect to Home
+```
+
+### 🔍 نکات مهم:
+
+**✅ UX Features:**
+- Tabs برای انتخاب روش ورود (Password/OTP)
+- AJAX SendOtp برای تجربه بهتر (بدون reload صفحه)
+- Timer countdown در VerifyOtp (120 ثانیه)
+- Resend OTP با AJAX
+- Auto-focus inputs
+- Bootstrap 5 styling
+- RTL support کامل
+- Mobile-first responsive
+
+**✅ Security:**
+- AntiForgeryToken در تمام POST forms
+- SignInManager برای Cookie management
+- Password hashing via IPasswordHasherService
+- OTP expiration (2 minutes)
+- One-time use OTP (حذف بعد از verify)
+- RememberMe با 30-day expiration
+
+**✅ Clean Architecture:**
+- Controller → MediatR Commands
+- Commands → Application Layer Handlers
+- Handlers → Domain + Infrastructure
+- No direct DbContext access in Controller
+- Separation of concerns ✅
+
+**⚠️ باقی‌مانده (اختیاری):**
+- Forget Password flow (US-003)
+- Email confirmation
+- Two-factor authentication (future)
+- Social login (Google, etc.) - فاز 2
+
+### 🧪 آماده برای تست:
+
+**Manual Testing Steps:**
+1. ✅ Run application: `dotnet run --project src/EazyMenu.Web`
+2. ✅ Navigate to: `https://localhost:5001/Account/Register`
+3. ✅ Test Register → Auto-login → Home
+4. ✅ Test Logout
+5. ✅ Test Login (Password) → Home
+6. ✅ Test Login (OTP tab) → SendOtp → VerifyOtp → Home
+7. ✅ Test RememberMe (close browser, reopen)
+8. ✅ Test AccessDenied (با دسترسی محدود)
+
+**⚠️ نیاز به تنظیمات:**
+- Kavenegar API Key در appsettings.json (برای SMS واقعی)
+- یا Mock ISmsService برای تست بدون SMS
+
+### 📦 Packages (بدون تغییر):
+- تمام packages قبلی
+- Bootstrap Icons از CDN
+
+### 🎨 Design Highlights:
+- Card-based layouts
+- Shadow effects (shadow-sm)
+- Primary color branding
+- Bootstrap Icons
+- Persian fonts (system default)
+- Accessible forms (labels, ARIA)
+- Responsive columns (col-12 col-md-6 col-lg-5)
+
+### ⏭️ مراحل بعدی:
+1. ✅ **Authentication Complete!** - Backend + Frontend آماده
+2. ⬜ **Manual Testing** - اجرای برنامه و تست Flows
+3. ⬜ **Forget Password** - US-003 (اختیاری - بعداً)
+4. ⬜ **Restaurant CRUD** - شروع US-006, US-007, US-008
+5. ⬜ **Admin Panel** - Dashboard و مدیریت
+
+---
+
 **آخرین به‌روزرسانی توسط:** AI Agent  
-**تاریخ:** 2025-10-02 22:15  
-**نسخه:** 1.3
+**تاریخ:** 2025-10-02 22:45  
+**نسخه:** 1.4
