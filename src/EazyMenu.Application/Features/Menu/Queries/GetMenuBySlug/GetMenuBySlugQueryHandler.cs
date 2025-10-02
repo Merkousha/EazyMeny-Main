@@ -59,8 +59,8 @@ public class GetMenuBySlugQueryHandler : IRequestHandler<GetMenuBySlugQuery, Res
             Name = restaurant.Name,
             Slug = restaurant.Slug,
             Description = restaurant.Description,
-            Logo = restaurant.Logo,
-            CoverImage = restaurant.CoverImage,
+            LogoUrl = restaurant.LogoUrl,
+            CoverImageUrl = restaurant.CoverImageUrl,
             PhoneNumber = restaurant.PhoneNumber,
             Address = restaurant.Address,
             WorkingHours = restaurant.WorkingHours,
@@ -70,7 +70,7 @@ public class GetMenuBySlugQueryHandler : IRequestHandler<GetMenuBySlugQuery, Res
                 Id = category.Id,
                 Name = category.Name,
                 Description = category.Description,
-                Icon = category.Icon,
+                IconUrl = category.IconUrl,
                 DisplayOrder = category.DisplayOrder,
                 Products = productList
                     .Where(p => p.CategoryId == category.Id)

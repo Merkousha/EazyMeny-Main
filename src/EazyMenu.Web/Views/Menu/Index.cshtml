@@ -218,9 +218,9 @@
 <div class="restaurant-header">
     <div class="container">
         <div class="d-flex align-items-center mb-3">
-            @if (!string.IsNullOrWhiteSpace(Model.Logo))
+            @if (!string.IsNullOrWhiteSpace(Model.LogoUrl))
             {
-                <img src="@Model.Logo" alt="@Model.Name" class="restaurant-logo me-3" />
+                <img src="@Model.LogoUrl" alt="@Model.Name" class="restaurant-logo me-3" />
             }
             else
             {
@@ -272,9 +272,9 @@
             @foreach (var category in Model.Categories)
             {
                 <a href="#category-@category.Id" class="category-link" data-category="@category.Id">
-                    @if (!string.IsNullOrWhiteSpace(category.Icon))
+                    @if (!string.IsNullOrWhiteSpace(category.IconUrl))
                     {
-                        <span>@category.Icon</span>
+                        <span>@category.IconUrl</span>
                     }
                     @category.Name
                     <span class="badge bg-secondary ms-1">@category.Products.Count</span>
@@ -303,9 +303,9 @@
             <section class="category-section mb-4" id="category-@category.Id">
                 <div class="category-header">
                     <h2 class="h4 mb-0">
-                        @if (!string.IsNullOrWhiteSpace(category.Icon))
+                        @if (!string.IsNullOrWhiteSpace(category.IconUrl))
                         {
-                            <span class="me-2">@category.Icon</span>
+                            <span class="me-2">@category.IconUrl</span>
                         }
                         @category.Name
                         <span class="badge bg-primary ms-2">@category.Products.Count</span>
