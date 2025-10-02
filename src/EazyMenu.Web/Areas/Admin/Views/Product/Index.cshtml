@@ -1,0 +1,186 @@
+@model IEnumerable<EazyMenu.Application.Common.Models.Product.ProductListDto>
+
+@{
+    ViewData["Title"] = "مدیریت محصولات";
+}
+
+<div class="content-wrapper">
+    <!-- Content Header -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">مدیریت محصولات</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-end">
+                        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index">خانه</a></li>
+                        <li class="breadcrumb-item active">محصولات</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">لیست محصولات</h3>
+                            <div class="card-tools">
+                                <a asp-area="Admin" asp-controller="Product" asp-action="Create" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-plus-circle"></i> افزودن محصول جدید
+                                </a>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            @if (Model != null && Model.Any())
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 80px;">تصویر</th>
+                                                <th>نام محصول</th>
+                                                <th>رستوران</th>
+                                                <th>دسته‌بندی</th>
+                                                <th>قیمت (تومان)</th>
+                                                <th>موجودی</th>
+                                                <th>ویژگی‌ها</th>
+                                                <th>وضعیت</th>
+                                                <th style="width: 150px;">عملیات</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var product in Model)
+                                            {
+                                                <tr>
+                                                    <td class="text-center">
+                                                        @if (!string.IsNullOrEmpty(product.Image1Url))
+                                                        {
+                                                            <img src="@product.Image1Url" alt="@product.Name" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;" />
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="bg-secondary d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; border-radius: 5px;">
+                                                                <i class="bi bi-image fs-4 text-white"></i>
+                                                            </div>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        <strong>@product.Name</strong>
+                                                        @if (!string.IsNullOrEmpty(product.NameEn))
+                                                        {
+                                                            <br /><small class="text-muted">@product.NameEn</small>
+                                                        }
+                                                    </td>
+                                                    <td>@product.RestaurantName</td>
+                                                    <td>@product.CategoryName</td>
+                                                    <td>
+                                                        @if (product.DiscountedPrice.HasValue)
+                                                        {
+                                                            <span class="text-decoration-line-through text-muted">@product.Price.ToString("N0")</span>
+                                                            <br />
+                                                            <strong class="text-success">@product.DiscountedPrice.Value.ToString("N0")</strong>
+                                                            <span class="badge bg-danger">@(Math.Round(((product.Price - product.DiscountedPrice.Value) / product.Price) * 100))%</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <strong>@product.Price.ToString("N0")</strong>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        @{
+                                                            var stockStatusClass = product.StockStatus == "موجود" ? "success" : (product.StockStatus == "کمبود موجودی" ? "warning" : "danger");
+                                                        }
+                                                        <span class="badge bg-@stockStatusClass">@product.StockStatus</span>
+                                                        @if (product.StockQuantity.HasValue)
+                                                        {
+                                                            <br /><small class="text-muted">(@product.StockQuantity)</small>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        @if (product.IsNew)
+                                                        {
+                                                            <span class="badge bg-info">جدید</span>
+                                                        }
+                                                        @if (product.IsPopular)
+                                                        {
+                                                            <span class="badge bg-warning">محبوب</span>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        @if (product.IsActive && product.IsAvailable)
+                                                        {
+                                                            <span class="badge bg-success">فعال</span>
+                                                        }
+                                                        else if (product.IsActive && !product.IsAvailable)
+                                                        {
+                                                            <span class="badge bg-warning">ناموجود</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="badge bg-danger">غیرفعال</span>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        <div class="btn-group" role="group">
+                                                            <a asp-area="Admin" asp-controller="Product" asp-action="Details" asp-route-id="@product.Id" class="btn btn-info btn-sm" title="جزئیات">
+                                                                <i class="bi bi-eye"></i>
+                                                            </a>
+                                                            <a asp-area="Admin" asp-controller="Product" asp-action="Edit" asp-route-id="@product.Id" class="btn btn-warning btn-sm" title="ویرایش">
+                                                                <i class="bi bi-pencil"></i>
+                                                            </a>
+                                                            <button type="button" class="btn btn-danger btn-sm" title="حذف" data-bs-toggle="modal" data-bs-target="#deleteModal-@product.Id">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </div>
+
+                                                        <!-- Delete Modal -->
+                                                        <div class="modal fade" id="deleteModal-@product.Id" tabindex="-1">
+                                                            <div class="modal-dialog">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title">تأیید حذف</h5>
+                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        آیا از حذف محصول "<strong>@product.Name</strong>" اطمینان دارید؟
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+                                                                        <form asp-area="Admin" asp-controller="Product" asp-action="Delete" method="post" class="d-inline">
+                                                                            <input type="hidden" name="id" value="@product.Id" />
+                                                                            <button type="submit" class="btn btn-danger">حذف</button>
+                                                                        </form>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-info text-center">
+                                    <i class="bi bi-info-circle fs-3"></i>
+                                    <p class="mt-2">هیچ محصولی ثبت نشده است.</p>
+                                    <a asp-area="Admin" asp-controller="Product" asp-action="Create" class="btn btn-primary mt-2">
+                                        <i class="bi bi-plus-circle"></i> افزودن اولین محصول
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

@@ -1,0 +1,217 @@
+@model EazyMenu.Application.Features.Products.Commands.CreateProduct.CreateProductCommand
+
+@{
+    ViewData["Title"] = "افزودن محصول جدید";
+}
+
+<div class="content-wrapper">
+    <!-- Content Header -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">افزودن محصول جدید</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-end">
+                        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index">خانه</a></li>
+                        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Product" asp-action="Index">محصولات</a></li>
+                        <li class="breadcrumb-item active">افزودن جدید</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <form asp-area="Admin" asp-controller="Product" asp-action="Create" method="post">
+                <div class="row">
+                    <!-- بخش اطلاعات اصلی -->
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">اطلاعات اصلی</h3>
+                            </div>
+                            <div class="card-body">
+                                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label asp-for="RestaurantId" class="form-label">رستوران *</label>
+                                        <select asp-for="RestaurantId" asp-items="ViewBag.Restaurants" class="form-select" id="restaurantSelect">
+                                            <option value="">انتخاب کنید...</option>
+                                        </select>
+                                        <span asp-validation-for="RestaurantId" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label asp-for="CategoryId" class="form-label">دسته‌بندی *</label>
+                                        <select asp-for="CategoryId" asp-items="ViewBag.Categories" class="form-select" id="categorySelect">
+                                            <option value="">ابتدا رستوران را انتخاب کنید...</option>
+                                        </select>
+                                        <span asp-validation-for="CategoryId" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label asp-for="Name" class="form-label">نام محصول (فارسی) *</label>
+                                        <input asp-for="Name" class="form-control" placeholder="مثلاً چلوکباب کوبیده" />
+                                        <span asp-validation-for="Name" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label asp-for="NameEn" class="form-label">نام محصول (انگلیسی)</label>
+                                        <input asp-for="NameEn" class="form-control" placeholder="e.g. Kabab Koobideh" />
+                                        <span asp-validation-for="NameEn" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="Description" class="form-label">توضیحات</label>
+                                    <textarea asp-for="Description" class="form-control" rows="4" placeholder="توضیحات کامل محصول..."></textarea>
+                                    <span asp-validation-for="Description" class="text-danger"></span>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label asp-for="Price" class="form-label">قیمت (تومان) *</label>
+                                        <input asp-for="Price" type="number" class="form-control" placeholder="مثلاً 150000" />
+                                        <span asp-validation-for="Price" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label asp-for="DiscountedPrice" class="form-label">قیمت با تخفیف (تومان)</label>
+                                        <input asp-for="DiscountedPrice" type="number" class="form-control" placeholder="مثلاً 120000" />
+                                        <span asp-validation-for="DiscountedPrice" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label asp-for="PreparationTime" class="form-label">زمان آماده‌سازی (دقیقه) *</label>
+                                        <input asp-for="PreparationTime" type="number" class="form-control" placeholder="مثلاً 30" />
+                                        <span asp-validation-for="PreparationTime" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">تصاویر محصول (URL)</label>
+                                    <input asp-for="Image1Url" class="form-control mb-2" placeholder="آدرس تصویر اول" />
+                                    <input asp-for="Image2Url" class="form-control mb-2" placeholder="آدرس تصویر دوم (اختیاری)" />
+                                    <input asp-for="Image3Url" class="form-control" placeholder="آدرس تصویر سوم (اختیاری)" />
+                                    <small class="text-muted">آدرس کامل تصاویر را وارد کنید (مثلاً https://example.com/image.jpg)</small>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="Options" class="form-label">گزینه‌های محصول (JSON)</label>
+                                    <textarea asp-for="Options" class="form-control" rows="3" placeholder='مثلاً: [{"name": "سایز بزرگ", "price": 5000}]'></textarea>
+                                    <small class="text-muted">گزینه‌های قابل انتخاب برای محصول را به صورت JSON وارد کنید</small>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="NutritionalInfo" class="form-label">اطلاعات تغذیه‌ای (JSON)</label>
+                                    <textarea asp-for="NutritionalInfo" class="form-control" rows="3" placeholder='مثلاً: {"calories": 500, "protein": "30g", "fat": "15g"}'></textarea>
+                                    <small class="text-muted">اطلاعات تغذیه‌ای را به صورت JSON وارد کنید</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- بخش تنظیمات و وضعیت -->
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">موجودی و نمایش</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label asp-for="StockQuantity" class="form-label">موجودی انبار</label>
+                                    <input asp-for="StockQuantity" type="number" class="form-control" placeholder="خالی = نامحدود" />
+                                    <small class="text-muted">خالی بگذارید برای موجودی نامحدود</small>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="DisplayOrder" class="form-label">ترتیب نمایش</label>
+                                    <input asp-for="DisplayOrder" type="number" class="form-control" value="0" />
+                                    <small class="text-muted">عدد کوچکتر = نمایش بالاتر</small>
+                                </div>
+
+                                <hr />
+
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input asp-for="IsActive" class="form-check-input" type="checkbox" checked />
+                                        <label asp-for="IsActive" class="form-check-label">فعال</label>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input asp-for="IsAvailable" class="form-check-input" type="checkbox" checked />
+                                        <label asp-for="IsAvailable" class="form-check-label">موجود</label>
+                                    </div>
+                                </div>
+
+                                <hr />
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">ویژگی‌های محصول</label>
+                                    <div class="form-check">
+                                        <input asp-for="IsNew" class="form-check-input" type="checkbox" />
+                                        <label asp-for="IsNew" class="form-check-label">محصول جدید</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input asp-for="IsPopular" class="form-check-input" type="checkbox" />
+                                        <label asp-for="IsPopular" class="form-check-label">محصول محبوب</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input asp-for="IsSpicy" class="form-check-input" type="checkbox" />
+                                        <label asp-for="IsSpicy" class="form-check-label">تند</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input asp-for="IsVegetarian" class="form-check-input" type="checkbox" />
+                                        <label asp-for="IsVegetarian" class="form-check-label">گیاهی (وگان)</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-success w-100">
+                                    <i class="bi bi-check-circle"></i> ذخیره محصول
+                                </button>
+                                <a asp-area="Admin" asp-controller="Product" asp-action="Index" class="btn btn-secondary w-100 mt-2">
+                                    <i class="bi bi-x-circle"></i> انصراف
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // بارگذاری دسته‌بندی‌ها هنگام تغییر رستوران
+        document.getElementById('restaurantSelect').addEventListener('change', function() {
+            const restaurantId = this.value;
+            const categorySelect = document.getElementById('categorySelect');
+            
+            if (!restaurantId) {
+                categorySelect.innerHTML = '<option value="">ابتدا رستوران را انتخاب کنید...</option>';
+                return;
+            }
+
+            fetch(`/Admin/Product/GetCategoriesByRestaurant?restaurantId=${restaurantId}`)
+                .then(response => response.json())
+                .then(data => {
+                    categorySelect.innerHTML = '<option value="">انتخاب کنید...</option>';
+                    data.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category.value;
+                        option.text = category.text;
+                        categorySelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error loading categories:', error));
+        });
+    </script>
+}

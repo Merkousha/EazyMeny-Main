@@ -1,0 +1,213 @@
+@model EazyMenu.Application.Common.Models.Product.ProductDto
+
+@{
+    ViewData["Title"] = "جزئیات محصول";
+}
+
+<div class="content-wrapper">
+    <!-- Content Header -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">جزئیات محصول</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-end">
+                        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index">خانه</a></li>
+                        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Product" asp-action="Index">محصولات</a></li>
+                        <li class="breadcrumb-item active">جزئیات</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- تصاویر و اطلاعات اصلی -->
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            @if (!string.IsNullOrEmpty(Model.Image1Url))
+                            {
+                                <img src="@Model.Image1Url" alt="@Model.Name" class="img-fluid rounded mb-3" style="max-height: 250px;" />
+                            }
+                            else
+                            {
+                                <div class="bg-secondary d-flex align-items-center justify-content-center mb-3" style="height: 250px; border-radius: 10px;">
+                                    <i class="bi bi-image display-1 text-white"></i>
+                                </div>
+                            }
+
+                            @if (!string.IsNullOrEmpty(Model.Image2Url) || !string.IsNullOrEmpty(Model.Image3Url))
+                            {
+                                <div class="row">
+                                    @if (!string.IsNullOrEmpty(Model.Image2Url))
+                                    {
+                                        <div class="col-6">
+                                            <img src="@Model.Image2Url" alt="@Model.Name" class="img-thumbnail" style="height: 100px; object-fit: cover;" />
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(Model.Image3Url))
+                                    {
+                                        <div class="col-6">
+                                            <img src="@Model.Image3Url" alt="@Model.Name" class="img-thumbnail" style="height: 100px; object-fit: cover;" />
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                        <div class="card-footer">
+                            <a asp-area="Admin" asp-controller="Product" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning w-100 mb-2">
+                                <i class="bi bi-pencil"></i> ویرایش محصول
+                            </a>
+                            <a asp-area="Admin" asp-controller="Product" asp-action="Index" class="btn btn-secondary w-100">
+                                <i class="bi bi-arrow-right"></i> بازگشت به لیست
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- اطلاعات کامل -->
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">@Model.Name</h3>
+                            @if (!string.IsNullOrEmpty(Model.NameEn))
+                            {
+                                <p class="card-subtitle text-muted">@Model.NameEn</p>
+                            }
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <h6 class="text-muted">رستوران</h6>
+                                    <p class="fw-bold">@Model.RestaurantName</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="text-muted">دسته‌بندی</h6>
+                                    <p class="fw-bold">@Model.CategoryName</p>
+                                </div>
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(Model.Description))
+                            {
+                                <div class="mb-3">
+                                    <h6 class="text-muted">توضیحات</h6>
+                                    <p>@Model.Description</p>
+                                </div>
+                            }
+
+                            <hr />
+
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <h6 class="text-muted">قیمت</h6>
+                                    @if (Model.DiscountedPrice.HasValue)
+                                    {
+                                        <p>
+                                            <span class="text-decoration-line-through text-muted">@Model.Price.ToString("N0") تومان</span><br />
+                                            <span class="fs-5 fw-bold text-success">@Model.DiscountedPrice.Value.ToString("N0") تومان</span>
+                                            <span class="badge bg-danger">@Model.DiscountPercentage% تخفیف</span>
+                                        </p>
+                                    }
+                                    else
+                                    {
+                                        <p class="fs-5 fw-bold">@Model.Price.ToString("N0") تومان</p>
+                                    }
+                                </div>
+                                <div class="col-md-4">
+                                    <h6 class="text-muted">زمان آماده‌سازی</h6>
+                                    <p class="fw-bold">@Model.PreparationTime دقیقه</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <h6 class="text-muted">موجودی</h6>
+                                    @if (Model.StockQuantity.HasValue)
+                                    {
+                                        <p class="fw-bold">@Model.StockQuantity عدد</p>
+                                    }
+                                    else
+                                    {
+                                        <p class="fw-bold text-success">نامحدود</p>
+                                    }
+                                </div>
+                            </div>
+
+                            <hr />
+
+                            <div class="mb-3">
+                                <h6 class="text-muted">وضعیت و ویژگی‌ها</h6>
+                                <div class="d-flex flex-wrap gap-2">
+                                    @if (Model.IsActive && Model.IsAvailable)
+                                    {
+                                        <span class="badge bg-success">فعال</span>
+                                    }
+                                    else if (Model.IsActive && !Model.IsAvailable)
+                                    {
+                                        <span class="badge bg-warning">ناموجود</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">غیرفعال</span>
+                                    }
+
+                                    @if (Model.IsNew)
+                                    {
+                                        <span class="badge bg-info">جدید</span>
+                                    }
+                                    @if (Model.IsPopular)
+                                    {
+                                        <span class="badge bg-warning">محبوب</span>
+                                    }
+                                    @if (Model.IsSpicy)
+                                    {
+                                        <span class="badge bg-danger">🌶️ تند</span>
+                                    }
+                                    @if (Model.IsVegetarian)
+                                    {
+                                        <span class="badge bg-success">🌱 گیاهی</span>
+                                    }
+                                </div>
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(Model.Options))
+                            {
+                                <hr />
+                                <div class="mb-3">
+                                    <h6 class="text-muted">گزینه‌های محصول</h6>
+                                    <pre class="bg-light p-2 rounded"><code>@Model.Options</code></pre>
+                                </div>
+                            }
+
+                            @if (!string.IsNullOrEmpty(Model.NutritionalInfo))
+                            {
+                                <hr />
+                                <div class="mb-3">
+                                    <h6 class="text-muted">اطلاعات تغذیه‌ای</h6>
+                                    <pre class="bg-light p-2 rounded"><code>@Model.NutritionalInfo</code></pre>
+                                </div>
+                            }
+
+                            <hr />
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <small class="text-muted">تاریخ ایجاد: @Model.CreatedAt.ToString("yyyy/MM/dd HH:mm")</small>
+                                </div>
+                                <div class="col-md-6">
+                                    @if (Model.UpdatedAt.HasValue)
+                                    {
+                                        <small class="text-muted">آخرین ویرایش: @Model.UpdatedAt.Value.ToString("yyyy/MM/dd HH:mm")</small>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
