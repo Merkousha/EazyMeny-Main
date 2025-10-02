@@ -1,0 +1,788 @@
+/*!
+ * Multi-Calendar DatePicker CSS v1.0.0
+ * Comprehensive styling for Gregorian, Persian (Jalaali), and Hijri (Islamic) calendars
+ * Supporting RTL layouts, light/dark themes, and responsive design
+ */
+
+/* Base Variables */
+:root {
+  /* Light Theme Colors */
+  --mcdp-bg: #ffffff;
+  --mcdp-border: #dee2e6;
+  --mcdp-text: #212529;
+  --mcdp-text-muted: #6c757d;
+  --mcdp-primary: #007bff;
+  --mcdp-primary-hover: #0056b3;
+  --mcdp-secondary: #6c757d;
+  --mcdp-success: #28a745;
+  --mcdp-danger: #dc3545;
+  --mcdp-warning: #ffc107;
+  --mcdp-info: #17a2b8;
+  --mcdp-light: #f8f9fa;
+  --mcdp-dark: #343a40;
+  
+  /* Shadow */
+  --mcdp-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15);
+  --mcdp-shadow-sm: 0 .125rem .25rem rgba(0, 0, 0, .075);
+  
+  /* Border radius */
+  --mcdp-border-radius: 0.375rem;
+  --mcdp-border-radius-sm: 0.25rem;
+  
+  /* Spacing */
+  --mcdp-spacer: 1rem;
+  --mcdp-spacer-sm: 0.5rem;
+  
+  /* Font sizes */
+  --mcdp-font-size-base: 1rem;
+  --mcdp-font-size-sm: 0.875rem;
+  --mcdp-font-size-xs: 0.75rem;
+  
+  /* Transitions */
+  --mcdp-transition: all 0.2s ease-in-out;
+}
+
+/* Dark Theme Variables */
+.mcdp-theme-dark {
+  --mcdp-bg: #2d3748;
+  --mcdp-border: #4a5568;
+  --mcdp-text: #e2e8f0;
+  --mcdp-text-muted: #a0aec0;
+  --mcdp-primary: #3182ce;
+  --mcdp-primary-hover: #2c5282;
+  --mcdp-secondary: #718096;
+  --mcdp-light: #4a5568;
+  --mcdp-dark: #1a202c;
+}
+
+/* Main Picker Container */
+.mcdp-picker {
+  position: absolute;
+  background: var(--mcdp-bg);
+  border: 1px solid var(--mcdp-border);
+  border-radius: var(--mcdp-border-radius);
+  box-shadow: var(--mcdp-shadow);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 14px;
+  color: var(--mcdp-text);
+  user-select: none;
+  z-index: 9999;
+  min-width: 280px;
+  max-width: 400px;
+}
+
+/* RTL Support */
+.mcdp-picker.mcdp-rtl {
+  direction: rtl;
+  text-align: right;
+  font-family: Tahoma, "Iranian Sans", "Droid Arabic Naskh", "B Nazanin", Arial, sans-serif;
+}
+
+.mcdp-picker.mcdp-rtl .mcdp-prev-btn::before {
+  transform: scaleX(-1) rotate(-135deg);
+}
+
+.mcdp-picker.mcdp-rtl .mcdp-next-btn::before {
+  transform: scaleX(-1) rotate(45deg);
+}
+
+.mcdp-picker.mcdp-rtl .mcdp-year-input {
+  margin-left: 0;
+  margin-right: 3px;
+}
+
+/* Header Section */
+.mcdp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: var(--mcdp-light);
+  border-bottom: 1px solid var(--mcdp-border);
+  border-radius: var(--mcdp-border-radius) var(--mcdp-border-radius) 0 0;
+}
+
+.mcdp-title {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--mcdp-text);
+  cursor: pointer;
+  padding: 3px 6px;
+  border-radius: var(--mcdp-border-radius-sm);
+  transition: var(--mcdp-transition);
+}
+
+.mcdp-title:hover {
+  background: var(--mcdp-bg);
+  color: var(--mcdp-primary);
+}
+
+.mcdp-year-input {
+  background: var(--mcdp-bg);
+  border: 1px solid var(--mcdp-border);
+  border-radius: var(--mcdp-border-radius-sm);
+  padding: 1px 3px;
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+  text-align: center;
+  width: 60px;
+  margin-left: 3px;
+  transition: var(--mcdp-transition);
+}
+
+.mcdp-year-input:focus {
+  outline: none;
+  border-color: var(--mcdp-primary);
+  background: var(--mcdp-bg);
+  box-shadow: 0 0 0 1px var(--mcdp-primary);
+}
+
+.mcdp-year-input:hover {
+  border-color: var(--mcdp-primary);
+  background: var(--mcdp-bg);
+}
+
+.mcdp-year-input.mcdp-invalid {
+  border-color: var(--mcdp-danger);
+  background-color: rgba(220, 53, 69, 0.1);
+  color: var(--mcdp-danger);
+}
+
+.mcdp-year-input.mcdp-invalid:focus {
+  box-shadow: 0 0 0 1px var(--mcdp-danger);
+}
+
+/* Ensure number input spinners are always visible */
+.mcdp-year-input,
+.mcdp-time-unit input[type="number"] {
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.mcdp-year-input::-webkit-outer-spin-button,
+.mcdp-year-input::-webkit-inner-spin-button,
+.mcdp-time-unit input[type="number"]::-webkit-outer-spin-button,
+.mcdp-time-unit input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: inner-spin-button;
+  opacity: 1;
+  height: 100%;
+}
+
+/* Custom RTL input class for better control */
+.mcdp-rtl-input {
+  direction: ltr;
+  text-align: right;
+}
+
+.mcdp-prev-btn,
+.mcdp-next-btn {
+  background: transparent;
+  border: none;
+  padding: 3px;
+  font-size: 16px;
+  color: var(--mcdp-text);
+  cursor: pointer;
+  border-radius: var(--mcdp-border-radius-sm);
+  transition: var(--mcdp-transition);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mcdp-prev-btn::before,
+.mcdp-next-btn::before {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-top: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+  transform: rotate(-135deg);
+}
+
+.mcdp-next-btn::before {
+  transform: rotate(45deg);
+}
+
+.mcdp-prev-btn:hover,
+.mcdp-next-btn:hover {
+  background: var(--mcdp-primary);
+  color: white;
+}
+
+.mcdp-prev-btn:focus,
+.mcdp-next-btn:focus {
+  outline: 2px solid var(--mcdp-primary);
+  outline-offset: 2px;
+}
+
+/* Calendar Section */
+.mcdp-calendar {
+  padding: 6px;
+}
+
+.mcdp-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 6px;
+}
+
+.mcdp-weekday {
+  text-align: center;
+  padding: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--mcdp-text-muted);
+  text-transform: uppercase;
+}
+
+.mcdp-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.mcdp-day {
+  position: relative;
+  padding: 3px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: var(--mcdp-border-radius-sm);
+  transition: var(--mcdp-transition);
+  min-height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.mcdp-day:hover {
+  background: var(--mcdp-light);
+  color: var(--mcdp-primary);
+}
+
+.mcdp-day.mcdp-today {
+  background: var(--mcdp-info);
+  color: white;
+  font-weight: 600;
+}
+
+.mcdp-day.mcdp-selected {
+  background: var(--mcdp-primary);
+  color: white;
+  font-weight: 600;
+}
+
+.mcdp-day.mcdp-selected:hover {
+  background: var(--mcdp-primary-hover);
+}
+
+.mcdp-day.mcdp-other-month {
+  color: var(--mcdp-text-muted);
+  opacity: 0.5;
+}
+
+.mcdp-day.mcdp-disabled {
+  color: var(--mcdp-text-muted);
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.mcdp-day.mcdp-disabled:hover {
+  background: transparent;
+  color: var(--mcdp-text-muted);
+}
+
+.mcdp-day:focus {
+  outline: 2px solid var(--mcdp-primary);
+  outline-offset: -2px;
+}
+
+/* Time Picker Section */
+.mcdp-time-picker {
+  border-top: 1px solid var(--mcdp-border);
+  padding: 6px;
+  background: var(--mcdp-light);
+}
+
+.mcdp-time-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.mcdp-time-unit {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+}
+
+.mcdp-time-unit label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--mcdp-text-muted);
+  text-transform: uppercase;
+  margin-bottom: 0;
+  min-width: 30px;
+  white-space: nowrap;
+}
+
+.mcdp-time-unit input {
+  width: 50px;
+  padding: 0;
+  border: 1px solid var(--mcdp-border);
+  border-radius: 3px;
+  text-align: center;
+  font-size: 12px;
+  background: var(--mcdp-white);
+  color: var(--mcdp-text);
+}
+
+.mcdp-time-unit input:focus {
+  outline: none;
+  border-color: var(--mcdp-primary);
+  box-shadow: 0 0 0 1px var(--mcdp-primary-light);
+}
+
+.mcdp-time-unit input:invalid {
+  border-color: var(--mcdp-danger);
+  background-color: rgba(220, 53, 69, 0.1);
+}
+
+.mcdp-time-unit input:valid {
+  border-color: var(--mcdp-success);
+}
+
+/* Manual Input Validation Feedback */
+.mcdp-element.mcdp-corrected {
+  border-color: var(--mcdp-warning) !important;
+  background-color: rgba(255, 193, 7, 0.1) !important;
+  animation: mcdp-corrected-pulse 0.5s ease-in-out;
+}
+
+.mcdp-element.mcdp-invalid {
+  border-color: var(--mcdp-danger) !important;
+  background-color: rgba(220, 53, 69, 0.1) !important;
+  animation: mcdp-invalid-shake 0.5s ease-in-out;
+}
+
+@keyframes mcdp-corrected-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+@keyframes mcdp-invalid-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+.mcdp-ampm {
+  padding: 2px 6px;
+  border: 1px solid var(--mcdp-border);
+  border-radius: 3px;
+  background: var(--mcdp-white);
+  color: var(--mcdp-text);
+  cursor: pointer;
+  font-size: 11px;
+  min-width: 30px;
+  text-align: center;
+}
+
+.mcdp-ampm:hover {
+  background: var(--mcdp-light);
+}
+
+/* Footer Section */
+.mcdp-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--mcdp-spacer-sm);
+  padding: 6px 10px;
+  border-top: 1px solid var(--mcdp-border);
+  background: var(--mcdp-light);
+  border-radius: 0 0 var(--mcdp-border-radius) var(--mcdp-border-radius);
+}
+
+.mcdp-footer button {
+  flex: 1;
+  padding: 4px 8px;
+  border: 1px solid var(--mcdp-border);
+  border-radius: var(--mcdp-border-radius-sm);
+  background: var(--mcdp-bg);
+  color: var(--mcdp-text);
+  font-size: 11px;
+  cursor: pointer;
+  transition: var(--mcdp-transition);
+}
+
+.mcdp-footer button:hover {
+  background: var(--mcdp-light);
+  border-color: var(--mcdp-primary);
+  color: var(--mcdp-primary);
+}
+
+.mcdp-today-btn:hover {
+  background: var(--mcdp-info);
+  border-color: var(--mcdp-info);
+  color: white;
+}
+
+.mcdp-clear-btn:hover {
+  background: var(--mcdp-warning);
+  border-color: var(--mcdp-warning);
+  color: white;
+}
+
+.mcdp-close-btn:hover {
+  background: var(--mcdp-secondary);
+  border-color: var(--mcdp-secondary);
+  color: white;
+}
+
+.mcdp-footer button:focus {
+  outline: 2px solid var(--mcdp-primary);
+  outline-offset: -2px;
+}
+
+/* Responsive Design */
+@media (max-width: 576px) {
+  .mcdp-picker {
+    min-width: 260px;
+    font-size: var(--mcdp-font-size-sm);
+  }
+  
+  .mcdp-header {
+    padding: 0.375rem 0.75rem;
+  }
+  
+  .mcdp-title {
+    font-size: var(--mcdp-font-size-sm);
+  }
+  
+  .mcdp-prev-btn,
+  .mcdp-next-btn {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1rem;
+  }
+  
+  .mcdp-day {
+    min-height: 2rem;
+    padding: 0.25rem;
+    font-size: var(--mcdp-font-size-sm);
+  }
+  
+  .mcdp-time-controls {
+    flex-wrap: wrap;
+  }
+  
+  .mcdp-time-unit input {
+    width: 2.5rem;
+  }
+  
+  /* Ensure number input spinners are visible on mobile */
+  .mcdp-year-input,
+  .mcdp-time-unit input[type="number"] {
+    -webkit-appearance: textfield;
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+  
+  .mcdp-year-input::-webkit-outer-spin-button,
+  .mcdp-year-input::-webkit-inner-spin-button,
+  .mcdp-time-unit input[type="number"]::-webkit-outer-spin-button,
+  .mcdp-time-unit input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: inner-spin-button;
+    opacity: 1;
+    height: 100%;
+  }
+  
+  .mcdp-footer {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .mcdp-footer button {
+    padding: 0.375rem;
+  }
+}
+
+/* High Contrast Support */
+@media (prefers-contrast: high) {
+  .mcdp-picker {
+    border-width: 2px;
+  }
+  
+  .mcdp-day:focus,
+  .mcdp-prev-btn:focus,
+  .mcdp-next-btn:focus,
+  .mcdp-footer button:focus {
+    outline-width: 3px;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .mcdp-picker *,
+  .mcdp-picker *::before,
+  .mcdp-picker *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .mcdp-picker {
+    display: none !important;
+  }
+}
+
+/* Animation Classes */
+.mcdp-picker.mcdp-fade-in {
+  animation: mcdpFadeIn 0.15s ease-out;
+}
+
+.mcdp-picker.mcdp-fade-out {
+  animation: mcdpFadeOut 0.15s ease-out;
+}
+
+@keyframes mcdpFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes mcdpFadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+/* Persian/Farsi Font Optimization */
+.mcdp-picker.mcdp-rtl {
+  font-family: "Vazirmatn", "IRANSans", "Tahoma", "Iranian Sans", "Droid Arabic Naskh", "B Nazanin", Arial, sans-serif;
+}
+
+/* Arabic Font Optimization */
+.mcdp-picker.mcdp-rtl[data-calendar="hijri"] {
+  font-family: "Noto Sans Arabic", "Droid Arabic Naskh", "Arabic Typesetting", "Geeza Pro", "Traditional Arabic", "Simplified Arabic", Tahoma, Arial, sans-serif;
+}
+
+/* Input Field Enhancement */
+input.mcdp-input {
+  border: 1px solid var(--mcdp-border);
+  border-radius: var(--mcdp-border-radius-sm);
+  padding: 0.375rem 0.75rem;
+  font-size: var(--mcdp-font-size-base);
+  transition: var(--mcdp-transition);
+}
+
+input.mcdp-input:focus {
+  outline: none;
+  border-color: var(--mcdp-primary);
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+input.mcdp-input.mcdp-rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Error States */
+.mcdp-picker.mcdp-error {
+  border-color: var(--mcdp-danger);
+}
+
+.mcdp-day.mcdp-error {
+  background: var(--mcdp-danger);
+  color: white;
+}
+
+.mcdp-error-message {
+  color: var(--mcdp-danger);
+  font-size: var(--mcdp-font-size-sm);
+  margin-top: 0.25rem;
+}
+
+/* Loading States */
+.mcdp-picker.mcdp-loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.mcdp-picker.mcdp-loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--mcdp-border-radius);
+}
+
+.mcdp-loading-spinner {
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 2px solid var(--mcdp-border);
+  border-top: 2px solid var(--mcdp-primary);
+  border-radius: 50%;
+  animation: mcdpSpin 1s linear infinite;
+}
+
+@keyframes mcdpSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Month/Year Picker (Future Enhancement) */
+.mcdp-month-picker,
+.mcdp-year-picker {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--mcdp-bg);
+  border-radius: var(--mcdp-border-radius);
+  padding: var(--mcdp-spacer);
+}
+
+.mcdp-month-grid,
+.mcdp-year-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--mcdp-spacer-sm);
+}
+
+.mcdp-month-item,
+.mcdp-year-item {
+  padding: var(--mcdp-spacer-sm);
+  text-align: center;
+  cursor: pointer;
+  border-radius: var(--mcdp-border-radius-sm);
+  transition: var(--mcdp-transition);
+}
+
+.mcdp-month-item:hover,
+.mcdp-year-item:hover {
+  background: var(--mcdp-light);
+  color: var(--mcdp-primary);
+}
+
+.mcdp-month-item.mcdp-selected,
+.mcdp-year-item.mcdp-selected {
+  background: var(--mcdp-primary);
+  color: white;
+}
+
+/* Utilities */
+.mcdp-sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.mcdp-d-none {
+  display: none !important;
+}
+
+.mcdp-d-block {
+  display: block !important;
+}
+
+.mcdp-d-flex {
+  display: flex !important;
+}
+
+.mcdp-justify-content-center {
+  justify-content: center !important;
+}
+
+.mcdp-align-items-center {
+  align-items: center !important;
+}
+
+.mcdp-text-center {
+  text-align: center !important;
+}
+
+.mcdp-text-right {
+  text-align: right !important;
+}
+
+.mcdp-text-left {
+  text-align: left !important;
+}
+
+/* Focus Visible Polyfill */
+.js-focus-visible .mcdp-day:focus:not(.focus-visible),
+.js-focus-visible .mcdp-prev-btn:focus:not(.focus-visible),
+.js-focus-visible .mcdp-next-btn:focus:not(.focus-visible),
+.js-focus-visible .mcdp-footer button:focus:not(.focus-visible) {
+  outline: none;
+}
+
+/* Custom Scrollbar for Time Pickers (Future Enhancement) */
+.mcdp-time-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.mcdp-time-scroll::-webkit-scrollbar-track {
+  background: var(--mcdp-light);
+}
+
+.mcdp-time-scroll::-webkit-scrollbar-thumb {
+  background: var(--mcdp-border);
+  border-radius: 3px;
+}
+
+.mcdp-time-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--mcdp-secondary);
+}
+
+/* Persian Number Support */
+.mcdp-picker.mcdp-persian-numbers .mcdp-day,
+.mcdp-picker.mcdp-persian-numbers .mcdp-title,
+.mcdp-picker.mcdp-persian-numbers input {
+  font-family: "Vazirmatn", "IRANSans", Tahoma, sans-serif;
+}
+
+/* Arabic Number Support */
+.mcdp-picker.mcdp-arabic-numbers .mcdp-day,
+.mcdp-picker.mcdp-arabic-numbers .mcdp-title,
+.mcdp-picker.mcdp-arabic-numbers input {
+  font-family: "Noto Sans Arabic", "Droid Arabic Naskh", Tahoma, sans-serif;
+}

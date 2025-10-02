@@ -1,0 +1,416 @@
+@model IEnumerable<EazyMenu.Application.Common.Models.Reservation.ReservationListDto>
+
+@{
+    ViewData["Title"] = "تقویم رزروها";
+    Layout = "_RestaurantLayout";
+}
+
+@section Styles {
+    <link href="~/lib/multi-calendar-datepicker/multi-calendar-datepicker.css" rel="stylesheet" />
+}
+
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1><i class="bi bi-calendar3"></i> تقویم رزروها - @ViewBag.RestaurantName</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-left">
+                        <li class="breadcrumb-item"><a asp-action="Index" asp-route-slug="@ViewBag.RestaurantSlug">رزروها</a></li>
+                        <li class="breadcrumb-item active">تقویم</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show">
+                    <i class="bi bi-check-circle"></i> @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show">
+                    <i class="bi bi-exclamation-triangle"></i> @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            <!-- انتخاب تاریخ -->
+            <div class="card mb-3">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title"><i class="bi bi-calendar-day"></i> انتخاب تاریخ شمسی</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row align-items-end">
+                        <div class="col-md-4">
+                            <label class="form-label">تاریخ:</label>
+                            <input type="text" id="selectedDate" class="form-control" 
+                                   placeholder="1403/07/12" readonly />
+                            <input type="hidden" id="selectedDateGregorian" 
+                                   value="@ViewBag.SelectedDate.ToString("yyyy-MM-dd")" />
+                        </div>
+                        <div class="col-md-8">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-secondary" id="btnPrevDay">
+                                    <i class="bi bi-chevron-right"></i> روز قبل
+                                </button>
+                                <button type="button" class="btn btn-outline-primary" id="btnToday">
+                                    <i class="bi bi-calendar-check"></i> امروز
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" id="btnNextDay">
+                                    روز بعد <i class="bi bi-chevron-left"></i>
+                                </button>
+                            </div>
+                            <button type="button" class="btn btn-success ms-2" id="btnLoadDate">
+                                <i class="bi bi-search"></i> نمایش رزروها
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- آمار روزانه -->
+            <div class="row mb-3">
+                <div class="col-lg-3 col-md-6">
+                    <div class="small-box bg-info">
+                        <div class="inner">
+                            <h3 id="totalCount">@Model.Count()</h3>
+                            <p>کل رزروها</p>
+                        </div>
+                        <div class="icon">
+                            <i class="bi bi-calendar-event"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="small-box bg-warning">
+                        <div class="inner">
+                            <h3 id="pendingCount">@Model.Count(r => r.Status == EazyMenu.Domain.Enums.ReservationStatus.Pending)</h3>
+                            <p>در انتظار</p>
+                        </div>
+                        <div class="icon">
+                            <i class="bi bi-hourglass-split"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="small-box bg-success">
+                        <div class="inner">
+                            <h3 id="confirmedCount">@Model.Count(r => r.Status == EazyMenu.Domain.Enums.ReservationStatus.Confirmed)</h3>
+                            <p>تایید شده</p>
+                        </div>
+                        <div class="icon">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="small-box bg-secondary">
+                        <div class="inner">
+                            <h3 id="totalGuests">@Model.Sum(r => r.GuestsCount)</h3>
+                            <p>کل نفرات</p>
+                        </div>
+                        <div class="icon">
+                            <i class="bi bi-people"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- جدول رزروها -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="bi bi-list-ul"></i> 
+                        رزروهای <span id="displayDate">امروز</span>
+                    </h3>
+                </div>
+                <div class="card-body p-0">
+                    <div id="loadingSpinner" class="text-center py-5" style="display: none;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">در حال بارگذاری...</span>
+                        </div>
+                        <p class="mt-2">در حال بارگذاری رزروها...</p>
+                    </div>
+                    
+                    <div id="reservationsTable">
+                        @if (Model.Any())
+                        {
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>ساعت</th>
+                                        <th>شماره رزرو</th>
+                                        <th>مشتری</th>
+                                        <th>تلفن</th>
+                                        <th>تعداد نفرات</th>
+                                        <th>میز</th>
+                                        <th>وضعیت</th>
+                                        <th>عملیات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var reservation in Model.OrderBy(r => r.ReservationTime))
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong dir="ltr">@reservation.FormattedTime</strong>
+                                            </td>
+                                            <td>@reservation.ReservationNumber</td>
+                                            <td>@reservation.CustomerName</td>
+                                            <td dir="ltr">@reservation.CustomerPhone</td>
+                                            <td>
+                                                <span class="badge bg-info">@reservation.GuestsCount نفر</span>
+                                            </td>
+                                            <td>
+                                                @if (reservation.TableNumber.HasValue)
+                                                {
+                                                    <span class="badge bg-secondary">میز @reservation.TableNumber</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <span class="@reservation.StatusBadgeClass">
+                                                    @reservation.StatusDisplay
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <a href="@Url.Action("Details", new { id = reservation.Id })" 
+                                                       class="btn btn-outline-primary" title="جزئیات">
+                                                        <i class="bi bi-eye"></i>
+                                                    </a>
+                                                    @if (reservation.Status == EazyMenu.Domain.Enums.ReservationStatus.Pending && !reservation.IsPast)
+                                                    {
+                                                        <button type="button" class="btn btn-outline-success" 
+                                                                data-bs-toggle="modal" 
+                                                                data-bs-target="#confirmModal-@reservation.Id" 
+                                                                title="تایید">
+                                                            <i class="bi bi-check-circle"></i>
+                                                        </button>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                        else
+                        {
+                            <div class="text-center py-5">
+                                <i class="bi bi-calendar-x display-1 text-muted"></i>
+                                <p class="text-muted mt-3">رزرویی برای این تاریخ یافت نشد</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Modal‌های تایید -->
+@foreach (var reservation in Model.Where(r => r.Status == EazyMenu.Domain.Enums.ReservationStatus.Pending && !r.IsPast))
+{
+    <div class="modal fade" id="confirmModal-@reservation.Id" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">تایید رزرو</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form asp-action="Confirm" method="post">
+                    <input type="hidden" name="id" value="@reservation.Id" />
+                    <div class="modal-body">
+                        <p>آیا مطمئن هستید که می‌خواهید این رزرو را تایید کنید؟</p>
+                        <div class="mb-3">
+                            <label class="form-label">شماره میز (اختیاری):</label>
+                            <input type="number" name="tableNumber" class="form-control" 
+                                   placeholder="مثال: 5" min="1" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle"></i> تایید رزرو
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/multi-calendar-datepicker/moment-bundled.js"></script>
+    <script src="~/lib/multi-calendar-datepicker/multi-calendar-datepicker.js"></script>
+    <script>
+        const slug = '@ViewBag.RestaurantSlug';
+        const selectedDateInput = document.getElementById('selectedDate');
+        const selectedDateGregorian = document.getElementById('selectedDateGregorian');
+        const displayDate = document.getElementById('displayDate');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const reservationsTable = document.getElementById('reservationsTable');
+
+        // Initialize Persian Date Picker
+        $(document).ready(function() {
+            // Debug: Check if libraries are loaded
+            console.log('jQuery loaded:', typeof $ !== 'undefined');
+            console.log('moment loaded:', typeof moment !== 'undefined');
+            console.log('multiCalendarDatePicker loaded:', typeof $.fn.multiCalendarDatePicker !== 'undefined');
+            
+            if (typeof $.fn.multiCalendarDatePicker === 'undefined') {
+                alert('خطا: کتابخانه DatePicker بارگذاری نشده است!');
+                return;
+            }
+            
+            $('#selectedDate').multiCalendarDatePicker({
+                calendar: 'persian',
+                locale: 'fa',
+                format: 'YYYY/MM/DD',
+                rtl: true,
+                theme: 'light',
+                todayHighlight: true,
+                showToday: true,
+                showClear: false,
+                autoClose: true
+            });
+            
+            
+            // Set initial date to today (Persian)
+            const today = moment();
+            const todayPersian = today.format('jYYYY/jMM/jDD');
+            $('#selectedDate').val(todayPersian);
+            $('#selectedDateGregorian').val(today.format('YYYY-MM-DD'));
+            if (displayDate) displayDate.textContent = todayPersian;
+            
+            // Load today's reservations
+            loadReservations(today.format('YYYY-MM-DD'));
+            
+            // Handle date change from picker
+            $('#selectedDate').on('mcdp:change', function(e, data) {
+                const persianParts = data.formatted.split('/');
+                const gregorianMoment = moment(persianParts[0] + '/' + persianParts[1] + '/' + persianParts[2], 'jYYYY/jMM/jDD');
+                $('#selectedDateGregorian').val(gregorianMoment.format('YYYY-MM-DD'));
+                if (displayDate) displayDate.textContent = data.formatted;
+            });
+        });
+
+        // تابع بارگذاری رزروها
+        async function loadReservations(date) {
+            loadingSpinner.style.display = 'block';
+            reservationsTable.style.display = 'none';
+
+            try {
+                const response = await fetch('/Restaurant/Reservation/Calendar/' + slug + '/GetByDate?date=' + date);
+                const result = await response.json();
+
+                if (result.success) {
+                    updateReservationsTable(result.data);
+                    updateStats(result.data);
+                } else {
+                    alert(result.message || 'خطا در دریافت اطلاعات');
+                }
+            } catch (error) {
+                console.error('Error loading reservations:', error);
+                alert('خطا در بارگذاری رزروها');
+            } finally {
+                loadingSpinner.style.display = 'none';
+                reservationsTable.style.display = 'block';
+            }
+        }
+
+        // تابع به‌روزرسانی جدول
+        function updateReservationsTable(reservations) {
+            if (reservations.length === 0) {
+                reservationsTable.innerHTML = '<div class="text-center py-5"><i class="bi bi-calendar-x display-1 text-muted"></i><p class="text-muted mt-3">رزرویی برای این تاریخ یافت نشد</p></div>';
+                return;
+            }
+
+            reservations.sort(function(a, b) { return a.reservationTime.localeCompare(b.reservationTime); });
+
+            var tableHtml = '<table class="table table-hover"><thead class="table-light"><tr><th>ساعت</th><th>شماره رزرو</th><th>مشتری</th><th>تلفن</th><th>تعداد نفرات</th><th>میز</th><th>وضعیت</th><th>عملیات</th></tr></thead><tbody>';
+
+            reservations.forEach(function(r) {
+                tableHtml += '<tr>';
+                tableHtml += '<td><strong dir="ltr">' + r.formattedTime + '</strong></td>';
+                tableHtml += '<td>' + r.reservationNumber + '</td>';
+                tableHtml += '<td>' + r.customerName + '</td>';
+                tableHtml += '<td dir="ltr">' + r.customerPhone + '</td>';
+                tableHtml += '<td><span class="badge bg-info">' + r.guestsCount + ' نفر</span></td>';
+                tableHtml += '<td>' + (r.tableNumber ? '<span class="badge bg-secondary">میز ' + r.tableNumber + '</span>' : '<span class="text-muted">-</span>') + '</td>';
+                tableHtml += '<td><span class="' + r.statusBadgeClass + '">' + r.statusDisplay + '</span></td>';
+                tableHtml += '<td><a href="/Restaurant/Reservation/Details/' + r.id + '" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></a></td>';
+                tableHtml += '</tr>';
+            });
+
+            tableHtml += '</tbody></table>';
+            reservationsTable.innerHTML = tableHtml;
+        }
+
+        // تابع به‌روزرسانی آمار
+        function updateStats(reservations) {
+            document.getElementById('totalCount').textContent = reservations.length;
+            document.getElementById('pendingCount').textContent = reservations.filter(function(r) { return r.status === 0; }).length;
+            document.getElementById('confirmedCount').textContent = reservations.filter(function(r) { return r.status === 1; }).length;
+            document.getElementById('totalGuests').textContent = reservations.reduce(function(sum, r) { return sum + r.guestsCount; }, 0);
+        }
+
+        // Event listeners
+        document.getElementById('btnLoadDate').addEventListener('click', function() {
+            var date = selectedDateGregorian.value;
+            if (date) {
+                loadReservations(date);
+            }
+        });
+
+        document.getElementById('btnToday').addEventListener('click', function() {
+            var today = moment();
+            var persianDate = today.format('jYYYY/jMM/jDD');
+            $('#selectedDate').val(persianDate);
+            $('#selectedDateGregorian').val(today.format('YYYY-MM-DD'));
+            if (displayDate) displayDate.textContent = persianDate;
+            loadReservations(today.format('YYYY-MM-DD'));
+        });
+
+        document.getElementById('btnPrevDay').addEventListener('click', function() {
+            var gregorianDate = moment(selectedDateGregorian.value);
+            var prevDay = gregorianDate.subtract(1, 'days');
+            var persianDate = prevDay.format('jYYYY/jMM/jDD');
+            $('#selectedDate').val(persianDate);
+            $('#selectedDateGregorian').val(prevDay.format('YYYY-MM-DD'));
+            if (displayDate) displayDate.textContent = persianDate;
+            loadReservations(prevDay.format('YYYY-MM-DD'));
+        });
+
+        document.getElementById('btnNextDay').addEventListener('click', function() {
+            var gregorianDate = moment(selectedDateGregorian.value);
+            var nextDay = gregorianDate.add(1, 'days');
+            var persianDate = nextDay.format('jYYYY/jMM/jDD');
+            $('#selectedDate').val(persianDate);
+            $('#selectedDateGregorian').val(nextDay.format('YYYY-MM-DD'));
+            if (displayDate) displayDate.textContent = persianDate;
+            loadReservations(nextDay.format('YYYY-MM-DD'));
+        });
+
+        selectedDateInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('btnLoadDate').click();
+            }
+        });
+    </script>
+}

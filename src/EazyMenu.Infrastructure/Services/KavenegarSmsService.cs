@@ -37,7 +37,7 @@ public class KavenegarSmsService : ISmsService
     {
         try
         {
-            var response = await _httpClient.GetAsync($"verify/lookup.json?receptor={phoneNumber}&token={code}&template=verify", cancellationToken);
+            var response = await _httpClient.GetAsync($"verify/lookup.json?receptor={phoneNumber}&token={code}&template=OTP", cancellationToken);
             return response.IsSuccessStatusCode;
         }
         catch

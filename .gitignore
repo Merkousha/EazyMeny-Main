@@ -265,3 +265,4 @@ lerna-debug.log*
 .Trashes
 ehthumbs.db
 Thumbs.db
+src/EazyMenu.Web/appsettings.Development.json

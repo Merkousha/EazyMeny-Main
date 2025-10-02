@@ -1,0 +1,407 @@
+@model EazyMenu.Application.Common.Models.Reservation.ReservationDto
+
+@{
+    ViewData["Title"] = "جزئیات رزرو";
+    Layout = "_RestaurantLayout";
+}
+
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1><i class="bi bi-receipt"></i> جزئیات رزرو</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-left">
+                        <li class="breadcrumb-item"><a asp-action="Index">رزروها</a></li>
+                        <li class="breadcrumb-item active">جزئیات</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show">
+                    <i class="bi bi-check-circle"></i> @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show">
+                    <i class="bi bi-exclamation-triangle"></i> @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            <div class="row">
+                <!-- کارت اطلاعات اصلی -->
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h3 class="card-title">
+                                <i class="bi bi-info-circle"></i> اطلاعات رزرو
+                            </h3>
+                            <span class="@Model.StatusBadgeClass fs-6">@Model.StatusDisplay</span>
+                        </div>
+                        <div class="card-body">
+                            <!-- شماره رزرو -->
+                            <div class="alert alert-info d-flex align-items-center mb-4">
+                                <i class="bi bi-hash fs-3 me-3"></i>
+                                <div>
+                                    <small class="text-muted d-block">شماره رزرو</small>
+                                    <strong class="fs-5">@Model.ReservationNumber</strong>
+                                </div>
+                            </div>
+
+                            <!-- جزئیات رزرو -->
+                            <div class="row g-4 mb-4">
+                                <div class="col-md-6">
+                                    <div class="info-box">
+                                        <span class="info-box-icon bg-primary">
+                                            <i class="bi bi-calendar-date"></i>
+                                        </span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">تاریخ</span>
+                                            <span class="info-box-number">@Model.FormattedDate</span>
+                                            <small class="text-muted">@Model.DaysUntilReservation</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-box">
+                                        <span class="info-box-icon bg-primary">
+                                            <i class="bi bi-clock"></i>
+                                        </span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">ساعت</span>
+                                            <span class="info-box-number" dir="ltr">@Model.FormattedTime</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-box">
+                                        <span class="info-box-icon bg-info">
+                                            <i class="bi bi-people"></i>
+                                        </span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">تعداد نفرات</span>
+                                            <span class="info-box-number">@Model.GuestsCount نفر</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-box">
+                                        <span class="info-box-icon @(Model.TableNumber.HasValue ? "bg-success" : "bg-secondary")">
+                                            <i class="bi bi-table"></i>
+                                        </span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">میز</span>
+                                            <span class="info-box-number">
+                                                @if (Model.TableNumber.HasValue)
+                                                {
+                                                    <text>میز @Model.TableNumber</text>
+                                                }
+                                                else
+                                                {
+                                                    <text>تخصیص نیافته</text>
+                                                }
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- اطلاعات مشتری -->
+                            <h5 class="mb-3"><i class="bi bi-person-circle"></i> اطلاعات مشتری</h5>
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th style="width: 200px">نام</th>
+                                        <td>@Model.CustomerName</td>
+                                    </tr>
+                                    <tr>
+                                        <th>تلفن</th>
+                                        <td dir="ltr">
+                                            <a href="tel:@Model.CustomerPhone">@Model.CustomerPhone</a>
+                                        </td>
+                                    </tr>
+                                    @if (!string.IsNullOrEmpty(Model.CustomerEmail))
+                                    {
+                                        <tr>
+                                            <th>ایمیل</th>
+                                            <td>
+                                                <a href="mailto:@Model.CustomerEmail">@Model.CustomerEmail</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                            <!-- درخواست‌های ویژه -->
+                            @if (!string.IsNullOrEmpty(Model.SpecialRequests))
+                            {
+                                <h5 class="mb-3 mt-4"><i class="bi bi-chat-left-text"></i> درخواست‌های ویژه</h5>
+                                <div class="alert alert-light">
+                                    <p class="mb-0">@Model.SpecialRequests</p>
+                                </div>
+                            }
+
+                            <!-- دلیل لغو -->
+                            @if (Model.Status == EazyMenu.Domain.Enums.ReservationStatus.Cancelled && 
+                                 !string.IsNullOrEmpty(Model.CancellationReason))
+                            {
+                                <h5 class="mb-3 mt-4"><i class="bi bi-x-circle"></i> دلیل لغو</h5>
+                                <div class="alert alert-danger">
+                                    <p class="mb-0">@Model.CancellationReason</p>
+                                    <small class="text-muted">لغو شده در: @Model.CancelledAt?.ToString("yyyy/MM/dd HH:mm")</small>
+                                </div>
+                            }
+                        </div>
+                        <div class="card-footer">
+                            <div class="d-flex gap-2 justify-content-between">
+                                <a href="@Url.Action("Index")" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-right"></i> بازگشت
+                                </a>
+                                <div class="d-flex gap-2">
+                                    @if (Model.Status == EazyMenu.Domain.Enums.ReservationStatus.Pending && !Model.IsPast)
+                                    {
+                                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmModal">
+                                            <i class="bi bi-check-circle"></i> تایید رزرو
+                                        </button>
+                                    }
+                                    @if ((Model.Status == EazyMenu.Domain.Enums.ReservationStatus.Pending || 
+                                          Model.Status == EazyMenu.Domain.Enums.ReservationStatus.Confirmed) && 
+                                         !Model.IsPast)
+                                    {
+                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#cancelModal">
+                                            <i class="bi bi-x-circle"></i> لغو رزرو
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- کارت Timeline -->
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="bi bi-clock-history"></i> تاریخچه</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="timeline">
+                                <div class="time-label">
+                                    <span class="bg-primary">@Model.CreatedAt.ToString("yyyy/MM/dd")</span>
+                                </div>
+                                <div>
+                                    <i class="bi bi-plus-circle bg-primary"></i>
+                                    <div class="timeline-item">
+                                        <h3 class="timeline-header">رزرو ایجاد شد</h3>
+                                        <div class="timeline-body">
+                                            <small class="text-muted">@Model.CreatedAt.ToString("HH:mm")</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @if (Model.Status == EazyMenu.Domain.Enums.ReservationStatus.Confirmed)
+                                {
+                                    <div>
+                                        <i class="bi bi-check-circle bg-success"></i>
+                                        <div class="timeline-item">
+                                            <h3 class="timeline-header">رزرو تایید شد</h3>
+                                            @if (Model.ReminderSent && Model.ReminderSentAt.HasValue)
+                                            {
+                                                <div class="timeline-body">
+                                                    <small class="text-muted">
+                                                        یادآوری ارسال شد: @Model.ReminderSentAt.Value.ToString("yyyy/MM/dd")
+                                                    </small>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+
+                                @if (Model.Status == EazyMenu.Domain.Enums.ReservationStatus.Cancelled && Model.CancelledAt.HasValue)
+                                {
+                                    <div>
+                                        <i class="bi bi-x-circle bg-danger"></i>
+                                        <div class="timeline-item">
+                                            <h3 class="timeline-header">رزرو لغو شد</h3>
+                                            <div class="timeline-body">
+                                                <small class="text-muted">@Model.CancelledAt.Value.ToString("yyyy/MM/dd HH:mm")</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+
+                                @if (Model.Status == EazyMenu.Domain.Enums.ReservationStatus.Completed)
+                                {
+                                    <div>
+                                        <i class="bi bi-flag bg-success"></i>
+                                        <div class="timeline-item">
+                                            <h3 class="timeline-header">تکمیل شد</h3>
+                                        </div>
+                                    </div>
+                                }
+
+                                <div>
+                                    <i class="bi bi-clock bg-gray"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- کارت اطلاعات رستوران -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="bi bi-shop"></i> رستوران</h3>
+                        </div>
+                        <div class="card-body">
+                            <strong>@Model.RestaurantName</strong>
+                            <p class="text-muted mb-2">@Model.RestaurantAddress</p>
+                            <p class="mb-0">
+                                <i class="bi bi-telephone"></i> 
+                                <a href="tel:@Model.RestaurantPhone" dir="ltr">@Model.RestaurantPhone</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Modal تایید -->
+@if (Model.Status == EazyMenu.Domain.Enums.ReservationStatus.Pending && !Model.IsPast)
+{
+    <div class="modal fade" id="confirmModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">تایید رزرو</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form asp-action="Confirm" method="post">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <div class="modal-body">
+                        <p>آیا مطمئن هستید که می‌خواهید این رزرو را تایید کنید؟</p>
+                        <div class="mb-3">
+                            <label class="form-label">شماره میز (اختیاری):</label>
+                            <input type="number" name="tableNumber" class="form-control" 
+                                   value="@Model.TableNumber" placeholder="مثال: 5" min="1" />
+                            <small class="text-muted">در صورت تخصیص میز، به مشتری SMS ارسال می‌شود</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle"></i> تایید رزرو
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Modal لغو -->
+@if ((Model.Status == EazyMenu.Domain.Enums.ReservationStatus.Pending || 
+      Model.Status == EazyMenu.Domain.Enums.ReservationStatus.Confirmed) && 
+     !Model.IsPast)
+{
+    <div class="modal fade" id="cancelModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">لغو رزرو</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form asp-action="Cancel" method="post">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <div class="modal-body">
+                        <p>آیا مطمئن هستید که می‌خواهید این رزرو را لغو کنید؟</p>
+                        <div class="mb-3">
+                            <label class="form-label">دلیل لغو <span class="text-danger">*</span></label>
+                            <textarea name="cancellationReason" class="form-control" rows="3" 
+                                      placeholder="دلیل لغو را وارد کنید..." required></textarea>
+                            <small class="text-muted">این دلیل برای مشتری ارسال خواهد شد</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> لغو رزرو
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+    .timeline {
+        position: relative;
+        margin: 0 0 30px 0;
+        padding: 0;
+        list-style: none;
+    }
+    .timeline:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: #dee2e6;
+        right: 31px;
+        margin: 0;
+    }
+    .timeline > div {
+        margin-bottom: 15px;
+        position: relative;
+    }
+    .timeline > div > .timeline-item {
+        margin-right: 60px;
+        background: #f8f9fa;
+        border-radius: 3px;
+        padding: 10px;
+    }
+    .timeline > div > i {
+        position: absolute;
+        right: 18px;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 30px;
+        font-size: 15px;
+        color: white;
+    }
+    .timeline > div > .time-label > span {
+        font-weight: 600;
+        padding: 5px;
+        display: inline-block;
+        background-color: #fff;
+        border-radius: 4px;
+    }
+    .timeline-header {
+        font-size: 14px;
+        font-weight: 600;
+        margin: 0;
+    }
+    .timeline-body {
+        margin-top: 5px;
+    }
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

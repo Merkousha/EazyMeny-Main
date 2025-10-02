@@ -28,9 +28,9 @@ public class SendOtpCommandHandler : IRequestHandler<SendOtpCommand, SendOtpResu
         // ارسال پیامک
         try
         {
-            await _smsService.SendAsync(
+            await _smsService.SendOtpAsync(
                 request.PhoneNumber,
-                $"کد تایید شما: {otpCode}\n\nایزی‌منو",
+                otpCode,
                 cancellationToken);
 
             return new SendOtpResult

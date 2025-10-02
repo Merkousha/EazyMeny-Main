@@ -1,0 +1,191 @@
+@model List<EazyMenu.Application.Common.Models.Reservation.ReservationListDto>
+
+@{
+    ViewData["Title"] = "رزروهای من";
+    Layout = "_Layout";
+}
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0"><i class="bi bi-list-ul"></i> رزروهای من</h3>
+                    <span class="badge bg-light text-dark">@Model.Count رزرو</span>
+                </div>
+                <div class="card-body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="bi bi-check-circle"></i> @TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @if (!Model.Any())
+                    {
+                        <div class="text-center py-5">
+                            <i class="bi bi-calendar-x display-1 text-muted"></i>
+                            <h4 class="text-muted mt-3">شما هنوز رزروی ندارید</h4>
+                            <p class="text-muted">می‌توانید از منوی رستوران‌ها میز خود را رزرو کنید.</p>
+                            <a href="/" class="btn btn-primary mt-3">
+                                <i class="bi bi-house"></i> بازگشت به صفحه اصلی
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>شماره رزرو</th>
+                                        <th>رستوران</th>
+                                        <th>تاریخ و ساعت</th>
+                                        <th>تعداد نفرات</th>
+                                        <th>میز</th>
+                                        <th>وضعیت</th>
+                                        <th>عملیات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var reservation in Model)
+                                    {
+                                        <tr class="@(reservation.IsPast ? "table-secondary" : "")">
+                                            <td>
+                                                <strong class="text-primary">@reservation.ReservationNumber</strong>
+                                            </td>
+                                            <td>
+                                                <i class="bi bi-shop"></i> @reservation.RestaurantName
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <i class="bi bi-calendar"></i> @reservation.FormattedDate
+                                                </div>
+                                                <div class="small text-muted">
+                                                    <i class="bi bi-clock"></i> @reservation.FormattedTime
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <i class="bi bi-people"></i> @reservation.GuestsCount نفر
+                                            </td>
+                                            <td>
+                                                @if (reservation.TableNumber.HasValue)
+                                                {
+                                                    <span class="badge bg-info">میز @reservation.TableNumber</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <span class="@reservation.StatusBadgeClass">
+                                                    @reservation.StatusDisplay
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm" role="group">
+                                                    <a asp-action="Details" asp-route-id="@reservation.Id" 
+                                                       class="btn btn-outline-primary" title="جزئیات">
+                                                        <i class="bi bi-eye"></i>
+                                                    </a>
+                                                    @if (reservation.Status == EazyMenu.Domain.Enums.ReservationStatus.Pending || 
+                                                         reservation.Status == EazyMenu.Domain.Enums.ReservationStatus.Confirmed)
+                                                    {
+                                                        @if (!reservation.IsPast)
+                                                        {
+                                                            <button type="button" class="btn btn-outline-danger" 
+                                                                    data-bs-toggle="modal" 
+                                                                    data-bs-target="#cancelModal-@reservation.Id"
+                                                                    title="لغو رزرو">
+                                                                <i class="bi bi-x-circle"></i>
+                                                            </button>
+                                                        }
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Modal لغو رزرو -->
+                                        <div class="modal fade" id="cancelModal-@reservation.Id" tabindex="-1">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header bg-danger text-white">
+                                                        <h5 class="modal-title">لغو رزرو</h5>
+                                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <form asp-action="Cancel" method="post">
+                                                        <input type="hidden" name="id" value="@reservation.Id" />
+                                                        <div class="modal-body">
+                                                            <p>آیا مطمئن هستید که می‌خواهید این رزرو را لغو کنید؟</p>
+                                                            <div class="alert alert-warning">
+                                                                <strong>رزرو:</strong> @reservation.ReservationNumber<br />
+                                                                <strong>رستوران:</strong> @reservation.RestaurantName<br />
+                                                                <strong>تاریخ:</strong> @reservation.FormattedDateTime
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">دلیل لغو (اختیاری):</label>
+                                                                <textarea name="cancellationReason" class="form-control" rows="2"></textarea>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+                                                            <button type="submit" class="btn btn-danger">
+                                                                <i class="bi bi-trash"></i> لغو رزرو
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Summary Cards -->
+                        <div class="row g-3 mt-3">
+                            <div class="col-md-3">
+                                <div class="card text-center border-warning">
+                                    <div class="card-body">
+                                        <h6 class="text-warning">در انتظار تایید</h6>
+                                        <h3>@Model.Count(r => r.Status == EazyMenu.Domain.Enums.ReservationStatus.Pending)</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-center border-success">
+                                    <div class="card-body">
+                                        <h6 class="text-success">تایید شده</h6>
+                                        <h3>@Model.Count(r => r.Status == EazyMenu.Domain.Enums.ReservationStatus.Confirmed)</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-center border-primary">
+                                    <div class="card-body">
+                                        <h6 class="text-primary">تکمیل شده</h6>
+                                        <h3>@Model.Count(r => r.Status == EazyMenu.Domain.Enums.ReservationStatus.Completed)</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-center border-danger">
+                                    <div class="card-body">
+                                        <h6 class="text-danger">لغو شده</h6>
+                                        <h3>@Model.Count(r => r.Status == EazyMenu.Domain.Enums.ReservationStatus.Cancelled)</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

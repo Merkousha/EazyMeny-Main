@@ -1,0 +1,170 @@
+@model EazyMenu.Application.Features.Reservations.Commands.CreateReservation.CreateReservationCommand
+
+@{
+    ViewData["Title"] = "رزرو میز";
+    Layout = "_Layout";
+}
+
+@section Styles {
+    <link href="~/lib/multi-calendar-datepicker/multi-calendar-datepicker.css" rel="stylesheet" />
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="bi bi-calendar-check"></i> رزرو میز</h3>
+                </div>
+                <div class="card-body p-4">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="bi bi-check-circle"></i> @TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <form asp-action="Reserve" method="post">
+                        <input type="hidden" asp-for="RestaurantId" />
+                        <input type="hidden" asp-for="CustomerId" />
+                        
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <!-- اطلاعات مشتری -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary mb-3"><i class="bi bi-person"></i> اطلاعات تماس</h5>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label asp-for="CustomerName" class="form-label">نام و نام خانوادگی <span class="text-danger">*</span></label>
+                                <input asp-for="CustomerName" class="form-control" placeholder="نام کامل خود را وارد کنید" />
+                                <span asp-validation-for="CustomerName" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="CustomerPhone" class="form-label">شماره تماس <span class="text-danger">*</span></label>
+                                <input asp-for="CustomerPhone" class="form-control" placeholder="09123456789" dir="ltr" />
+                                <span asp-validation-for="CustomerPhone" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-12">
+                                <label asp-for="CustomerEmail" class="form-label">ایمیل (اختیاری)</label>
+                                <input asp-for="CustomerEmail" class="form-control" placeholder="example@email.com" dir="ltr" />
+                                <span asp-validation-for="CustomerEmail" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- جزئیات رزرو -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary mb-3"><i class="bi bi-calendar-event"></i> جزئیات رزرو</h5>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">تاریخ شمسی <span class="text-danger">*</span></label>
+                                <input type="text" id="reservationDatePersian" class="form-control" placeholder="1403/07/12" readonly />
+                                <input asp-for="ReservationDate" type="hidden" id="reservationDateGregorian" />
+                                <span asp-validation-for="ReservationDate" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="ReservationTime" class="form-label">ساعت <span class="text-danger">*</span></label>
+                                <input asp-for="ReservationTime" type="time" class="form-control" dir="ltr" />
+                                <span asp-validation-for="ReservationTime" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-12">
+                                <label asp-for="GuestsCount" class="form-label">تعداد نفرات <span class="text-danger">*</span></label>
+                                <select asp-for="GuestsCount" class="form-select">
+                                    <option value="">انتخاب کنید...</option>
+                                    @for (int i = 1; i <= 20; i++)
+                                    {
+                                        <option value="@i">@i نفر</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="GuestsCount" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-12">
+                                <label asp-for="SpecialRequests" class="form-label">درخواست‌های ویژه (اختیاری)</label>
+                                <textarea asp-for="SpecialRequests" class="form-control" rows="3" placeholder="مثلاً: میز کنار پنجره، صندلی کودک، ..."></textarea>
+                                <span asp-validation-for="SpecialRequests" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- دکمه‌ها -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="javascript:history.back()" class="btn btn-secondary">
+                                <i class="bi bi-arrow-right"></i> بازگشت
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check-lg"></i> ثبت رزرو
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- راهنما -->
+            <div class="card mt-4 border-info">
+                <div class="card-body">
+                    <h6 class="text-info"><i class="bi bi-info-circle"></i> نکات مهم:</h6>
+                    <ul class="small mb-0">
+                        <li>پس از ثبت رزرو، پیامک تایید برای شما ارسال خواهد شد.</li>
+                        <li>لطفاً 15 دقیقه قبل از ساعت رزرو حضور داشته باشید.</li>
+                        <li>در صورت عدم حضور یا تأخیر، لطفاً با رستوران تماس بگیرید.</li>
+                        <li>برای لغو رزرو، حداقل 2 ساعت قبل از زمان رزرو اقدام کنید.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script src="~/lib/multi-calendar-datepicker/moment-bundled.js"></script>
+    <script src="~/lib/multi-calendar-datepicker/multi-calendar-datepicker.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Get today's date in Persian
+            @* const today = moment();
+            const todayPersian = today.format('jYYYY/jMM/jDD');
+            
+            // Initialize Persian Date Picker
+            $('#reservationDatePersian').multiCalendarDatePicker({
+                calendar: 'persian',
+                locale: 'fa',
+                format: 'YYYY/MM/DD',
+                rtl: true,
+                theme: 'light',
+                todayHighlight: true,
+                showToday: true,
+                showClear: false,
+                autoClose: true,
+                minDate: todayPersian // امروز به بعد
+            });
+            
+            // Set default to today (Persian)
+            $('#reservationDatePersian').val(todayPersian);
+            $('#reservationDateGregorian').val(today.format('YYYY-MM-DD'));
+            
+            // Handle date change
+            $('#reservationDatePersian').on('mcdp:change', function(e, data) {
+                // Convert Persian to Gregorian
+                const persianParts = data.formatted.split('/');
+                const gregorianMoment = moment(persianParts[0] + '/' + persianParts[1] + '/' + persianParts[2], 'jYYYY/jMM/jDD');
+                $('#reservationDateGregorian').val(gregorianMoment.format('YYYY-MM-DD'));
+            }); *@
+            $('#reservationDatePersian').multiCalendarDatePicker({
+    calendar: 'persian',
+    locale: 'fa',
+    format: 'YYYY/MM/DD',
+    rtl: true
+});
+        });
+    </script>
+}

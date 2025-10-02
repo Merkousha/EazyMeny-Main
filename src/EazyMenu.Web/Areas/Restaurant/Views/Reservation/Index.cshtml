@@ -1,0 +1,384 @@
+@model IEnumerable<EazyMenu.Application.Common.Models.Reservation.ReservationListDto>
+
+@{
+    ViewData["Title"] = "مدیریت رزروها";
+    Layout = "_RestaurantLayout";
+}
+
+@section Styles {
+    <link href="~/lib/multi-calendar-datepicker/multi-calendar-datepicker.css" rel="stylesheet" />
+}
+
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1><i class="bi bi-calendar-check"></i> مدیریت رزروها</h1>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show">
+                    <i class="bi bi-check-circle"></i> @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show">
+                    <i class="bi bi-exclamation-triangle"></i> @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            <!-- فیلترها -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="bi bi-funnel"></i> فیلترها</h3>
+                </div>
+                <div class="card-body">
+                    <form method="get" id="filterForm" action="@Url.Action("Index", new { slug = ViewBag.RestaurantSlug })">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label">از تاریخ</label>
+                                <input type="text" id="fromDatePersian" class="form-control" placeholder="1403/01/01" readonly />
+                                <input type="hidden" name="fromDate" id="fromDateGregorian" value="@ViewBag.FromDate" />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">تا تاریخ</label>
+                                <input type="text" id="toDatePersian" class="form-control" placeholder="1403/12/29" readonly />
+                                <input type="hidden" name="toDate" id="toDateGregorian" value="@ViewBag.ToDate" />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">وضعیت</label>
+                                <select name="status" class="form-select">
+                                    <option value="">همه</option>
+                                    <option value="Pending" selected="@(ViewBag.Status == "Pending")">در انتظار تایید</option>
+                                    <option value="Confirmed" selected="@(ViewBag.Status == "Confirmed")">تایید شده</option>
+                                    <option value="Completed" selected="@(ViewBag.Status == "Completed")">تکمیل شده</option>
+                                    <option value="Cancelled" selected="@(ViewBag.Status == "Cancelled")">لغو شده</option>
+                                    <option value="NoShow" selected="@(ViewBag.Status == "NoShow")">عدم حضور</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">&nbsp;</label>
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="bi bi-search"></i> جستجو
+                                    </button>
+                                    <a href="@Url.Action("Index", new { slug = ViewBag.RestaurantSlug })" 
+                                       class="btn btn-secondary">
+                                        <i class="bi bi-x"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- آمار کوتاه -->
+            <div class="row mb-3">
+                <div class="col-lg-3 col-md-6">
+                    <div class="small-box bg-warning">
+                        <div class="inner">
+                            <h3>@Model.Count(r => r.Status == EazyMenu.Domain.Enums.ReservationStatus.Pending)</h3>
+                            <p>در انتظار تایید</p>
+                        </div>
+                        <div class="icon">
+                            <i class="bi bi-hourglass-split"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="small-box bg-success">
+                        <div class="inner">
+                            <h3>@Model.Count(r => r.Status == EazyMenu.Domain.Enums.ReservationStatus.Confirmed)</h3>
+                            <p>تایید شده</p>
+                        </div>
+                        <div class="icon">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="small-box bg-primary">
+                        <div class="inner">
+                            <h3>@Model.Count(r => r.Status == EazyMenu.Domain.Enums.ReservationStatus.Completed)</h3>
+                            <p>تکمیل شده</p>
+                        </div>
+                        <div class="icon">
+                            <i class="bi bi-flag"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="small-box bg-danger">
+                        <div class="inner">
+                            <h3>@Model.Count(r => r.Status == EazyMenu.Domain.Enums.ReservationStatus.Cancelled)</h3>
+                            <p>لغو شده</p>
+                        </div>
+                        <div class="icon">
+                            <i class="bi bi-x-circle"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- جدول رزروها -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">لیست رزروها - @ViewBag.RestaurantName</h3>
+                    <div class="card-tools">
+                        <a href="@Url.Action("Calendar", new { slug = ViewBag.RestaurantSlug })" 
+                           class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-calendar3"></i> نمای تقویم
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    @if (Model.Any())
+                    {
+                        <table class="table table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th>شماره رزرو</th>
+                                    <th>مشتری</th>
+                                    <th>تلفن</th>
+                                    <th>تاریخ</th>
+                                    <th>ساعت</th>
+                                    <th>تعداد نفرات</th>
+                                    <th>میز</th>
+                                    <th>وضعیت</th>
+                                    <th>عملیات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var reservation in Model)
+                                {
+                                    <tr class="@(reservation.IsPast ? "table-secondary" : "")">
+                                        <td>
+                                            <strong>@reservation.ReservationNumber</strong>
+                                        </td>
+                                        <td>@reservation.CustomerName</td>
+                                        <td dir="ltr">@reservation.CustomerPhone</td>
+                                        <td>@reservation.FormattedDate</td>
+                                        <td dir="ltr">@reservation.FormattedTime</td>
+                                        <td>
+                                            <span class="badge bg-info">@reservation.GuestsCount نفر</span>
+                                        </td>
+                                        <td>
+                                            @if (reservation.TableNumber.HasValue)
+                                            {
+                                                <span class="badge bg-secondary">میز @reservation.TableNumber</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">-</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <span class="@reservation.StatusBadgeClass">
+                                                @reservation.StatusDisplay
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <a href="@Url.Action("Details", new { id = reservation.Id })" 
+                                                   class="btn btn-outline-primary" title="جزئیات">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                @if (reservation.Status == EazyMenu.Domain.Enums.ReservationStatus.Pending && !reservation.IsPast)
+                                                {
+                                                    <button type="button" class="btn btn-outline-success" 
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#confirmModal-@reservation.Id" 
+                                                            title="تایید">
+                                                        <i class="bi bi-check-circle"></i>
+                                                    </button>
+                                                }
+                                                @if ((reservation.Status == EazyMenu.Domain.Enums.ReservationStatus.Pending || 
+                                                      reservation.Status == EazyMenu.Domain.Enums.ReservationStatus.Confirmed) && 
+                                                     !reservation.IsPast)
+                                                {
+                                                    <button type="button" class="btn btn-outline-danger" 
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#cancelModal-@reservation.Id" 
+                                                            title="لغو">
+                                                        <i class="bi bi-x-circle"></i>
+                                                    </button>
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="bi bi-calendar-x display-1 text-muted"></i>
+                            <p class="text-muted mt-3">رزرویی یافت نشد</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Modal‌های تایید و لغو -->
+@foreach (var reservation in Model)
+{
+    <!-- Modal تایید -->
+    @if (reservation.Status == EazyMenu.Domain.Enums.ReservationStatus.Pending && !reservation.IsPast)
+    {
+        <div class="modal fade" id="confirmModal-@reservation.Id" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title">تایید رزرو</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form asp-action="Confirm" method="post">
+                        <input type="hidden" name="id" value="@reservation.Id" />
+                        <div class="modal-body">
+                            <p>آیا مطمئن هستید که می‌خواهید این رزرو را تایید کنید؟</p>
+                            <div class="mb-3">
+                                <label class="form-label">شماره میز (اختیاری):</label>
+                                <input type="number" name="tableNumber" class="form-control" 
+                                       placeholder="مثال: 5" min="1" />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle"></i> تایید رزرو
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Modal لغو -->
+    @if ((reservation.Status == EazyMenu.Domain.Enums.ReservationStatus.Pending || 
+          reservation.Status == EazyMenu.Domain.Enums.ReservationStatus.Confirmed) && 
+         !reservation.IsPast)
+    {
+        <div class="modal fade" id="cancelModal-@reservation.Id" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title">لغو رزرو</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form asp-action="Cancel" method="post">
+                        <input type="hidden" name="id" value="@reservation.Id" />
+                        <div class="modal-body">
+                            <p>آیا مطمئن هستید که می‌خواهید این رزرو را لغو کنید؟</p>
+                            <div class="mb-3">
+                                <label class="form-label">دلیل لغو:</label>
+                                <textarea name="cancellationReason" class="form-control" rows="3" 
+                                          placeholder="دلیل لغو را وارد کنید..." required></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> لغو رزرو
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/multi-calendar-datepicker/moment-bundled.js"></script>
+    <script src="~/lib/multi-calendar-datepicker/multi-calendar-datepicker.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Initialize From Date Persian Picker
+            $('#fromDatePersian').multiCalendarDatePicker({
+                calendar: 'persian',
+                locale: 'fa',
+                format: 'YYYY/MM/DD',
+                rtl: true,
+                theme: 'light',
+                todayHighlight: true,
+                showToday: true,
+                showClear: true,
+                autoClose: true
+            });
+            
+            // Initialize To Date Persian Picker
+            $('#toDatePersian').multiCalendarDatePicker({
+                calendar: 'persian',
+                locale: 'fa',
+                format: 'YYYY/MM/DD',
+                rtl: true,
+                theme: 'light',
+                todayHighlight: true,
+                showToday: true,
+                showClear: true,
+                autoClose: true
+            });
+            
+            // Convert existing Gregorian dates to Persian (if any)
+            var fromDateGregorian = $('#fromDateGregorian').val();
+            var toDateGregorian = $('#toDateGregorian').val();
+            
+            if (fromDateGregorian && fromDateGregorian.trim() !== '') {
+                var fromMoment = moment(fromDateGregorian, 'YYYY-MM-DD');
+                if (fromMoment.isValid()) {
+                    $('#fromDatePersian').val(fromMoment.format('jYYYY/jMM/jDD'));
+                }
+            }
+            
+            if (toDateGregorian && toDateGregorian.trim() !== '') {
+                var toMoment = moment(toDateGregorian, 'YYYY-MM-DD');
+                if (toMoment.isValid()) {
+                    $('#toDatePersian').val(toMoment.format('jYYYY/jMM/jDD'));
+                }
+            }
+            
+            // Handle From Date change
+            $('#fromDatePersian').on('mcdp:change', function(e, data) {
+                const persianParts = data.formatted.split('/');
+                const gregorianMoment = moment(persianParts[0] + '/' + persianParts[1] + '/' + persianParts[2], 'jYYYY/jMM/jDD');
+                $('#fromDateGregorian').val(gregorianMoment.format('YYYY-MM-DD'));
+            });
+            
+            // Handle To Date change
+            $('#toDatePersian').on('mcdp:change', function(e, data) {
+                const persianParts = data.formatted.split('/');
+                const gregorianMoment = moment(persianParts[0] + '/' + persianParts[1] + '/' + persianParts[2], 'jYYYY/jMM/jDD');
+                $('#toDateGregorian').val(gregorianMoment.format('YYYY-MM-DD'));
+            });
+            
+            // Handle clear button
+            $('#fromDatePersian').on('mcdp:clear', function() {
+                $('#fromDateGregorian').val('');
+            });
+            
+            $('#toDatePersian').on('mcdp:clear', function() {
+                $('#toDateGregorian').val('');
+            });
+        });
+    </script>
+}
