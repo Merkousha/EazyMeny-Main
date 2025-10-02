@@ -85,14 +85,12 @@
             </ul>
         </li>
 
-        <!-- Placeholder sections -->
+        <!-- Orders -->
         <li class="nav-item">
-            <a href="#" class="nav-link disabled" aria-disabled="true">
+            <a asp-area="Admin" asp-controller="Order" asp-action="Index"
+               class="nav-link @(IsActive("Order") ? "active" : string.Empty)">
                 <i class="nav-icon bi bi-bag-check"></i>
-                <p>
-                    سفارشات
-                    <span class="nav-badge badge text-bg-secondary me-3">به‌زودی</span>
-                </p>
+                <p>سفارش‌ها</p>
             </a>
         </li>
         <li class="nav-item">

@@ -1,0 +1,178 @@
+@using System.Linq
+@model IEnumerable<EazyMenu.Application.Common.Models.Order.OrderListDto>
+@{
+    ViewData["Title"] = "مدیریت سفارش‌ها";
+    var totalOrders = Model.Count();
+    var paidOrders = Model.Count(o => o.IsPaid);
+    var pendingOrders = Model.Count(o => o.Status == "در انتظار تایید");
+    var deliveredOrders = Model.Count(o => o.Status == "تحویل داده شده");
+    var currentStatus = (ViewData["Status"]?.ToString() ?? string.Empty).ToLowerInvariant();
+
+    string GetStatusBadgeClass(string status) => status switch
+    {
+        "در انتظار تایید" => "bg-secondary",
+        "تایید شده" => "bg-info",
+        "در حال آماده‌سازی" => "bg-warning text-dark",
+        "آماده تحویل" => "bg-primary",
+        "تحویل داده شده" => "bg-success",
+        "لغو شده" => "bg-danger",
+        _ => "bg-light text-dark"
+    };
+}
+
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">@ViewData["Title"]</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-end">
+                    <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index">خانه</a></li>
+                    <li class="breadcrumb-item active">سفارش‌ها</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-3 col-6">
+                <div class="small-box text-bg-primary">
+                    <div class="inner">
+                        <h3>@totalOrders</h3>
+                        <p>تعداد کل سفارش‌ها</p>
+                    </div>
+                    <i class="small-box-icon bi bi-basket2"></i>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="small-box text-bg-success">
+                    <div class="inner">
+                        <h3>@paidOrders</h3>
+                        <p>سفارش‌های پرداخت شده</p>
+                    </div>
+                    <i class="small-box-icon bi bi-credit-card"></i>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="small-box text-bg-warning">
+                    <div class="inner">
+                        <h3>@pendingOrders</h3>
+                        <p>در انتظار تایید</p>
+                    </div>
+                    <i class="small-box-icon bi bi-clock-history"></i>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="small-box text-bg-success bg-gradient">
+                    <div class="inner">
+                        <h3>@deliveredOrders</h3>
+                        <p>تحویل داده شده</p>
+                    </div>
+                    <i class="small-box-icon bi bi-truck"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 class="card-title"><i class="bi bi-list-ul ms-1"></i> لیست سفارش‌ها</h3>
+                <div>
+                    <div class="btn-group" role="group">
+                        <a asp-area="Admin" asp-controller="Order" asp-action="Index" asp-route-restaurantId="@ViewData["RestaurantId"]" class="btn btn-outline-secondary btn-sm @(string.IsNullOrEmpty(currentStatus) ? "active" : string.Empty)">همه</a>
+                        <a asp-area="Admin" asp-controller="Order" asp-action="Index" asp-route-restaurantId="@ViewData["RestaurantId"]" asp-route-status="pending" class="btn btn-outline-secondary btn-sm @(currentStatus == "pending" ? "active" : string.Empty)">در انتظار</a>
+                        <a asp-area="Admin" asp-controller="Order" asp-action="Index" asp-route-restaurantId="@ViewData["RestaurantId"]" asp-route-status="confirmed" class="btn btn-outline-secondary btn-sm @(currentStatus == "confirmed" ? "active" : string.Empty)">تایید شده</a>
+                        <a asp-area="Admin" asp-controller="Order" asp-action="Index" asp-route-restaurantId="@ViewData["RestaurantId"]" asp-route-status="preparing" class="btn btn-outline-secondary btn-sm @(currentStatus == "preparing" ? "active" : string.Empty)">در حال آماده‌سازی</a>
+                        <a asp-area="Admin" asp-controller="Order" asp-action="Index" asp-route-restaurantId="@ViewData["RestaurantId"]" asp-route-status="ready" class="btn btn-outline-secondary btn-sm @(currentStatus == "ready" ? "active" : string.Empty)">آماده تحویل</a>
+                        <a asp-area="Admin" asp-controller="Order" asp-action="Index" asp-route-restaurantId="@ViewData["RestaurantId"]" asp-route-status="delivered" class="btn btn-outline-secondary btn-sm @(currentStatus == "delivered" ? "active" : string.Empty)">تحویل شده</a>
+                        <a asp-area="Admin" asp-controller="Order" asp-action="Index" asp-route-restaurantId="@ViewData["RestaurantId"]" asp-route-status="cancelled" class="btn btn-outline-secondary btn-sm @(currentStatus == "cancelled" ? "active" : string.Empty)">لغو شده</a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body table-responsive p-0">
+                @if (!Model.Any())
+                {
+                    <div class="text-center py-5">
+                        <i class="bi bi-inbox display-1 text-muted"></i>
+                        <p class="mt-3 text-muted">هنوز سفارشی ثبت نشده است.</p>
+                    </div>
+                }
+                else
+                {
+                    <table class="table table-hover table-striped mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>شماره سفارش</th>
+                                <th>رستوران</th>
+                                <th>مشتری</th>
+                                <th>نوع</th>
+                                <th>مبلغ (تومان)</th>
+                                <th>وضعیت</th>
+                                <th>پرداخت</th>
+                                <th>تاریخ ثبت</th>
+                                <th class="text-center">عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var order in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@order.OrderNumber</strong>
+                                        <div class="text-muted small">@order.OrderDate.ToString("yyyy/MM/dd HH:mm")</div>
+                                    </td>
+                                    <td>@order.RestaurantName</td>
+                                    <td>
+                                        <div>@order.CustomerName</div>
+                                        <small class="text-muted">@order.CustomerPhone</small>
+                                    </td>
+                                    <td>
+                                        @if (order.IsDelivery)
+                                        {
+                                            <span class="badge bg-info">دلیوری</span>
+                                        }
+                                        else if (order.TableNumber.HasValue)
+                                        {
+                                            <span class="badge bg-secondary">میز @order.TableNumber</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-light text-dark">حضوری</span>
+                                        }
+                                    </td>
+                                    <td>@order.TotalAmount.ToString("N0")</td>
+                                    <td>
+                                        <span class="badge @GetStatusBadgeClass(order.Status)">@order.Status</span>
+                                    </td>
+                                    <td>
+                                        @if (order.IsPaid)
+                                        {
+                                            <span class="badge bg-success">پرداخت شده</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">پرداخت نشده</span>
+                                        }
+                                        <div class="text-muted small">
+                                            @(order.IsOnlinePayment ? "آنلاین" : "نقدی")
+                                        </div>
+                                    </td>
+                                    <td>@order.OrderDate.ToString("HH:mm")</td>
+                                    <td class="text-center">
+                                        <a asp-area="Admin" asp-controller="Order" asp-action="Details" asp-route-id="@order.Id" class="btn btn-sm btn-primary">
+                                            <i class="bi bi-eye"></i>
+                                            جزئیات
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+</section>

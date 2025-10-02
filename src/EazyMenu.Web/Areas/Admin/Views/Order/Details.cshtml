@@ -1,0 +1,240 @@
+@using System.Linq
+@model EazyMenu.Application.Common.Models.Order.OrderDetailsDto
+@{
+    ViewData["Title"] = $"سفارش {Model.OrderNumber}";
+
+    string GetStatusBadgeClass(string status) => status switch
+    {
+        "در انتظار تایید" => "bg-secondary",
+        "تایید شده" => "bg-info",
+        "در حال آماده‌سازی" => "bg-warning text-dark",
+        "آماده تحویل" => "bg-primary",
+        "تحویل داده شده" => "bg-success",
+        "لغو شده" => "bg-danger",
+        _ => "bg-light text-dark"
+    };
+}
+
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">@ViewData["Title"]</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-end">
+                    <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index">خانه</a></li>
+                    <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Order" asp-action="Index">سفارش‌ها</a></li>
+                    <li class="breadcrumb-item active">@Model.OrderNumber</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card mb-3">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h3 class="card-title">اطلاعات سفارش</h3>
+                        <span class="badge @GetStatusBadgeClass(Model.Status)">@Model.Status</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="fw-bold mb-1">رستوران</div>
+                                <div>@Model.RestaurantName</div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="fw-bold mb-1">تاریخ ثبت</div>
+                                <div>@Model.OrderDate.ToString("yyyy/MM/dd HH:mm")</div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="fw-bold mb-1">نام مشتری</div>
+                                <div>@Model.CustomerName</div>
+                                <div class="text-muted">@Model.CustomerPhone</div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="fw-bold mb-1">نوع سفارش</div>
+                                <div>
+                                    @if (Model.IsDelivery)
+                                    {
+                                        <span class="badge bg-info">دلیوری</span>
+                                    }
+                                    else if (Model.TableNumber.HasValue)
+                                    {
+                                        <span class="badge bg-secondary">حضوری (میز @Model.TableNumber)</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-light text-dark">حضوری</span>
+                                    }
+                                </div>
+                                @if (Model.IsDelivery && !string.IsNullOrWhiteSpace(Model.DeliveryAddress))
+                                {
+                                    <div class="mt-2 text-muted small">
+                                        <i class="bi bi-geo-alt ms-1"></i>
+                                        @Model.DeliveryAddress
+                                    </div>
+                                }
+                            </div>
+                            <div class="col-md-6">
+                                <div class="fw-bold mb-1">زمان مورد انتظار</div>
+                                <div>@(Model.DesiredDeliveryTime?.ToString("HH:mm") ?? "ثبت نشده")</div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="fw-bold mb-1">یادداشت مشتری</div>
+                                <div>@(string.IsNullOrWhiteSpace(Model.CustomerNotes) ? "-" : Model.CustomerNotes)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h3 class="card-title">آیتم‌های سفارش</h3>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>نام محصول</th>
+                                    <th class="text-center">تعداد</th>
+                                    <th class="text-center">قیمت واحد</th>
+                                    <th class="text-center">مجموع</th>
+                                    <th>توضیحات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Items)
+                                {
+                                    <tr>
+                                        <td>@item.ProductName</td>
+                                        <td class="text-center">@item.Quantity</td>
+                                        <td class="text-center">@item.UnitPrice.ToString("N0")</td>
+                                        <td class="text-center">@item.TotalPrice.ToString("N0")</td>
+                                        <td>
+                                            @if (!string.IsNullOrWhiteSpace(item.SelectedOptions))
+                                            {
+                                                <div class="small text-muted">@item.SelectedOptions</div>
+                                            }
+                                            @if (!string.IsNullOrWhiteSpace(item.SpecialInstructions))
+                                            {
+                                                <div class="small">@item.SpecialInstructions</div>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h3 class="card-title">وضعیت پرداخت</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="badge @(Model.IsPaid ? "bg-success" : "bg-danger") me-2">
+                                @Model.PaymentStatus
+                            </span>
+                            <span class="text-muted">(@(Model.IsOnlinePayment ? "آنلاین" : "نقدی"))</span>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>جمع جزء</span>
+                                <span>@Model.SubTotal.ToString("N0")</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>هزینه ارسال</span>
+                                <span>@Model.DeliveryFee.ToString("N0")</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>مالیات</span>
+                                <span>@Model.Tax.ToString("N0")</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>تخفیف</span>
+                                <span>@Model.Discount.ToString("N0")</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between fw-bold">
+                                <span>قابل پرداخت</span>
+                                <span>@Model.TotalAmount.ToString("N0") تومان</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h3 class="card-title">جدول زمانی سفارش</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul class="timeline timeline-inverse">
+                            <li class="timeline-item">
+                                <i class="bi bi-basket2 timeline-icon bg-primary"></i>
+                                <div class="timeline-content">
+                                    <span class="timeline-date">@Model.OrderDate.ToString("yyyy/MM/dd HH:mm")</span>
+                                    <h6 class="timeline-title">ثبت سفارش</h6>
+                                </div>
+                            </li>
+                            @if (Model.PreparedAt.HasValue)
+                            {
+                                <li class="timeline-item">
+                                    <i class="bi bi-fire timeline-icon bg-warning"></i>
+                                    <div class="timeline-content">
+                                        <span class="timeline-date">@Model.PreparedAt.Value.ToString("yyyy/MM/dd HH:mm")</span>
+                                        <h6 class="timeline-title">آماده‌سازی سفارش</h6>
+                                    </div>
+                                </li>
+                            }
+                            @if (Model.DeliveredAt.HasValue)
+                            {
+                                <li class="timeline-item">
+                                    <i class="bi bi-truck timeline-icon bg-success"></i>
+                                    <div class="timeline-content">
+                                        <span class="timeline-date">@Model.DeliveredAt.Value.ToString("yyyy/MM/dd HH:mm")</span>
+                                        <h6 class="timeline-title">تحویل به مشتری</h6>
+                                    </div>
+                                </li>
+                            }
+                            <li class="timeline-item">
+                                <i class="bi bi-circle timeline-icon bg-transparent"></i>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(Model.CancellationReason))
+                {
+                    <div class="card border-danger">
+                        <div class="card-header bg-danger text-white">
+                            <h3 class="card-title">دلیل لغو</h3>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-0">@Model.CancellationReason</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-12 d-flex justify-content-between">
+                <a asp-area="Admin" asp-controller="Order" asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-right"></i>
+                    بازگشت به لیست
+                </a>
+                <div class="btn-group">
+                    <a class="btn btn-outline-primary" asp-area="Restaurant" asp-controller="Order" asp-action="Details" asp-route-id="@Model.Id" target="_blank">
+                        <i class="bi bi-box-arrow-up-right"></i>
+                        مشاهده در پنل رستوران
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
