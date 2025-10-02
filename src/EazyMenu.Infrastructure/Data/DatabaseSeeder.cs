@@ -28,6 +28,9 @@ public static class DatabaseSeeder
         // Seed Users
         var (adminUser, ownerUser, customerUser) = await SeedUsersAsync(userManager);
 
+        // Seed SubscriptionPlans (باید قبل از Subscriptions باشد)
+        var plans = await SeedSubscriptionPlansAsync(context);
+
         // Seed Restaurants
         var restaurants = await SeedRestaurantsAsync(context, ownerUser.Id);
 
@@ -42,7 +45,7 @@ public static class DatabaseSeeder
         await SeedProductsAsync(context, categories);
 
         // Seed Subscriptions
-        await SeedSubscriptionsAsync(context, ownerUser.Id);
+        await SeedSubscriptionsAsync(context, ownerUser.Id, plans);
 
         await context.SaveChangesAsync();
 
@@ -466,7 +469,102 @@ public static class DatabaseSeeder
         Console.WriteLine($"✅ {products.Count} products seeded");
     }
 
-    private static async Task SeedSubscriptionsAsync(ApplicationDbContext context, Guid userId)
+    private static async Task<List<SubscriptionPlan>> SeedSubscriptionPlansAsync(ApplicationDbContext context)
+    {
+        // بررسی اگر پلن‌ها وجود دارند، فقط بازگردانی
+        var existingPlans = await context.SubscriptionPlans.ToListAsync();
+        if (existingPlans.Any())
+        {
+            Console.WriteLine($"⚠️  SubscriptionPlans already exist ({existingPlans.Count} plans), skipping seed");
+            return existingPlans.OrderBy(p => p.PlanType).ToList();
+        }
+        
+        Console.WriteLine("🌱 Seeding SubscriptionPlans...");
+
+        var plans = new List<SubscriptionPlan>
+        {
+            // پلن پایه
+            new SubscriptionPlan
+            {
+                Id = Guid.NewGuid(),
+                PlanType = PlanType.Basic,
+                Name = "پایه",
+                Description = "مناسب برای رستوران‌های کوچک و استارتاپ‌ها",
+                PriceMonthly = 500000, // 500 هزار تومان
+                PriceYearly = 5000000, // 5 میلیون تومان (تخفیف 17%)
+                MaxProducts = 50,
+                MaxCategories = 10,
+                MaxOrders = 100,
+                HasQRCode = true,
+                HasWebsite = false,
+                HasReservation = false,
+                HasAnalytics = false,
+                SupportLevel = "ایمیل",
+                Features = @"[""تا 50 محصول"",""تا 10 دسته‌بندی"",""100 سفارش در ماه"",""QR Code اختصاصی"",""پشتیبانی ایمیل""]",
+                DisplayOrder = 1,
+                IsActive = true,
+                IsPopular = false,
+                CreatedAt = DateTime.UtcNow
+            },
+            
+            // پلن استاندارد (محبوب)
+            new SubscriptionPlan
+            {
+                Id = Guid.NewGuid(),
+                PlanType = PlanType.Standard,
+                Name = "استاندارد",
+                Description = "مناسب برای رستوران‌های متوسط با نیاز به امکانات بیشتر",
+                PriceMonthly = 1000000, // 1 میلیون تومان
+                PriceYearly = 10000000, // 10 میلیون تومان (تخفیف 17%)
+                MaxProducts = 200,
+                MaxCategories = 50,
+                MaxOrders = 500,
+                HasQRCode = true,
+                HasWebsite = true,
+                HasReservation = true,
+                HasAnalytics = true,
+                SupportLevel = "تلفنی",
+                Features = @"[""تا 200 محصول"",""تا 50 دسته‌بندی"",""500 سفارش در ماه"",""QR Code اختصاصی"",""وب‌سایت اختصاصی"",""سیستم رزرو میز"",""گزارش‌گیری پایه"",""پشتیبانی تلفنی""]",
+                DisplayOrder = 2,
+                IsActive = true,
+                IsPopular = true, // این پلن محبوب است
+                CreatedAt = DateTime.UtcNow
+            },
+            
+            // پلن پیشرفته
+            new SubscriptionPlan
+            {
+                Id = Guid.NewGuid(),
+                PlanType = PlanType.Premium,
+                Name = "پیشرفته",
+                Description = "مناسب برای رستوران‌های بزرگ و زنجیره‌ای",
+                PriceMonthly = 2000000, // 2 میلیون تومان
+                PriceYearly = 20000000, // 20 میلیون تومان (تخفیف 17%)
+                MaxProducts = -1, // نامحدود
+                MaxCategories = -1, // نامحدود
+                MaxOrders = -1, // نامحدود
+                HasQRCode = true,
+                HasWebsite = true,
+                HasReservation = true,
+                HasAnalytics = true,
+                SupportLevel = "اختصاصی 24/7",
+                Features = @"[""محصولات نامحدود"",""دسته‌بندی نامحدود"",""سفارش نامحدود"",""QR Code اختصاصی"",""وب‌سایت اختصاصی با قالب‌های متعدد"",""سیستم رزرو پیشرفته"",""گزارش‌گیری تحلیلی"",""مدیریت چند شعبه"",""پشتیبانی اختصاصی 24/7""]",
+                DisplayOrder = 3,
+                IsActive = true,
+                IsPopular = false,
+                CreatedAt = DateTime.UtcNow
+            }
+        };
+
+        await context.SubscriptionPlans.AddRangeAsync(plans);
+        await context.SaveChangesAsync();
+        
+        Console.WriteLine($"✅ {plans.Count} SubscriptionPlans seeded successfully");
+        
+        return plans;
+    }
+
+    private static async Task SeedSubscriptionsAsync(ApplicationDbContext context, Guid userId, List<SubscriptionPlan> plans)
     {
         if (await context.Subscriptions.AnyAsync())
         {
@@ -481,31 +579,38 @@ public static class DatabaseSeeder
             return;
         }
 
-        // TODO: باید ابتدا SubscriptionPlan ها را seed کنیم
-        // var subscription = new Subscription
-        // {
-        //     Id = Guid.NewGuid(),
-        //     RestaurantId = restaurant.Id,
-        //     SubscriptionPlanId = Guid.Empty, // باید از دیتابیس گرفته شود
-        //     Status = SubscriptionStatus.Active,
-        //     StartDate = DateTime.UtcNow.AddDays(-30),
-        //     EndDate = DateTime.UtcNow.AddDays(60),
-        //     Amount = 500000,
-        //     IsYearly = false,
-        //     AutoRenew = true,
-        //     MaxProducts = 100,
-        //     MaxOrdersPerMonth = 1000,
-        //     HasReservationFeature = true,
-        //     HasWebsiteBuilder = true,
-        //     HasAdvancedReporting = false,
-        //     CurrentProductCount = 0,
-        //     CurrentMonthOrderCount = 0,
-        //     CreatedAt = DateTime.UtcNow.AddDays(-30)
-        // };
+        // Get Standard plan (محبوب‌ترین پلن)
+        var standardPlan = plans.FirstOrDefault(p => p.PlanType == PlanType.Standard);
+        if (standardPlan == null)
+        {
+            Console.WriteLine("⚠️  Standard plan not found for subscription seeding");
+            return;
+        }
 
-        // await context.Subscriptions.AddAsync(subscription);
-        // await context.SaveChangesAsync();
-        Console.WriteLine($"⚠️ Subscription seeding skipped - needs SubscriptionPlan entity first");
+        var subscription = new Subscription
+        {
+            Id = Guid.NewGuid(),
+            RestaurantId = restaurant.Id,
+            SubscriptionPlanId = standardPlan.Id,
+            Status = SubscriptionStatus.Active,
+            StartDate = DateTime.UtcNow.AddDays(-30),
+            EndDate = DateTime.UtcNow.AddDays(60), // 60 روز باقیمانده
+            Amount = standardPlan.PriceMonthly * 3, // 3 ماهه
+            IsYearly = false,
+            AutoRenew = true,
+            MaxProducts = standardPlan.MaxProducts,
+            MaxOrdersPerMonth = standardPlan.MaxOrders,
+            HasReservationFeature = standardPlan.HasReservation,
+            HasWebsiteBuilder = standardPlan.HasWebsite,
+            HasAdvancedReporting = standardPlan.HasAnalytics,
+            CurrentProductCount = 0,
+            CurrentMonthOrderCount = 0,
+            CreatedAt = DateTime.UtcNow.AddDays(-30)
+        };
+
+        await context.Subscriptions.AddAsync(subscription);
+        await context.SaveChangesAsync();
+        Console.WriteLine($"✅ Subscription seeded for restaurant: {restaurant.Name} (Plan: {standardPlan.Name})");
     }
 
     private static async Task GenerateQRCodesAsync(List<Restaurant> restaurants, IQRCodeService qrCodeService)

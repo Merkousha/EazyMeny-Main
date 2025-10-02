@@ -1,0 +1,184 @@
+@model List<EazyMenu.Application.Common.Models.Subscription.SubscriptionPlanDto>
+@{
+    ViewData["Title"] = "انتخاب پلن اشتراک";
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h2 class="fw-bold mb-3">انتخاب پلن اشتراک</h2>
+            <p class="text-muted">بهترین پلن را برای رستوران خود انتخاب کنید</p>
+        </div>
+    </div>
+
+    <!-- Toggle سالانه/ماهانه -->
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <div class="btn-group" role="group">
+                <input type="radio" class="btn-check" name="planDuration" id="monthly" value="monthly" checked>
+                <label class="btn btn-outline-primary" for="monthly">ماهانه</label>
+
+                <input type="radio" class="btn-check" name="planDuration" id="yearly" value="yearly">
+                <label class="btn btn-outline-primary" for="yearly">سالانه (تخفیف ویژه)</label>
+            </div>
+        </div>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+        @foreach (var plan in Model)
+        {
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm @(plan.IsPopular ? "border-primary" : "")">
+                    @if (plan.IsPopular)
+                    {
+                        <div class="card-header bg-primary text-white text-center">
+                            <small><i class="bi bi-star-fill"></i> محبوب‌ترین</small>
+                        </div>
+                    }
+                    <div class="card-body d-flex flex-column">
+                        <h4 class="card-title text-center mb-3">@plan.Name</h4>
+                        <p class="text-muted text-center mb-4">@plan.Description</p>
+
+                        <!-- قیمت -->
+                        <div class="text-center mb-4">
+                            <h2 class="fw-bold price-monthly" style="display: block;">
+                                @plan.PriceMonthly.ToString("N0") <small class="text-muted fs-6">تومان/ماه</small>
+                            </h2>
+                            <h2 class="fw-bold price-yearly" style="display: none;">
+                                @plan.PriceYearly.ToString("N0") <small class="text-muted fs-6">تومان/سال</small>
+                            </h2>
+                            @if (plan.YearlyDiscountPercentage > 0)
+                            {
+                                <span class="badge bg-success price-yearly" style="display: none;">
+                                    @plan.YearlyDiscountPercentage.ToString("0") % تخفیف
+                                </span>
+                            }
+                        </div>
+
+                        <!-- ویژگی‌ها -->
+                        <ul class="list-unstyled mb-4">
+                            @if (plan.IsUnlimitedProducts)
+                            {
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>محصولات نامحدود</li>
+                            }
+                            else
+                            {
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>تا @plan.MaxProducts محصول</li>
+                            }
+
+                            @if (plan.IsUnlimitedCategories)
+                            {
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>دسته‌بندی نامحدود</li>
+                            }
+                            else
+                            {
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>تا @plan.MaxCategories دسته‌بندی</li>
+                            }
+
+                            @if (plan.IsUnlimitedOrders)
+                            {
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>سفارش نامحدود</li>
+                            }
+                            else
+                            {
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>@plan.MaxOrders سفارش/ماه</li>
+                            }
+
+                            @if (plan.HasQRCode)
+                            {
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>QR Code اختصاصی</li>
+                            }
+
+                            @if (plan.HasWebsite)
+                            {
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>وب‌سایت اختصاصی</li>
+                            }
+
+                            @if (plan.HasReservation)
+                            {
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>سیستم رزرو میز</li>
+                            }
+
+                            @if (plan.HasAnalytics)
+                            {
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>گزارش‌گیری تحلیلی</li>
+                            }
+
+                            <li class="mb-2"><i class="bi bi-headset text-primary me-2"></i>پشتیبانی: @plan.SupportLevel</li>
+                        </ul>
+
+                        <!-- دکمه خرید -->
+                        <div class="mt-auto">
+                            <form asp-action="Purchase" method="post" class="purchase-form">
+                                <input type="hidden" name="planId" value="@plan.Id" />
+                                <input type="hidden" name="isYearly" class="is-yearly-input" value="false" />
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn @(plan.IsPopular ? "btn-primary" : "btn-outline-primary") w-100">
+                                    انتخاب پلن @plan.Name
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-12 text-center">
+            <p class="text-muted">
+                <i class="bi bi-shield-check me-1"></i>
+                تمامی پرداخت‌ها از طریق درگاه امن زرین‌پال انجام می‌شود
+            </p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Toggle بین ماهانه و سالانه
+        document.querySelectorAll('input[name="planDuration"]').forEach(radio => {
+            radio.addEventListener('change', function () {
+                const isYearly = this.value === 'yearly';
+                
+                // نمایش/مخفی کردن قیمت‌ها
+                document.querySelectorAll('.price-monthly').forEach(el => {
+                    el.style.display = isYearly ? 'none' : 'block';
+                });
+                document.querySelectorAll('.price-yearly').forEach(el => {
+                    el.style.display = isYearly ? 'block' : 'none';
+                });
+
+                // به‌روزرسانی input های hidden
+                document.querySelectorAll('.is-yearly-input').forEach(input => {
+                    input.value = isYearly ? 'true' : 'false';
+                });
+            });
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .border-primary {
+            border-width: 2px !important;
+        }
+    </style>
+}

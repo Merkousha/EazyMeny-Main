@@ -16,4 +16,14 @@ public interface IRepository<T> where T : BaseEntity
     Task DeleteAsync(T entity, CancellationToken cancellationToken = default);
     Task<int> CountAsync(Expression<Func<T, bool>>? predicate = null, CancellationToken cancellationToken = default);
     Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// دریافت با Include Navigation Properties
+    /// </summary>
+    Task<T?> GetByIdWithIncludesAsync(Guid id, CancellationToken cancellationToken = default, params Expression<Func<T, object>>[] includes);
+    
+    /// <summary>
+    /// جستجو با Include Navigation Properties
+    /// </summary>
+    Task<IEnumerable<T>> FindWithIncludesAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default, params Expression<Func<T, object>>[] includes);
 }

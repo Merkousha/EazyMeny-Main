@@ -1,0 +1,88 @@
+@{
+    ViewData["Title"] = "پرداخت موفق";
+    var refID = ViewBag.RefID as long?;
+    var amount = ViewBag.Amount as decimal?;
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-body text-center p-5">
+                    <!-- آیکون موفقیت -->
+                    <div class="mb-4">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+                    </div>
+
+                    <h3 class="fw-bold text-success mb-3">پرداخت با موفقیت انجام شد!</h3>
+                    <p class="text-muted mb-4">اشتراک شما با موفقیت فعال شد</p>
+
+                    <!-- جزئیات پرداخت -->
+                    <div class="bg-light rounded p-4 mb-4">
+                        @if (refID.HasValue)
+                        {
+                            <div class="row mb-3">
+                                <div class="col-6 text-end">
+                                    <strong>کد رهگیری:</strong>
+                                </div>
+                                <div class="col-6 text-start">
+                                    <span class="text-primary">@refID.Value.ToString("N0")</span>
+                                </div>
+                            </div>
+                        }
+
+                        @if (amount.HasValue && amount > 0)
+                        {
+                            <div class="row">
+                                <div class="col-6 text-end">
+                                    <strong>مبلغ پرداختی:</strong>
+                                </div>
+                                <div class="col-6 text-start">
+                                    <span class="text-success fw-bold">@amount.Value.ToString("N0") تومان</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- پیام -->
+                    <div class="alert alert-info mb-4" role="alert">
+                        <i class="bi bi-info-circle me-2"></i>
+                        اشتراک شما فعال شد و می‌توانید از تمامی امکانات استفاده کنید
+                    </div>
+
+                    <!-- دکمه‌ها -->
+                    <div class="d-grid gap-2">
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg">
+                            <i class="bi bi-house-door me-2"></i>
+                            بازگشت به داشبورد
+                        </a>
+                        <a asp-area="Restaurant" asp-controller="Product" asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-plus-circle me-2"></i>
+                            شروع افزودن محصولات
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- راهنما -->
+            <div class="mt-4 text-center">
+                <p class="text-muted small">
+                    <i class="bi bi-question-circle me-1"></i>
+                    در صورت بروز مشکل با پشتیبانی تماس بگیرید
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .card {
+            border-radius: 15px;
+        }
+
+        .bg-light {
+            border-radius: 10px;
+        }
+    </style>
+}

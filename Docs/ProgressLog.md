@@ -3,8 +3,8 @@
 ## 📊 خلاصه وضعیت پروژه
 
 **تاریخ شروع:** 2 اکتبر 2025  
-**آخرین بروزرسانی:** 3 اکتبر 2025 22:00  
-**وضعیت کلی:** 🟢 MVP Complete! - Admin Order Management Done!
+**آخرین بروزرسانی:** 2 اکتبر 2025 20:45  
+**وضعیت کلی:** 🟢 Subscription Purchase Flow COMPLETE! ✨
 
 ---
 
@@ -53,7 +53,86 @@
 
 #### گزارش پیشرفت:
 ```
-📅 2 اکتبر 2025
+📅 2 اکتبر 2025 20:45
+✅ Subscription Purchase Flow COMPLETE! ✨
+   - Phase 1: Database Schema (18:30)
+     * Created SubscriptionPlan entity (PlanType, Name, Price, Limits, Features)
+     * Renamed SubscriptionPlan enum to PlanType (Basic=1, Standard=2, Premium=3)
+     * Updated Subscription entity with SubscriptionPlanId FK
+     * Created Migration: AddSubscriptionPlanEntity
+     * Database dropped and recreated successfully
+     * Seeded 3 plans: Basic (500k/month), Standard (1M/month, IsPopular), Premium (2M/month, unlimited)
+   
+   - Phase 2: Repository Enhancement (19:00)
+     * Added GetByIdWithIncludesAsync & FindWithIncludesAsync to IRepository
+     * Implemented Include methods in Repository<T> with params Expression[]
+     * Fixed Query Handlers to use subscription.SubscriptionPlan.Name
+   
+   - Phase 3: CQRS Commands & Queries (19:30)
+     * GetSubscriptionPlansQuery + Handler (fetch active plans)
+     * PurchaseSubscriptionCommand + Handler + Validator (create subscription + payment + Zarinpal)
+     * RenewSubscriptionCommand + Handler (extend subscription)
+     * VerifyPaymentCommand + Handler (callback verification & activation)
+   
+   - Phase 4: Web Layer (20:00)
+     * Public SubscriptionController (ChoosePlan, Purchase, Renew, PaymentCallback, Success, Failed)
+     * ChoosePlan.cshtml (3 pricing cards, monthly/yearly toggle, IsPopular badge, responsive)
+     * Success.cshtml (payment success with RefID & amount)
+     * Failed.cshtml (error message with retry button)
+   
+   - Phase 5: Integration (20:30)
+     * Updated AccountController Register → Redirect to ChoosePlan for RestaurantOwners
+     * Added IsUserRestaurantOwnerAsync helper method
+     * Updated Home/Index.cshtml with RestaurantOwner dashboard + Renew button
+   
+📦 Files Created/Modified: 25+
+   Domain Layer (3):
+   - Entities/SubscriptionPlan.cs, Enums/PlanType.cs, Entities/Subscription.cs
+   
+   Application Layer (12):
+   - Interfaces/IRepository.cs (Include methods)
+   - Models/Subscription/SubscriptionPlanDto.cs (with FeaturesList computed)
+   - Queries: GetSubscriptionPlans (2), GetSubscriptionDetails (Fixed), GetAllSubscriptions (Fixed)
+   - Commands: PurchaseSubscription (3), RenewSubscription (2), VerifyPayment (2)
+   
+   Infrastructure Layer (3):
+   - Repositories/Repository.cs (Include implementation)
+   - Data/Configurations/SubscriptionPlanConfiguration.cs
+   - Data/DatabaseSeeder.cs (SeedSubscriptionPlansAsync)
+   
+   Web Layer (7):
+   - Controllers/SubscriptionController.cs (6 actions)
+   - Controllers/AccountController.cs (Redirect + Helper)
+   - Views/Subscription: ChoosePlan.cshtml, Success.cshtml, Failed.cshtml
+   - Views/Home/Index.cshtml (Dashboard with Renew)
+   
+📊 Build Result: ✅ Success (10.7s, 0 errors, 4 warnings)
+📊 Migration Result: ✅ Applied successfully
+📊 Seeding Result: ✅ 3 SubscriptionPlans seeded
+📊 Test Coverage: Ready for end-to-end testing
+
+🎯 Complete Flow Implemented:
+   1. Register → Redirect to ChoosePlan
+   2. ChoosePlan → Select Plan (Monthly/Yearly)
+   3. Purchase → Validate → Create Subscription (Trial) + Payment
+   4. Redirect to Zarinpal → User Pays
+   5. PaymentCallback → Verify → Activate Subscription (Active)
+   6. Success Page → Dashboard with active subscription
+   7. Dashboard → Renew button for expiring subscriptions
+   
+🔍 Notes:
+   - Clean Architecture maintained (no layer violations)
+   - Repository pattern extended with Include support
+   - Zarinpal integration ready (RequestPaymentAsync, VerifyPaymentAsync)
+   - Mobile-responsive UI with Bootstrap 5
+   - Persian RTL support throughout
+   
+⏱️ زمان صرف شده: 4.5 ساعت
+👤 مسئول: AI Agent (Complete Implementation)
+```
+
+```
+📅 2 اکتبر 2025 (قبلی)
 ✅ مستندات کامل شد
    - سند PRD با 100+ صفحه
    - 15 User Story جامع

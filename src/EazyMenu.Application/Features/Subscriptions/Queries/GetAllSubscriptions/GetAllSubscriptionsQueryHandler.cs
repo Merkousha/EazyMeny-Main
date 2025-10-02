@@ -25,7 +25,13 @@ public class GetAllSubscriptionsQueryHandler : IRequestHandler<GetAllSubscriptio
 
     public async Task<List<SubscriptionListDto>> Handle(GetAllSubscriptionsQuery request, CancellationToken cancellationToken)
     {
-        var subscriptions = await _subscriptionRepository.GetAllAsync(cancellationToken);
+        // دریافت تمام اشتراک‌ها با Include SubscriptionPlan
+        var allSubscriptions = await _subscriptionRepository.FindWithIncludesAsync(
+            s => true,
+            cancellationToken,
+            s => s.SubscriptionPlan);
+        
+        var subscriptions = allSubscriptions.AsEnumerable();
 
         if (request.RestaurantId.HasValue)
         {
@@ -50,7 +56,7 @@ public class GetAllSubscriptionsQueryHandler : IRequestHandler<GetAllSubscriptio
                 Id = subscription.Id,
                 RestaurantId = subscription.RestaurantId,
                 RestaurantName = restaurantLookup.TryGetValue(subscription.RestaurantId, out var name) ? name : "-",
-                Plan = "پایه", // TODO: باید از subscription.SubscriptionPlan.Name استفاده شود
+                Plan = subscription.SubscriptionPlan?.Name ?? "نامشخص",
                 Status = GetStatusTitle(subscription.Status),
                 StartDate = subscription.StartDate,
                 EndDate = subscription.EndDate,

@@ -1,0 +1,74 @@
+@{
+    ViewData["Title"] = "خطا در پرداخت";
+    var errorMessage = ViewBag.ErrorMessage as string ?? "پرداخت ناموفق بود";
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-body text-center p-5">
+                    <!-- آیکون خطا -->
+                    <div class="mb-4">
+                        <i class="bi bi-x-circle-fill text-danger" style="font-size: 5rem;"></i>
+                    </div>
+
+                    <h3 class="fw-bold text-danger mb-3">پرداخت ناموفق!</h3>
+                    <p class="text-muted mb-4">متأسفانه پرداخت شما با موفقیت انجام نشد</p>
+
+                    <!-- پیام خطا -->
+                    <div class="alert alert-danger mb-4" role="alert">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        @errorMessage
+                    </div>
+
+                    <!-- دلایل احتمالی -->
+                    <div class="bg-light rounded p-4 mb-4 text-end">
+                        <h6 class="fw-bold mb-3">دلایل احتمالی:</h6>
+                        <ul class="list-unstyled text-muted small">
+                            <li class="mb-2"><i class="bi bi-dot me-1"></i>لغو پرداخت توسط کاربر</li>
+                            <li class="mb-2"><i class="bi bi-dot me-1"></i>عدم کفایت موجودی حساب</li>
+                            <li class="mb-2"><i class="bi bi-dot me-1"></i>خطا در ارتباط با بانک</li>
+                            <li class="mb-2"><i class="bi bi-dot me-1"></i>اطلاعات کارت نامعتبر</li>
+                        </ul>
+                    </div>
+
+                    <!-- دکمه‌ها -->
+                    <div class="d-grid gap-2">
+                        <a asp-action="ChoosePlan" class="btn btn-primary btn-lg">
+                            <i class="bi bi-arrow-clockwise me-2"></i>
+                            تلاش مجدد
+                        </a>
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-house-door me-2"></i>
+                            بازگشت به صفحه اصلی
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- راهنما -->
+            <div class="mt-4 text-center">
+                <p class="text-muted small">
+                    <i class="bi bi-telephone me-1"></i>
+                    در صورت برداشت وجه و عدم فعال‌سازی اشتراک، با پشتیبانی تماس بگیرید
+                </p>
+                <p class="text-muted small">
+                    وجه به صورت خودکار تا 72 ساعت به حساب شما بازگردانده می‌شود
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .card {
+            border-radius: 15px;
+        }
+
+        .bg-light {
+            border-radius: 10px;
+        }
+    </style>
+}

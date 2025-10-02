@@ -67,4 +67,34 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
     {
         return await _dbSet.AnyAsync(predicate, cancellationToken);
     }
+
+    /// <summary>
+    /// دریافت با Include Navigation Properties
+    /// </summary>
+    public virtual async Task<T?> GetByIdWithIncludesAsync(Guid id, CancellationToken cancellationToken = default, params Expression<Func<T, object>>[] includes)
+    {
+        IQueryable<T> query = _dbSet;
+        
+        foreach (var include in includes)
+        {
+            query = query.Include(include);
+        }
+        
+        return await query.FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
+    }
+
+    /// <summary>
+    /// جستجو با Include Navigation Properties
+    /// </summary>
+    public virtual async Task<IEnumerable<T>> FindWithIncludesAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default, params Expression<Func<T, object>>[] includes)
+    {
+        IQueryable<T> query = _dbSet;
+        
+        foreach (var include in includes)
+        {
+            query = query.Include(include);
+        }
+        
+        return await query.Where(predicate).ToListAsync(cancellationToken);
+    }
 }

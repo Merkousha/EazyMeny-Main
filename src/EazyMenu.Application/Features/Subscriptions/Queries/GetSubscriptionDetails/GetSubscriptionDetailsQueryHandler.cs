@@ -24,8 +24,12 @@ public class GetSubscriptionDetailsQueryHandler : IRequestHandler<GetSubscriptio
 
     public async Task<SubscriptionDetailsDto?> Handle(GetSubscriptionDetailsQuery request, CancellationToken cancellationToken)
     {
-        // TODO: باید SubscriptionPlan را Include کنیم - فعلاً موقتاً Basic استفاده می‌شود
-        var subscription = await _subscriptionRepository.GetByIdAsync(request.Id, cancellationToken);
+        // دریافت اشتراک با Include SubscriptionPlan
+        var subscription = await _subscriptionRepository.GetByIdWithIncludesAsync(
+            request.Id,
+            cancellationToken,
+            s => s.SubscriptionPlan);
+        
         if (subscription == null)
             return null;
 
@@ -37,7 +41,7 @@ public class GetSubscriptionDetailsQueryHandler : IRequestHandler<GetSubscriptio
             RestaurantId = subscription.RestaurantId,
             RestaurantName = restaurant?.Name ?? "-",
             RestaurantPhone = restaurant?.PhoneNumber ?? "-",
-            Plan = "پایه", // TODO: باید از subscription.SubscriptionPlan.Name استفاده شود
+            Plan = subscription.SubscriptionPlan?.Name ?? "نامشخص",
             Status = GetStatusTitle(subscription.Status),
             StartDate = subscription.StartDate,
             EndDate = subscription.EndDate,

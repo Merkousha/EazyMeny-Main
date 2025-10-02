@@ -1,8 +1,115 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<EazyMenu.Infrastructure.Identity.ApplicationIdentityUser> SignInManager
+@inject UserManager<EazyMenu.Infrastructure.Identity.ApplicationIdentityUser> UserManager
+
+@{
+    ViewData["Title"] = "داشبورد";
+    var user = await UserManager.GetUserAsync(User);
+    var roles = user != null ? await UserManager.GetRolesAsync(user) : new List<string>();
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@if (SignInManager.IsSignedIn(User))
+{
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <h3 class="mb-4">خوش آمدید، @user?.FullName!</h3>
+            </div>
+        </div>
+
+        @if (roles.Contains("RestaurantOwner"))
+        {
+            <!-- داشبورد صاحب رستوران -->
+            <div class="row g-4">
+                <!-- کارت اشتراک -->
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="bi bi-credit-card me-2"></i>اشتراک فعلی</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted">
+                                برای مشاهده جزئیات اشتراک یا تمدید آن، به بخش مدیریت اشتراک مراجعه کنید.
+                            </p>
+                            <div class="d-grid gap-2 mt-auto">
+                                <a asp-action="ChoosePlan" asp-controller="Subscription" class="btn btn-outline-primary">
+                                    <i class="bi bi-arrow-clockwise me-2"></i>
+                                    تمدید یا ارتقاء اشتراک
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- کارت رستوران -->
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0"><i class="bi bi-building me-2"></i>رستوران من</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted">
+                                مدیریت اطلاعات رستوران، منو، محصولات و دسته‌بندی‌ها
+                            </p>
+                            <div class="d-grid gap-2 mt-auto">
+                                <a asp-area="Restaurant" asp-controller="Product" asp-action="Index" class="btn btn-outline-success">
+                                    <i class="bi bi-card-list me-2"></i>
+                                    مدیریت منو
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- کارت سفارشات -->
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-warning">
+                            <h5 class="mb-0"><i class="bi bi-cart me-2"></i>سفارشات</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted">
+                                مشاهده و مدیریت سفارشات دریافتی از مشتریان
+                            </p>
+                            <div class="d-grid gap-2 mt-auto">
+                                <a asp-area="Restaurant" asp-controller="Order" asp-action="Index" class="btn btn-outline-warning">
+                                    <i class="bi bi-list-check me-2"></i>
+                                    مشاهده سفارشات
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>نکته:</strong> برای استفاده کامل از امکانات، مطمئن شوید که اشتراک فعالی دارید.
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <!-- داشبورد پیش‌فرض -->
+            <div class="text-center">
+                <h1 class="display-4">خوش آمدید!</h1>
+                <p class="lead">به پنل مدیریت EazyMenu خوش آمدید</p>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <!-- صفحه عمومی برای کاربران مهمان -->
+    <div class="text-center">
+        <h1 class="display-4">خوش آمدید به EazyMenu</h1>
+        <p class="lead">سیستم مدیریت رستوران و منوی دیجیتال</p>
+        <div class="mt-4">
+            <a asp-action="Register" asp-controller="Account" class="btn btn-primary btn-lg me-2">ثبت‌نام</a>
+            <a asp-action="Login" asp-controller="Account" class="btn btn-outline-primary btn-lg">ورود</a>
+        </div>
+    </div>
+}

@@ -1,3 +1,5 @@
+using EazyMenu.Domain.Enums;
+
 namespace EazyMenu.Application.Common.Models.Subscription;
 
 /// <summary>
@@ -5,8 +7,10 @@ namespace EazyMenu.Application.Common.Models.Subscription;
 /// </summary>
 public class SubscriptionPlanDto
 {
-    public string PlanType { get; set; } = string.Empty; // Basic, Standard, Premium
+    public Guid Id { get; set; }
+    public PlanType PlanType { get; set; }
     public string Name { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
     public decimal PriceMonthly { get; set; }
     public decimal PriceYearly { get; set; }
     public int MaxProducts { get; set; }
@@ -17,7 +21,10 @@ public class SubscriptionPlanDto
     public bool HasReservation { get; set; }
     public bool HasAnalytics { get; set; }
     public string SupportLevel { get; set; } = string.Empty;
-    public List<string> Features { get; set; } = new();
+    public string Features { get; set; } = string.Empty; // JSON string
+    public int DisplayOrder { get; set; }
+    public bool IsActive { get; set; }
+    public bool IsPopular { get; set; }
     
     /// <summary>
     /// محاسبه درصد تخفیف سالانه
@@ -41,4 +48,24 @@ public class SubscriptionPlanDto
     /// آیا سفارشات نامحدود است؟
     /// </summary>
     public bool IsUnlimitedOrders => MaxOrders == -1;
+    
+    /// <summary>
+    /// لیست ویژگی‌ها (Parse شده از JSON)
+    /// </summary>
+    public List<string> FeaturesList
+    {
+        get
+        {
+            try
+            {
+                return string.IsNullOrEmpty(Features)
+                    ? new List<string>()
+                    : System.Text.Json.JsonSerializer.Deserialize<List<string>>(Features) ?? new List<string>();
+            }
+            catch
+            {
+                return new List<string>();
+            }
+        }
+    }
 }

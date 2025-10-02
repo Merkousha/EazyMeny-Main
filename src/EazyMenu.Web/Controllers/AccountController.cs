@@ -101,6 +101,12 @@ public class AccountController : Controller
                 return RedirectToAction("Index", "Home", new { area = "Admin" });
             }
 
+            // هدایت صاحب رستوران به صفحه انتخاب پلن
+            if (await IsUserRestaurantOwnerAsync(user))
+            {
+                return RedirectToAction("ChoosePlan", "Subscription");
+            }
+
             return RedirectToAction("Index", "Home");
         }
 
@@ -362,6 +368,15 @@ public class AccountController : Controller
     {
         var roles = await _userManager.GetRolesAsync(user);
         return roles.Contains("Admin");
+    }
+
+    /// <summary>
+    /// بررسی نقش صاحب رستوران
+    /// </summary>
+    private async Task<bool> IsUserRestaurantOwnerAsync(ApplicationIdentityUser user)
+    {
+        var roles = await _userManager.GetRolesAsync(user);
+        return roles.Contains("RestaurantOwner");
     }
 
     #endregion
