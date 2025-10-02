@@ -260,6 +260,59 @@ Coverage:            0%
 
 ### ⏭️ مراحل بعدی:
 - پیاده‌سازی صفحه منوی عمومی برای مشتریان
+
+---
+
+## [2025-10-03 00:00] - Admin Redirect & Subscription Management Complete
+
+### ✅ تکمیل شده:
+- **1. هدایت خودکار ادمین به داشبورد:**
+  - افزودن متد کمکی `IsUserAdminAsync` در AccountController
+  - هدایت ادمین به `/Admin/Home/Index` بعد از ورود موفق (3 مسیر: Register، Login Password، Login OTP)
+
+- **2. بخش مدیریت اشتراک‌ها (Subscription CRUD):**
+  - DTOها: SubscriptionListDto، SubscriptionDetailsDto
+  - Queries: GetAllSubscriptionsQuery + Handler، GetSubscriptionDetailsQuery + Handler
+  - Controller: SubscriptionController در Admin Area
+  - Views: Index.cshtml (لیست با فیلتر)، Details.cshtml (جزئیات کامل)
+  - فیلترهای وضعیت: Trial، Active، Expiring، Expired، Suspended، Cancelled
+  - لینک فعال در Sidebar
+
+**فایل‌های ایجاد/تغییر یافته (11 فایل):**
+1. src/EazyMenu.Web/Controllers/AccountController.cs (+ IsUserAdminAsync، + 3 admin redirects)
+2. src/EazyMenu.Application/Common/Models/Subscription/SubscriptionListDto.cs
+3. src/EazyMenu.Application/Common/Models/Subscription/SubscriptionDetailsDto.cs
+4. src/EazyMenu.Application/Features/Subscriptions/Queries/GetAllSubscriptions/GetAllSubscriptionsQuery.cs
+5. src/EazyMenu.Application/Features/Subscriptions/Queries/GetAllSubscriptions/GetAllSubscriptionsQueryHandler.cs
+6. src/EazyMenu.Application/Features/Subscriptions/Queries/GetSubscriptionDetails/GetSubscriptionDetailsQuery.cs
+7. src/EazyMenu.Application/Features/Subscriptions/Queries/GetSubscriptionDetails/GetSubscriptionDetailsQueryHandler.cs
+8. src/EazyMenu.Web/Areas/Admin/Controllers/SubscriptionController.cs
+9. src/EazyMenu.Web/Areas/Admin/Views/Subscription/Index.cshtml
+10. src/EazyMenu.Web/Areas/Admin/Views/Subscription/Details.cshtml
+11. src/EazyMenu.Web/Areas/Admin/Views/Shared/_Sidebar.cshtml
+
+### 📊 نتیجه:
+- Build: ✅ موفق (4.8s، 0 error، 4 warning)
+- Migration: ➖ مربوط نیست
+- Tests: ⏸️ آماده تست دستی
+- Application Status: 🟢 Ready
+
+### 🔍 نکات:
+- ادمین مستقیماً به `/Admin/Home/Index` هدایت می‌شود
+- بخش Subscription با CQRS pattern
+- نمایش روزهای باقیمانده با رنگ‌بندی
+- هشدار برای اشتراک‌های در حال انقضا (≤7 روز)
+- UI RTL و Mobile-first
+
+### 📈 Progress Update:
+**قبل:** 90% (Admin Orders)
+**بعد:** 92% (+ Admin Redirect + Subscription Management)
+**باقی‌مانده:** Public Menu Page، Reservation System
+
+---
+
+## [2025-10-03 15:30] - Admin Dashboard (HomeController + Views) Complete
+
 ### ✅ تکمیل شده:
 - پیاده‌سازی کامل **Admin Dashboard** با CQRS Pattern
 - **Backend (CQRS):**
@@ -314,6 +367,163 @@ Coverage:            0%
 ### ⏭️ مراحل بعدی:
 - [Task بعدی پیشنهادی]
 ```
+
+---
+
+## [2025-10-03 19:00] - Public Menu Page Complete ✅
+
+### ✅ تکمیل شده:
+- **صفحه منوی عمومی برای مشتریان** با تمام قابلیت‌ها
+- **Backend CQRS (6 فایل):**
+  - ProductMenuDto.cs - محصولات با FinalPrice و DiscountPercentage محاسبه شده
+  - CategoryWithProductsDto.cs - دسته‌بندی‌ها با لیست محصولات
+  - RestaurantMenuDto.cs - منوی کامل رستوران
+  - GetMenuBySlugQuery.cs + Handler - دریافت منو با slug رستوران
+  
+- **Frontend (4 فایل):**
+  - MenuController.cs - Controller عمومی با route /menu/{slug}
+  - Index.cshtml - صفحه منوی موبایل‌محور با RTL
+  - NotFound.cshtml - صفحه خطای رستوران یافت نشد
+  - _MenuLayout.cshtml - Layout اختصاصی برای صفحات عمومی
+
+### 🎯 ویژگی‌های پیاده‌سازی شده:
+
+**Business Logic:**
+- ✅ دریافت منو با Slug رستوران
+- ✅ فیلتر رستوران فعال (IsActive = true)
+- ✅ فیلتر دسته‌بندی‌های فعال (IsActive = true)
+- ✅ ترتیب دسته‌بندی‌ها با DisplayOrder
+- ✅ فیلتر محصولات فعال (IsActive + StockQuantity > 0)
+- ✅ ترتیب محصولات با DisplayOrder
+- ✅ محاسبه FinalPrice (DiscountedPrice ?? Price)
+- ✅ محاسبه DiscountPercentage (با فرمول)
+- ✅ Null safety برای رستوران نامعتبر
+
+**UI/UX Features:**
+- ✅ **Restaurant Header:** Logo, نام، توضیحات، شماره تلفن، آدرس، ساعات کاری
+- ✅ **Sticky Category Navigation:** نوار دسته‌بندی‌ها چسبیده به بالا با scroll horizontal
+- ✅ **Search Box:** جستجو در نام محصولات (real-time filtering)
+- ✅ **Category Sections:** نمایش دسته‌بندی‌ها با icon + تعداد محصولات
+- ✅ **Product Cards:** 
+  - تصویر محصول (با placeholder برای عدم تصویر)
+  - Badge های: جدید، محبوب، تند 🌶️، گیاهی 🌱، ناموجود
+  - نام، توضیحات (2 خط محدود)
+  - زمان آماده‌سازی
+  - قیمت (با تخفیف خط‌خورده)
+  - Badge درصد تخفیف
+- ✅ **Smooth Scroll:** اسکرول نرم به دسته‌بندی‌ها
+- ✅ **Intersection Observer:** تغییر active state دسته‌بندی در هنگام scroll
+- ✅ **Responsive Design:** 
+  - Mobile: 1 ستون
+  - Tablet: 2 ستون
+  - Desktop: 3 ستون
+- ✅ **RTL Support:** کاملاً راست‌چین فارسی
+- ✅ **Footer:** اطلاعات تماس، لینک‌های سریع
+- ✅ **Loading Overlay:** نمایش لودینگ در هنگام تغییر صفحه
+
+### 📁 فایل‌های ایجاد شده (10 فایل):
+
+**Application/Common/Models/Menu/ (3 DTOs):**
+1. ProductMenuDto.cs - 15 properties با computed FinalPrice + DiscountPercentage
+2. CategoryWithProductsDto.cs - 7 properties با List<ProductMenuDto>
+3. RestaurantMenuDto.cs - 13 properties با List<CategoryWithProductsDto>
+
+**Application/Features/Menu/Queries/ (2 files):**
+4. GetMenuBySlugQuery.cs - Record-based query با Slug
+5. GetMenuBySlugQueryHandler.cs - Handler با Restaurant/Category/Product joins + filtering
+
+**Web/Controllers/ (1 file):**
+6. MenuController.cs - Public controller با /menu/{slug} route
+
+**Web/Views/Menu/ (2 views):**
+7. Index.cshtml - صفحه منوی کامل (450+ lines) با JavaScript
+8. NotFound.cshtml - صفحه خطای 404
+
+**Web/Views/Shared/ (1 layout):**
+9. _MenuLayout.cshtml - Layout عمومی با Bootstrap 5 RTL + Footer
+
+### 🔧 مشکلات حل شده:
+- ✅ Computed Properties در DTO (FinalPrice, DiscountPercentage)
+- ✅ Nested DTOs (Restaurant → Categories → Products)
+- ✅ Filtering active items (Restaurant, Category, Product)
+- ✅ RTL Layout برای صفحات عمومی (جدا از Admin)
+- ✅ Sticky navigation با scroll handling
+- ✅ Real-time search filtering با JavaScript
+- ✅ Intersection Observer برای active category highlighting
+
+### 📊 نتیجه:
+- **Files Created:** 10 files (Backend + Frontend)
+- **Total Lines:** ~1,500 lines
+- **Build:** ✅ Success (4 warnings درباره Product nullable - قابل نادیده‌گرفتن)
+- **Run:** ✅ Success - http://localhost:5125
+- **URL:** `/menu/{slug}` (مثال: `/menu/zeitoon`)
+
+### 🎨 Design Highlights:
+- **Mobile-First:** طراحی برای موبایل با تبلت و دسکتاپ
+- **Material Design:** Shadow effects, rounded corners
+- **Color Coding:**
+  - Primary: #2563eb (لینک‌ها، دکمه‌ها)
+  - Success: #22c55e (قیمت‌ها، Badge جدید)
+  - Danger: #ef4444 (تخفیف، Badge تند)
+  - Warning: #f59e0b (Badge محبوب)
+  - Secondary: #64748b (متن‌های ثانویه)
+- **Typography:** Segoe UI (system font) با پشتیبانی فارسی
+- **Spacing:** Consistent padding/margin (Bootstrap 5)
+- **Icons:** Bootstrap Icons
+- **Animations:** Smooth transitions (0.2s)
+
+### 🧪 تست‌های پیشنهادی:
+```powershell
+# اجرای برنامه
+dotnet run --project src/EazyMenu.Web
+
+# تست URL های منو
+http://localhost:5125/menu/zeitoon       # رستوران زیتون (موجود در Seed)
+http://localhost:5125/menu/burger-star   # فست‌فود برگر استار
+http://localhost:5125/menu/niloofar-cafe # کافه نیلوفر
+http://localhost:5125/menu/invalid-slug  # تست صفحه NotFound
+```
+
+**چک‌لیست تست:**
+- [ ] Restaurant Header → Logo, نام، اطلاعات تماس نمایش می‌شود
+- [ ] Category Navigation → Sticky, Scroll horizontal, Active state
+- [ ] Search → Real-time filtering محصولات
+- [ ] Product Cards → تصویر، Badge ها، قیمت، تخفیف
+- [ ] Smooth Scroll → کلیک دسته‌بندی → اسکرول نرم
+- [ ] Intersection Observer → تغییر active category با scroll
+- [ ] Responsive → Mobile (1 col), Tablet (2 col), Desktop (3 col)
+- [ ] RTL → تمام المان‌ها راست‌چین
+- [ ] NotFound → Slug نامعتبر → صفحه خطا
+- [ ] Footer → لینک‌ها کار می‌کنند
+
+### 📈 آمار نهایی MVP:
+```
+Authentication:   ████████████████████ 100% ✅
+Restaurant CRUD:  ████████████████████ 100% ✅
+Category CRUD:    ████████████████████ 100% ✅
+Product CRUD:     ████████████████████ 100% ✅
+Admin Dashboard:  ████████████████████ 100% ✅
+Admin Orders:     ████████████████████ 100% ✅
+Subscriptions:    ████████████████████ 100% ✅
+Public Menu:      ████████████████████ 100% ✅ (Just completed!)
+────────────────────────────────────────────
+MVP Progress:     ███████████████████░  95% ✅
+```
+
+**باقی‌مانده:**
+- ⬜ Shopping Cart System (Session-based)
+- ⬜ Order Creation from Menu (Customer side)
+- ⬜ QR Code Testing (scan → menu display)
+- ⬜ Reservation System (US-011)
+
+### ⏭️ مراحل بعدی:
+1. ✅ **Public Menu Page Complete!** - مشتریان می‌توانند منو را مشاهده کنند
+2. ⬜ تست QR Code → Scan → Menu Display
+3. ⬜ Shopping Cart System (Session/Cookie)
+4. ⬜ Order Creation Flow (Customer → Restaurant)
+5. ⬜ Reservation System
+
+---
 
 ### مثال واقعی:
 

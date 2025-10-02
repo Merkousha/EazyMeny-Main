@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - EazyMenu</title>
+    
+    <!-- Bootstrap 5 RTL -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- Custom Styles -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1;
+        }
+
+        .footer {
+            background-color: #1e293b;
+            color: white;
+            padding: 1.5rem 0;
+            margin-top: auto;
+        }
+
+        .footer a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer a:hover {
+            color: white;
+        }
+
+        /* Loading Spinner */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+    </style>
+
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">در حال بارگذاری...</span>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main>
+        @RenderBody()
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row g-3">
+                <div class="col-12 col-md-4">
+                    <h5 class="mb-3">EazyMenu</h5>
+                    <p class="small text-white-50">
+                        سیستم مدیریت رستوران و منوی دیجیتال
+                    </p>
+                </div>
+                <div class="col-6 col-md-4">
+                    <h6 class="mb-3">دسترسی سریع</h6>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><a href="/">صفحه اصلی</a></li>
+                        <li class="mb-2"><a href="/Account/Login">ورود</a></li>
+                        <li class="mb-2"><a href="/Account/Register">ثبت‌نام</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-4">
+                    <h6 class="mb-3">تماس با ما</h6>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2">
+                            <i class="bi bi-envelope me-2"></i>
+                            <a href="mailto:info@eazymenu.ir">info@eazymenu.ir</a>
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-telephone me-2"></i>
+                            <a href="tel:+982188888888">021-88888888</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-3 border-white opacity-25">
+            <div class="text-center small text-white-50">
+                © @DateTime.Now.Year EazyMenu. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- jQuery (optional, for easier DOM manipulation) -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
+    <script>
+        // Show loading overlay on page navigation
+        window.addEventListener('beforeunload', function() {
+            document.getElementById('loadingOverlay')?.classList.add('show');
+        });
+
+        // Hide loading overlay when page loads
+        window.addEventListener('load', function() {
+            document.getElementById('loadingOverlay')?.classList.remove('show');
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

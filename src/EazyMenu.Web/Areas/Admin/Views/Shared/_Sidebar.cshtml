@@ -108,9 +108,10 @@
 
         <li class="nav-header">تنظیمات</li>
         <li class="nav-item">
-            <a href="#" class="nav-link disabled" aria-disabled="true">
+            <a asp-area="Admin" asp-controller="Subscription" asp-action="Index"
+               class="nav-link @(IsActive("Subscription") ? "active" : string.Empty)">
                 <i class="nav-icon bi bi-credit-card"></i>
-                <p>اشتراک</p>
+                <p>اشتراک‌ها</p>
             </a>
         </li>
         <li class="nav-item">

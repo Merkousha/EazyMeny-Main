@@ -1,0 +1,461 @@
+@model EazyMenu.Application.Common.Models.Menu.RestaurantMenuDto
+@{
+    ViewData["Title"] = Model.Name;
+    Layout = "_MenuLayout";
+}
+
+@section Styles {
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #64748b;
+            --success-color: #22c55e;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+        }
+
+        body {
+            background-color: #f8fafc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .restaurant-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #1e40af 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .restaurant-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid white;
+            object-fit: cover;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .category-section {
+            scroll-margin-top: 80px;
+        }
+
+        .category-header {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-right: 4px solid var(--primary-color);
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .product-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .product-image-placeholder {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: #94a3b8;
+        }
+
+        .product-body {
+            padding: 1rem;
+        }
+
+        .product-badges {
+            margin-bottom: 0.5rem;
+        }
+
+        .product-badges .badge {
+            margin-left: 0.25rem;
+            font-size: 0.7rem;
+        }
+
+        .product-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #1e293b;
+        }
+
+        .product-description {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-bottom: 0.75rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-price {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: auto;
+        }
+
+        .price-main {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--success-color);
+        }
+
+        .price-original {
+            font-size: 0.9rem;
+            text-decoration: line-through;
+            color: #94a3b8;
+            margin-left: 0.5rem;
+        }
+
+        .discount-badge {
+            background: var(--danger-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .sticky-categories {
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 100;
+            padding: 0.75rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+        }
+
+        .category-nav {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            padding: 0.25rem;
+            scrollbar-width: none;
+        }
+
+        .category-nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-link {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            background: #f1f5f9;
+            color: #475569;
+            text-decoration: none;
+            white-space: nowrap;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .category-link:hover, .category-link.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .search-box {
+            margin-bottom: 1rem;
+        }
+
+        .search-input {
+            border-radius: 25px;
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #e2e8f0;
+            font-size: 1rem;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .info-item i {
+            margin-left: 0.5rem;
+        }
+
+        @@media (max-width: 768px) {
+            .product-card {
+                margin-bottom: 0.75rem;
+            }
+            
+            .restaurant-header {
+                padding: 1.5rem 0;
+            }
+        }
+    </style>
+}
+
+<div class="restaurant-header">
+    <div class="container">
+        <div class="d-flex align-items-center mb-3">
+            @if (!string.IsNullOrWhiteSpace(Model.Logo))
+            {
+                <img src="@Model.Logo" alt="@Model.Name" class="restaurant-logo me-3" />
+            }
+            else
+            {
+                <div class="restaurant-logo me-3 d-flex align-items-center justify-content-center" style="background: rgba(255,255,255,0.2);">
+                    <i class="bi bi-shop fs-2"></i>
+                </div>
+            }
+            <div>
+                <h1 class="mb-1">@Model.Name</h1>
+                @if (!string.IsNullOrWhiteSpace(Model.Description))
+                {
+                    <p class="mb-0 opacity-75">@Model.Description</p>
+                }
+            </div>
+        </div>
+        
+        <div class="row g-2">
+            <div class="col-auto">
+                <div class="info-item">
+                    <i class="bi bi-telephone"></i>
+                    <span>@Model.PhoneNumber</span>
+                </div>
+            </div>
+            @if (!string.IsNullOrWhiteSpace(Model.Address))
+            {
+                <div class="col-auto">
+                    <div class="info-item">
+                        <i class="bi bi-geo-alt"></i>
+                        <span>@Model.Address</span>
+                    </div>
+                </div>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.WorkingHours))
+            {
+                <div class="col-auto">
+                    <div class="info-item">
+                        <i class="bi bi-clock"></i>
+                        <span>@Model.WorkingHours</span>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="sticky-categories">
+    <div class="container">
+        <div class="category-nav" id="categoryNav">
+            @foreach (var category in Model.Categories)
+            {
+                <a href="#category-@category.Id" class="category-link" data-category="@category.Id">
+                    @if (!string.IsNullOrWhiteSpace(category.Icon))
+                    {
+                        <span>@category.Icon</span>
+                    }
+                    @category.Name
+                    <span class="badge bg-secondary ms-1">@category.Products.Count</span>
+                </a>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="container pb-4">
+    <div class="search-box">
+        <input type="text" class="form-control search-input" id="searchInput" placeholder="جستجو در منو...">
+    </div>
+
+    @if (!Model.Categories.Any())
+    {
+        <div class="alert alert-info text-center">
+            <i class="bi bi-info-circle fs-3 d-block mb-2"></i>
+            <p class="mb-0">هنوز محصولی در منو ثبت نشده است.</p>
+        </div>
+    }
+    else
+    {
+        @foreach (var category in Model.Categories)
+        {
+            <section class="category-section mb-4" id="category-@category.Id">
+                <div class="category-header">
+                    <h2 class="h4 mb-0">
+                        @if (!string.IsNullOrWhiteSpace(category.Icon))
+                        {
+                            <span class="me-2">@category.Icon</span>
+                        }
+                        @category.Name
+                        <span class="badge bg-primary ms-2">@category.Products.Count</span>
+                    </h2>
+                    @if (!string.IsNullOrWhiteSpace(category.Description))
+                    {
+                        <p class="text-muted mb-0 mt-1 small">@category.Description</p>
+                    }
+                </div>
+
+                <div class="row g-3" data-category-products="@category.Id">
+                    @foreach (var product in category.Products)
+                    {
+                        <div class="col-12 col-md-6 col-lg-4 product-item" data-product-name="@product.Name.ToLower()">
+                            <div class="product-card @(!product.IsAvailable ? "opacity-50" : "")">
+                                @if (!string.IsNullOrWhiteSpace(product.Image1Url))
+                                {
+                                    <img src="@product.Image1Url" alt="@product.Name" class="product-image" />
+                                }
+                                else
+                                {
+                                    <div class="product-image-placeholder">
+                                        <i class="bi bi-image"></i>
+                                    </div>
+                                }
+
+                                <div class="product-body">
+                                    @if (product.IsNew || product.IsPopular || product.IsSpicy || product.IsVegetarian || !product.IsAvailable)
+                                    {
+                                        <div class="product-badges">
+                                            @if (product.IsNew)
+                                            {
+                                                <span class="badge bg-success">جدید</span>
+                                            }
+                                            @if (product.IsPopular)
+                                            {
+                                                <span class="badge bg-warning text-dark">محبوب</span>
+                                            }
+                                            @if (product.IsSpicy)
+                                            {
+                                                <span class="badge bg-danger">تند 🌶️</span>
+                                            }
+                                            @if (product.IsVegetarian)
+                                            {
+                                                <span class="badge bg-success">گیاهی 🌱</span>
+                                            }
+                                            @if (!product.IsAvailable)
+                                            {
+                                                <span class="badge bg-secondary">ناموجود</span>
+                                            }
+                                        </div>
+                                    }
+
+                                    <div class="product-name">@product.Name</div>
+
+                                    @if (!string.IsNullOrWhiteSpace(product.Description))
+                                    {
+                                        <div class="product-description">@product.Description</div>
+                                    }
+
+                                    <div class="d-flex align-items-center text-muted small mb-2">
+                                        <i class="bi bi-clock me-1"></i>
+                                        <span>@product.PreparationTime دقیقه</span>
+                                    </div>
+
+                                    <div class="product-price">
+                                        <div>
+                                            <span class="price-main">@product.FinalPrice.ToString("N0") تومان</span>
+                                            @if (product.DiscountedPrice.HasValue)
+                                            {
+                                                <span class="price-original">@product.Price.ToString("N0")</span>
+                                            }
+                                        </div>
+                                        @if (product.DiscountPercentage.HasValue)
+                                        {
+                                            <span class="discount-badge">@product.DiscountPercentage% تخفیف</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </section>
+        }
+    }
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Search functionality
+            const searchInput = document.getElementById('searchInput');
+            const productItems = document.querySelectorAll('.product-item');
+            const categorySections = document.querySelectorAll('.category-section');
+
+            searchInput?.addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase().trim();
+
+                productItems.forEach(item => {
+                    const productName = item.getAttribute('data-product-name');
+                    const matches = productName.includes(searchTerm);
+                    item.style.display = matches || searchTerm === '' ? '' : 'none';
+                });
+
+                // Hide empty categories
+                categorySections.forEach(section => {
+                    const visibleProducts = section.querySelectorAll('.product-item:not([style*="display: none"])');
+                    section.style.display = visibleProducts.length > 0 || searchTerm === '' ? '' : 'none';
+                });
+            });
+
+            // Smooth scroll for category navigation
+            const categoryLinks = document.querySelectorAll('.category-link');
+            categoryLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetSection = document.querySelector(targetId);
+                    
+                    if (targetSection) {
+                        targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+
+                    // Update active state
+                    categoryLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // Intersection Observer for active category highlighting
+            const observerOptions = {
+                root: null,
+                rootMargin: '-100px 0px -50% 0px',
+                threshold: 0
+            };
+
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const categoryId = entry.target.id.replace('category-', '');
+                        categoryLinks.forEach(link => {
+                            const linkCategoryId = link.getAttribute('data-category');
+                            link.classList.toggle('active', linkCategoryId === categoryId);
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            categorySections.forEach(section => observer.observe(section));
+        });
+    </script>
+}

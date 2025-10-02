@@ -95,6 +95,12 @@ public class AccountController : Controller
                 return Redirect(returnUrl);
             }
 
+            // هدایت ادمین به داشبورد
+            if (await IsUserAdminAsync(user))
+            {
+                return RedirectToAction("Index", "Home", new { area = "Admin" });
+            }
+
             return RedirectToAction("Index", "Home");
         }
 
@@ -180,6 +186,12 @@ public class AccountController : Controller
         if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
         {
             return Redirect(returnUrl);
+        }
+
+        // هدایت ادمین به داشبورد
+        if (await IsUserAdminAsync(user))
+        {
+            return RedirectToAction("Index", "Home", new { area = "Admin" });
         }
 
         return RedirectToAction("Index", "Home");
@@ -301,6 +313,12 @@ public class AccountController : Controller
             return Redirect(returnUrl);
         }
 
+        // هدایت ادمین به داشبورد
+        if (await IsUserAdminAsync(user))
+        {
+            return RedirectToAction("Index", "Home", new { area = "Admin" });
+        }
+
         return RedirectToAction("Index", "Home");
     }
 
@@ -331,6 +349,19 @@ public class AccountController : Controller
     public IActionResult AccessDenied()
     {
         return View();
+    }
+
+    #endregion
+
+    #region Helper Methods
+
+    /// <summary>
+    /// بررسی نقش ادمین کاربر
+    /// </summary>
+    private async Task<bool> IsUserAdminAsync(ApplicationIdentityUser user)
+    {
+        var roles = await _userManager.GetRolesAsync(user);
+        return roles.Contains("Admin");
     }
 
     #endregion

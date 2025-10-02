@@ -2,14 +2,14 @@
 
 ## 📋 وضعیت کلی
 
-**تاریخ:** 3 اکتبر 2025 15:30  
+**تاریخ:** 3 اکتبر 2025 00:00  
 **کل کارها:** 97  
-**تکمیل شده:** 85 ✅ (+1 Admin Dashboard)  
+**تکمیل شده:** 87 ✅ (+2 Admin Redirect + Subscription)  
 **در حال انجام:** 0 🔵  
-**باقی‌مانده:** 12 ⬜
+**باقی‌مانده:** 10 ⬜
 
-**آخرین Task:** Admin Dashboard Complete (Backend CQRS + Controller + Views) ✅  
-**پیشرفت MVP:** 📊 88% (Auth + Restaurant + Category + Product + Dashboard آماده)
+**آخرین Task:** Admin Redirect & Subscription Management Complete ✅  
+**پیشرفت MVP:** 📊 92% (Auth + Restaurant + Category + Product + Dashboard + Orders + Subscription آماده)
 
 ---
 
@@ -147,11 +147,33 @@
 - [ ] Integration Tests - Full auth flow
 
 ### مدیریت اشتراک
+
+#### Admin Subscription Management ✅ COMPLETE!
+- [x] **Subscription DTOs (2 فایل)** ✅ 2025-10-03 00:00
+  - 👤 مسئول: AI Agent
+  - ⏱️ مدت: 10 دقیقه
+  - 📝 نکته: SubscriptionListDto + SubscriptionDetailsDto
+  
+- [x] **GetAllSubscriptions Query (2 فایل)** ✅ 2025-10-03 00:00
+  - 📝 نکته: با فیلتر Restaurant و Status
+  
+- [x] **GetSubscriptionDetails Query (2 فایل)** ✅ 2025-10-03 00:00
+  - 📝 نکته: جزئیات کامل اشتراک
+  
+- [x] **SubscriptionController** ✅ 2025-10-03 00:00
+  - 📝 نکته: Admin Area، Index و Details
+  
+- [x] **Subscription Views (2 views)** ✅ 2025-10-03 00:00
+  - 📝 نکته: Index (لیست + فیلتر)، Details (جزئیات کامل)
+  - 🎯 UI: Small boxes، Status badges، Days remaining
+  
+- [x] **Admin Redirect** ✅ 2025-10-03 00:00
+  - 📝 نکته: ادمین مستقیماً به Dashboard هدایت می‌شود
+
 - [ ] تعریف پلن‌های اشتراک در دیتابیس (US-004)
 - [ ] صفحه انتخاب و خرید پلن (US-004)
 - [ ] یکپارچگی با زرین‌پال (US-004)
 - [ ] پردازش Callback پرداخت (US-004)
-- [ ] سیستم مدیریت اشتراک (US-005)
 - [ ] تمدید خودکار (US-005)
 - [ ] محاسبه Proration (US-005)
 - [ ] صدور فاکتور دیجیتال
@@ -766,29 +788,75 @@ dotnet run --project src/EazyMenu.Web
 
 ---
 
-## 🎯 پیشنهاد Task بعدی (Priority Order)
+## � Public Menu Page - COMPLETE! ✅
 
-### Option 1: Public Menu Page (US-009) - **پیشنهاد قوی** ⭐
-**چرا:** QR Codeها فعلاً به جایی لینک نمی‌دهند (Broken UX). این صفحه Critical Path MVP است.
-- ⏱️ تخمین: 4 ساعت
-- 📦 فایل‌ها: 7 (Query/Handler + Controller + View + CSS)
-- 🎯 خروجی: صفحه منوی عمومی Mobile-First برای مشتریان رستوران
-- 🔗 Route: /menu/{slug}
-- ⚡ تاثیر: QR Code → Menu Page (تکمیل چرخه MVP اصلی)
+### ✅ تکمیل شده (2025-10-03 19:00):
 
-### Option 2: Order System (US-009, US-010) - زمان‌بر
-- ⏱️ تخمین: 15 ساعت (Backend 6h + Cart 5h + Panel 4h)
-- 📦 فایل‌ها: ~40 فایل
-- 🎯 خروجی: سیستم سفارش آنلاین + سبد خرید + پنل مدیریت سفارش
-- ⚠️ نکته: پیش‌نیاز: Public Menu Page
+**Backend (6 فایل):**
+- [x] **ProductMenuDto** (1 فایل) ✅
+  - 👤 مسئول: AI Agent
+  - ⏱️ مدت: 15 دقیقه
+  - 📝 نکته: 15 properties با computed FinalPrice + DiscountPercentage
 
-### Option 3: Authentication Frontend (Controllers + Views)
-- ⏱️ تخمین: 3 ساعت
-- 📦 فایل‌ها: 5 (Controller + 3 Views + CSS)
-- 🎯 خروجی: صفحات Login, Register, Forgot Password
-- ⚠️ نکته: Backend آماده است، فقط UI می‌خواهد
+- [x] **CategoryWithProductsDto** (1 فایل) ✅
+  - ⏱️ مدت: 10 دقیقه
+  - 📝 نکته: Nested structure با List<ProductMenuDto>
+
+- [x] **RestaurantMenuDto** (1 فایل) ✅
+  - ⏱️ مدت: 10 دقیقه
+  - 📝 نکته: Complete menu با List<CategoryWithProductsDto>
+
+- [x] **GetMenuBySlugQuery + Handler** (2 فایل) ✅
+  - ⏱️ مدت: 30 دقیقه
+  - 📝 نکته: Restaurant lookup by slug, Category/Product joins, Active filtering
+
+**Frontend (4 فایل):**
+- [x] **MenuController** (1 فایل) ✅
+  - ⏱️ مدت: 15 دقیقه
+  - 📝 نکته: /menu/{slug} route, NotFound handling
+
+- [x] **Menu Views** (3 files) ✅
+  - ⏱️ مدت: 90 دقیقه
+  - 📝 نکته: Index (450+ lines), NotFound, _MenuLayout
+  - 🎯 Features: Mobile-First, RTL, Search, Sticky nav, Smooth scroll
+
+**Build Results:**
+- ✅ Build: Success (4 warnings Product nullable)
+- ✅ Run: Success - http://localhost:5125
+- ✅ Route: /menu/{slug}
+- ✅ Total Files: 10
 
 ---
 
-**آخرین بروزرسانی:** 2025-10-03 15:30  
+## �🎯 پیشنهاد Task بعدی (Priority Order)
+
+### Option 1: Shopping Cart System (Session-based) - **پیشنهاد قوی** ⭐
+**چرا:** مشتری می‌تواند منو را ببیند اما نمی‌تواند سفارش بدهد. Session Cart پیش‌نیاز Order است.
+- ⏱️ تخمین: 3-4 ساعت
+- 📦 فایل‌ها: 8 (CartDto + Service + Controller + View + AJAX)
+- 🎯 خروجی: Add to Cart, Update Quantity, Remove Item, Cart Total
+- 🔗 Feature: Session-based cart (no DB)
+- ⚡ تاثیر: Menu → Cart → Checkout (فلو کامل)
+
+### Option 2: Reservation System (US-011)
+- ⏱️ تخمین: 6 ساعت
+- 📦 فایل‌ها: ~15 فایل
+- 🎯 خروجی: Reserve table by customer + Manage reservations in panel
+- ⚠️ نکته: مستقل از Order - می‌تواند موازی اجرا شود
+
+### Option 3: Order System Backend (CQRS for Order Creation)
+- ⏱️ تخمین: 5 ساعت
+- 📦 فایل‌ها: ~15 فایل
+- 🎯 خروجی: CreateOrder Command, Order placement flow
+- ⚠️ نکته: پیش‌نیاز: Cart System
+
+### Option 4: Subscription Purchase Flow (US-004)
+- ⏱️ تخمین: 4 ساعت
+- 📦 فایل‌ها: ~10 فایل
+- 🎯 خروجی: Choose plan + Zarinpal payment + Activate subscription
+- ⚡ تاثیر: Revenue stream (مدل درآمدی)
+
+---
+
+**آخرین بروزرسانی:** 2025-10-03 19:00  
 **بروزرسانی بعدی:** 2025-10-04

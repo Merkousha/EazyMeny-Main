@@ -1,0 +1,169 @@
+@using System.Linq
+@model IEnumerable<EazyMenu.Application.Common.Models.Subscription.SubscriptionListDto>
+@{
+    ViewData["Title"] = "مدیریت اشتراک‌ها";
+    var totalSubscriptions = Model.Count();
+    var activeSubscriptions = Model.Count(s => s.IsActive);
+    var expiredSubscriptions = Model.Count(s => s.DaysRemaining < 0);
+    var expiringSoon = Model.Count(s => s.DaysRemaining >= 0 && s.DaysRemaining <= 7);
+    var currentStatus = (ViewData["Status"]?.ToString() ?? string.Empty).ToLowerInvariant();
+
+    string GetStatusBadgeClass(string status) => status switch
+    {
+        "آزمایشی" => "bg-info",
+        "فعال" => "bg-success",
+        "در حال انقضا" => "bg-warning text-dark",
+        "منقضی شده" => "bg-danger",
+        "معلق" => "bg-secondary",
+        "لغو شده" => "bg-dark",
+        _ => "bg-light text-dark"
+    };
+
+    string GetPlanBadgeClass(string plan) => plan switch
+    {
+        "پایه" => "bg-info",
+        "استاندارد" => "bg-primary",
+        "پیشرفته" => "bg-success",
+        _ => "bg-secondary"
+    };
+}
+
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">@ViewData["Title"]</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-end">
+                    <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index">خانه</a></li>
+                    <li class="breadcrumb-item active">اشتراک‌ها</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-3 col-6">
+                <div class="small-box text-bg-primary">
+                    <div class="inner">
+                        <h3>@totalSubscriptions</h3>
+                        <p>تعداد کل اشتراک‌ها</p>
+                    </div>
+                    <i class="small-box-icon bi bi-credit-card-2-back"></i>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="small-box text-bg-success">
+                    <div class="inner">
+                        <h3>@activeSubscriptions</h3>
+                        <p>اشتراک‌های فعال</p>
+                    </div>
+                    <i class="small-box-icon bi bi-check-circle"></i>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="small-box text-bg-warning">
+                    <div class="inner">
+                        <h3>@expiringSoon</h3>
+                        <p>در حال انقضا (7 روز)</p>
+                    </div>
+                    <i class="small-box-icon bi bi-clock-history"></i>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="small-box text-bg-danger">
+                    <div class="inner">
+                        <h3>@expiredSubscriptions</h3>
+                        <p>منقضی شده</p>
+                    </div>
+                    <i class="small-box-icon bi bi-x-circle"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 class="card-title"><i class="bi bi-list-ul ms-1"></i> لیست اشتراک‌ها</h3>
+                <div>
+                    <div class="btn-group" role="group">
+                        <a asp-area="Admin" asp-controller="Subscription" asp-action="Index" asp-route-restaurantId="@ViewData["RestaurantId"]" class="btn btn-outline-secondary btn-sm @(string.IsNullOrEmpty(currentStatus) ? "active" : string.Empty)">همه</a>
+                        <a asp-area="Admin" asp-controller="Subscription" asp-action="Index" asp-route-restaurantId="@ViewData["RestaurantId"]" asp-route-status="trial" class="btn btn-outline-secondary btn-sm @(currentStatus == "trial" ? "active" : string.Empty)">آزمایشی</a>
+                        <a asp-area="Admin" asp-controller="Subscription" asp-action="Index" asp-route-restaurantId="@ViewData["RestaurantId"]" asp-route-status="active" class="btn btn-outline-secondary btn-sm @(currentStatus == "active" ? "active" : string.Empty)">فعال</a>
+                        <a asp-area="Admin" asp-controller="Subscription" asp-action="Index" asp-route-restaurantId="@ViewData["RestaurantId"]" asp-route-status="expiring" class="btn btn-outline-secondary btn-sm @(currentStatus == "expiring" ? "active" : string.Empty)">در حال انقضا</a>
+                        <a asp-area="Admin" asp-controller="Subscription" asp-action="Index" asp-route-restaurantId="@ViewData["RestaurantId"]" asp-route-status="expired" class="btn btn-outline-secondary btn-sm @(currentStatus == "expired" ? "active" : string.Empty)">منقضی شده</a>
+                        <a asp-area="Admin" asp-controller="Subscription" asp-action="Index" asp-route-restaurantId="@ViewData["RestaurantId"]" asp-route-status="cancelled" class="btn btn-outline-secondary btn-sm @(currentStatus == "cancelled" ? "active" : string.Empty)">لغو شده</a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body table-responsive p-0">
+                @if (!Model.Any())
+                {
+                    <div class="text-center py-5">
+                        <i class="bi bi-inbox display-1 text-muted"></i>
+                        <p class="mt-3 text-muted">هنوز اشتراکی ثبت نشده است.</p>
+                    </div>
+                }
+                else
+                {
+                    <table class="table table-hover table-striped mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>رستوران</th>
+                                <th>پلن</th>
+                                <th>وضعیت</th>
+                                <th>تاریخ شروع</th>
+                                <th>تاریخ پایان</th>
+                                <th>روزهای باقیمانده</th>
+                                <th>مبلغ (تومان)</th>
+                                <th class="text-center">عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var subscription in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@subscription.RestaurantName</strong>
+                                    </td>
+                                    <td>
+                                        <span class="badge @GetPlanBadgeClass(subscription.Plan)">@subscription.Plan</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge @GetStatusBadgeClass(subscription.Status)">@subscription.Status</span>
+                                    </td>
+                                    <td>@subscription.StartDate.ToString("yyyy/MM/dd")</td>
+                                    <td>@subscription.EndDate.ToString("yyyy/MM/dd")</td>
+                                    <td>
+                                        @if (subscription.DaysRemaining < 0)
+                                        {
+                                            <span class="text-danger fw-bold">منقضی شده</span>
+                                        }
+                                        else if (subscription.DaysRemaining <= 7)
+                                        {
+                                            <span class="text-warning fw-bold">@subscription.DaysRemaining روز</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-success">@subscription.DaysRemaining روز</span>
+                                        }
+                                    </td>
+                                    <td>@subscription.Amount.ToString("N0")</td>
+                                    <td class="text-center">
+                                        <a asp-area="Admin" asp-controller="Subscription" asp-action="Details" asp-route-id="@subscription.Id" class="btn btn-sm btn-primary">
+                                            <i class="bi bi-eye"></i>
+                                            جزئیات
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+</section>
