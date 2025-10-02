@@ -14,15 +14,18 @@ public class GetOrderDetailsQueryHandler : IRequestHandler<GetOrderDetailsQuery,
     private readonly IRepository<Order> _orderRepository;
     private readonly IRepository<OrderItem> _orderItemRepository;
     private readonly IRepository<Restaurant> _restaurantRepository;
+    private readonly IRepository<Payment> _paymentRepository;
 
     public GetOrderDetailsQueryHandler(
         IRepository<Order> orderRepository,
         IRepository<OrderItem> orderItemRepository,
-        IRepository<Restaurant> restaurantRepository)
+        IRepository<Restaurant> restaurantRepository,
+        IRepository<Payment> paymentRepository)
     {
         _orderRepository = orderRepository;
         _orderItemRepository = orderItemRepository;
         _restaurantRepository = restaurantRepository;
+        _paymentRepository = paymentRepository;
     }
 
     public async Task<OrderDetailsDto?> Handle(GetOrderDetailsQuery request, CancellationToken cancellationToken)
@@ -35,6 +38,13 @@ public class GetOrderDetailsQueryHandler : IRequestHandler<GetOrderDetailsQuery,
 
         var restaurant = await _restaurantRepository.GetByIdAsync(order.RestaurantId, cancellationToken);
         var orderItems = await _orderItemRepository.FindAsync(oi => oi.OrderId == order.Id, cancellationToken);
+        
+        // دریافت اطلاعات پرداخت (اگر وجود داشته باشد)
+        Payment? payment = null;
+        if (order.PaymentId.HasValue)
+        {
+            payment = await _paymentRepository.GetByIdAsync(order.PaymentId.Value, cancellationToken);
+        }
 
         var dto = new OrderDetailsDto
         {
@@ -51,7 +61,7 @@ public class GetOrderDetailsQueryHandler : IRequestHandler<GetOrderDetailsQuery,
             DesiredDeliveryTime = order.DesiredDeliveryTime,
             PreparedAt = order.PreparedAt,
             DeliveredAt = order.DeliveredAt,
-            Status = GetStatusTitle(order.Status),
+            Status = order.Status, // استفاده از Enum مستقیماً
             SubTotal = order.SubTotal,
             DeliveryFee = order.DeliveryFee,
             Tax = order.Tax,
@@ -59,6 +69,7 @@ public class GetOrderDetailsQueryHandler : IRequestHandler<GetOrderDetailsQuery,
             TotalAmount = order.TotalAmount,
             IsPaid = order.IsPaid,
             IsOnlinePayment = order.IsOnlinePayment,
+            PaymentRefID = payment?.RefID,
             CustomerNotes = order.CustomerNotes,
             CancellationReason = order.CancellationReason
         };
@@ -78,18 +89,4 @@ public class GetOrderDetailsQueryHandler : IRequestHandler<GetOrderDetailsQuery,
 
         return dto;
     }
-
-    /// <summary>
-    /// نمایش فارسی وضعیت سفارش
-    /// </summary>
-    private static string GetStatusTitle(OrderStatus status) => status switch
-    {
-        OrderStatus.Pending => "در انتظار تایید",
-        OrderStatus.Confirmed => "تایید شده",
-        OrderStatus.Preparing => "در حال آماده‌سازی",
-        OrderStatus.Ready => "آماده تحویل",
-        OrderStatus.Delivered => "تحویل داده شده",
-        OrderStatus.Cancelled => "لغو شده",
-        _ => status.ToString()
-    };
 }

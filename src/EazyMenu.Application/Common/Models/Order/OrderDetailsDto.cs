@@ -1,3 +1,5 @@
+using EazyMenu.Domain.Enums;
+
 namespace EazyMenu.Application.Common.Models.Order;
 
 /// <summary>
@@ -21,7 +23,25 @@ public class OrderDetailsDto
     public DateTime? PreparedAt { get; set; }
     public DateTime? DeliveredAt { get; set; }
 
-    public string Status { get; set; } = string.Empty;
+    /// <summary>
+    /// وضعیت سفارش (Enum)
+    /// </summary>
+    public OrderStatus Status { get; set; }
+    
+    /// <summary>
+    /// متن وضعیت فارسی
+    /// </summary>
+    public string StatusText => Status switch
+    {
+        OrderStatus.Pending => "در انتظار تایید",
+        OrderStatus.Confirmed => "تایید شده",
+        OrderStatus.Preparing => "در حال آماده‌سازی",
+        OrderStatus.Ready => "آماده تحویل",
+        OrderStatus.Delivered => "تحویل داده شده",
+        OrderStatus.Cancelled => "لغو شده",
+        _ => "نامشخص"
+    };
+    
     public decimal SubTotal { get; set; }
     public decimal DeliveryFee { get; set; }
     public decimal Tax { get; set; }
@@ -31,6 +51,11 @@ public class OrderDetailsDto
     public bool IsPaid { get; set; }
     public bool IsOnlinePayment { get; set; }
     public string PaymentStatus => IsPaid ? "پرداخت شده" : "در انتظار پرداخت";
+    
+    /// <summary>
+    /// شماره پیگیری پرداخت (RefID)
+    /// </summary>
+    public string? PaymentRefID { get; set; }
 
     public string? CustomerNotes { get; set; }
     public string? CancellationReason { get; set; }

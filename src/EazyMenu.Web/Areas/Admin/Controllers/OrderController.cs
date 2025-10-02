@@ -23,13 +23,10 @@ public class OrderController : Controller
     /// <summary>
     /// لیست سفارش‌ها
     /// </summary>
-    public async Task<IActionResult> Index(Guid? restaurantId, string? status)
+    public async Task<IActionResult> Index(Guid? restaurantId, EazyMenu.Domain.Enums.OrderStatus? status)
     {
-        var orders = await _mediator.Send(new GetAllOrdersQuery
-        {
-            RestaurantId = restaurantId,
-            Status = status
-        });
+        var orders = await _mediator.Send(new GetAllOrdersQuery(restaurantId, status));
+        
         ViewData["RestaurantId"] = restaurantId;
         ViewData["Status"] = status;
         return View(orders);

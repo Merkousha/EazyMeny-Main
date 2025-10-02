@@ -25,15 +25,34 @@ public class GetAllOrdersQueryHandler : IRequestHandler<GetAllOrdersQuery, List<
     {
         var orders = await _orderRepository.GetAllAsync(cancellationToken);
 
+        // فیلتر بر اساس رستوران
         if (request.RestaurantId.HasValue)
         {
             orders = orders.Where(o => o.RestaurantId == request.RestaurantId.Value);
         }
 
-        if (!string.IsNullOrWhiteSpace(request.Status) &&
-            Enum.TryParse<OrderStatus>(request.Status, true, out var statusFilter))
+        // فیلتر بر اساس وضعیت
+        if (request.Status.HasValue)
         {
-            orders = orders.Where(o => o.Status == statusFilter);
+            orders = orders.Where(o => o.Status == request.Status.Value);
+        }
+
+        // فیلتر بر اساس وضعیت پرداخت
+        if (request.IsPaid.HasValue)
+        {
+            orders = orders.Where(o => o.IsPaid == request.IsPaid.Value);
+        }
+
+        // فیلتر بر اساس تاریخ (از)
+        if (request.FromDate.HasValue)
+        {
+            orders = orders.Where(o => o.OrderDate >= request.FromDate.Value);
+        }
+
+        // فیلتر بر اساس تاریخ (تا)
+        if (request.ToDate.HasValue)
+        {
+            orders = orders.Where(o => o.OrderDate <= request.ToDate.Value);
         }
 
         // کش کردن نام رستوران‌ها برای کاهش فراخوانی
@@ -50,30 +69,18 @@ public class GetAllOrdersQueryHandler : IRequestHandler<GetAllOrdersQuery, List<
                 RestaurantName = restaurantLookup.TryGetValue(order.RestaurantId, out var name) ? name : "-",
                 CustomerName = string.IsNullOrWhiteSpace(order.CustomerName) ? "مشتری مهمان" : order.CustomerName,
                 CustomerPhone = order.CustomerPhone,
-                Status = GetStatusTitle(order.Status),
+                Status = order.Status, // استفاده از Enum مستقیماً
                 TotalAmount = order.TotalAmount,
                 OrderDate = order.OrderDate,
                 IsDelivery = order.IsDelivery,
                 TableNumber = order.TableNumber,
                 IsPaid = order.IsPaid,
-                IsOnlinePayment = order.IsOnlinePayment
+                IsOnlinePayment = order.IsOnlinePayment,
+                ItemsCount = order.OrderItems?.Count ?? 0,
+                DesiredDeliveryTime = order.DesiredDeliveryTime
             })
             .ToList();
 
         return result;
     }
-
-    /// <summary>
-    /// نمایش فارسی برای وضعیت سفارش
-    /// </summary>
-    private static string GetStatusTitle(OrderStatus status) => status switch
-    {
-        OrderStatus.Pending => "در انتظار تایید",
-        OrderStatus.Confirmed => "تایید شده",
-        OrderStatus.Preparing => "در حال آماده‌سازی",
-        OrderStatus.Ready => "آماده تحویل",
-        OrderStatus.Delivered => "تحویل داده شده",
-        OrderStatus.Cancelled => "لغو شده",
-        _ => status.ToString()
-    };
 }

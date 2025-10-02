@@ -1,23 +1,13 @@
 @using System.Linq
+@using EazyMenu.Domain.Enums
 @model IEnumerable<EazyMenu.Application.Common.Models.Order.OrderListDto>
 @{
     ViewData["Title"] = "مدیریت سفارش‌ها";
     var totalOrders = Model.Count();
     var paidOrders = Model.Count(o => o.IsPaid);
-    var pendingOrders = Model.Count(o => o.Status == "در انتظار تایید");
-    var deliveredOrders = Model.Count(o => o.Status == "تحویل داده شده");
-    var currentStatus = (ViewData["Status"]?.ToString() ?? string.Empty).ToLowerInvariant();
-
-    string GetStatusBadgeClass(string status) => status switch
-    {
-        "در انتظار تایید" => "bg-secondary",
-        "تایید شده" => "bg-info",
-        "در حال آماده‌سازی" => "bg-warning text-dark",
-        "آماده تحویل" => "bg-primary",
-        "تحویل داده شده" => "bg-success",
-        "لغو شده" => "bg-danger",
-        _ => "bg-light text-dark"
-    };
+    var pendingOrders = Model.Count(o => o.Status == OrderStatus.Pending);
+    var deliveredOrders = Model.Count(o => o.Status == OrderStatus.Delivered);
+    var currentStatus = ViewData["Status"] as OrderStatus?;
 }
 
 <div class="content-header">
@@ -82,13 +72,13 @@
                 <h3 class="card-title"><i class="bi bi-list-ul ms-1"></i> لیست سفارش‌ها</h3>
                 <div>
                     <div class="btn-group" role="group">
-                        <a asp-area="Admin" asp-controller="Order" asp-action="Index" asp-route-restaurantId="@ViewData["RestaurantId"]" class="btn btn-outline-secondary btn-sm @(string.IsNullOrEmpty(currentStatus) ? "active" : string.Empty)">همه</a>
-                        <a asp-area="Admin" asp-controller="Order" asp-action="Index" asp-route-restaurantId="@ViewData["RestaurantId"]" asp-route-status="pending" class="btn btn-outline-secondary btn-sm @(currentStatus == "pending" ? "active" : string.Empty)">در انتظار</a>
-                        <a asp-area="Admin" asp-controller="Order" asp-action="Index" asp-route-restaurantId="@ViewData["RestaurantId"]" asp-route-status="confirmed" class="btn btn-outline-secondary btn-sm @(currentStatus == "confirmed" ? "active" : string.Empty)">تایید شده</a>
-                        <a asp-area="Admin" asp-controller="Order" asp-action="Index" asp-route-restaurantId="@ViewData["RestaurantId"]" asp-route-status="preparing" class="btn btn-outline-secondary btn-sm @(currentStatus == "preparing" ? "active" : string.Empty)">در حال آماده‌سازی</a>
-                        <a asp-area="Admin" asp-controller="Order" asp-action="Index" asp-route-restaurantId="@ViewData["RestaurantId"]" asp-route-status="ready" class="btn btn-outline-secondary btn-sm @(currentStatus == "ready" ? "active" : string.Empty)">آماده تحویل</a>
-                        <a asp-area="Admin" asp-controller="Order" asp-action="Index" asp-route-restaurantId="@ViewData["RestaurantId"]" asp-route-status="delivered" class="btn btn-outline-secondary btn-sm @(currentStatus == "delivered" ? "active" : string.Empty)">تحویل شده</a>
-                        <a asp-area="Admin" asp-controller="Order" asp-action="Index" asp-route-restaurantId="@ViewData["RestaurantId"]" asp-route-status="cancelled" class="btn btn-outline-secondary btn-sm @(currentStatus == "cancelled" ? "active" : string.Empty)">لغو شده</a>
+                        <a asp-area="Admin" asp-controller="Order" asp-action="Index" asp-route-restaurantId="@ViewData["RestaurantId"]" class="btn btn-outline-secondary btn-sm @(!currentStatus.HasValue ? "active" : string.Empty)">همه</a>
+                        <a asp-area="Admin" asp-controller="Order" asp-action="Index" asp-route-restaurantId="@ViewData["RestaurantId"]" asp-route-status="@OrderStatus.Pending" class="btn btn-outline-secondary btn-sm @(currentStatus == OrderStatus.Pending ? "active" : string.Empty)">در انتظار</a>
+                        <a asp-area="Admin" asp-controller="Order" asp-action="Index" asp-route-restaurantId="@ViewData["RestaurantId"]" asp-route-status="@OrderStatus.Confirmed" class="btn btn-outline-secondary btn-sm @(currentStatus == OrderStatus.Confirmed ? "active" : string.Empty)">تایید شده</a>
+                        <a asp-area="Admin" asp-controller="Order" asp-action="Index" asp-route-restaurantId="@ViewData["RestaurantId"]" asp-route-status="@OrderStatus.Preparing" class="btn btn-outline-secondary btn-sm @(currentStatus == OrderStatus.Preparing ? "active" : string.Empty)">در حال آماده‌سازی</a>
+                        <a asp-area="Admin" asp-controller="Order" asp-action="Index" asp-route-restaurantId="@ViewData["RestaurantId"]" asp-route-status="@OrderStatus.Ready" class="btn btn-outline-secondary btn-sm @(currentStatus == OrderStatus.Ready ? "active" : string.Empty)">آماده تحویل</a>
+                        <a asp-area="Admin" asp-controller="Order" asp-action="Index" asp-route-restaurantId="@ViewData["RestaurantId"]" asp-route-status="@OrderStatus.Delivered" class="btn btn-outline-secondary btn-sm @(currentStatus == OrderStatus.Delivered ? "active" : string.Empty)">تحویل شده</a>
+                        <a asp-area="Admin" asp-controller="Order" asp-action="Index" asp-route-restaurantId="@ViewData["RestaurantId"]" asp-route-status="@OrderStatus.Cancelled" class="btn btn-outline-secondary btn-sm @(currentStatus == OrderStatus.Cancelled ? "active" : string.Empty)">لغو شده</a>
                     </div>
                 </div>
             </div>
@@ -145,7 +135,7 @@
                                     </td>
                                     <td>@order.TotalAmount.ToString("N0")</td>
                                     <td>
-                                        <span class="badge @GetStatusBadgeClass(order.Status)">@order.Status</span>
+                                        <span class="badge @order.StatusBadgeClass">@order.StatusText</span>
                                     </td>
                                     <td>
                                         @if (order.IsPaid)
