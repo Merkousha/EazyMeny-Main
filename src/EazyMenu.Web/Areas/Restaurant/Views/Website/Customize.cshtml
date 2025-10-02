@@ -1,0 +1,322 @@
+@model EazyMenu.Application.Features.Website.DTOs.WebsiteCustomizationDto
+
+@{
+    ViewData["Title"] = "سفارشی‌سازی وب‌سایت";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1">
+                        <i class="bi bi-palette me-2"></i>
+                        سفارشی‌سازی وب‌سایت
+                    </h2>
+                    <p class="text-muted mb-0">رنگ، فونت، لوگو و تنظیمات SEO</p>
+                </div>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-right me-2"></i>
+                    بازگشت
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <form asp-action="Customize" method="post" id="customizeForm">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+        <div class="row">
+            <!-- رنگ‌ها -->
+            <div class="col-lg-6 mb-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title mb-4">
+                            <i class="bi bi-palette-fill me-2 text-primary"></i>
+                            رنگ‌بندی
+                        </h5>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label asp-for="PrimaryColor" class="form-label">رنگ اصلی</label>
+                                <div class="input-group">
+                                    <input asp-for="PrimaryColor" type="color" class="form-control form-control-color" title="انتخاب رنگ اصلی">
+                                    <input asp-for="PrimaryColor" type="text" class="form-control" placeholder="#FF6B35" maxlength="7">
+                                </div>
+                                <span asp-validation-for="PrimaryColor" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="SecondaryColor" class="form-label">رنگ ثانویه</label>
+                                <div class="input-group">
+                                    <input asp-for="SecondaryColor" type="color" class="form-control form-control-color" title="انتخاب رنگ ثانویه">
+                                    <input asp-for="SecondaryColor" type="text" class="form-control" placeholder="#004E89" maxlength="7">
+                                </div>
+                                <span asp-validation-for="SecondaryColor" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="TextColor" class="form-label">رنگ متن</label>
+                                <div class="input-group">
+                                    <input asp-for="TextColor" type="color" class="form-control form-control-color" title="انتخاب رنگ متن">
+                                    <input asp-for="TextColor" type="text" class="form-control" placeholder="#333333" maxlength="7">
+                                </div>
+                                <span asp-validation-for="TextColor" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="BackgroundColor" class="form-label">رنگ پس‌زمینه</label>
+                                <div class="input-group">
+                                    <input asp-for="BackgroundColor" type="color" class="form-control form-control-color" title="انتخاب رنگ پس‌زمینه">
+                                    <input asp-for="BackgroundColor" type="text" class="form-control" placeholder="#FFFFFF" maxlength="7">
+                                </div>
+                                <span asp-validation-for="BackgroundColor" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle me-1"></i>
+                                رنگ‌ها باید به فرمت Hex باشند (مثال: #FF6B35)
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- فونت‌ها -->
+            <div class="col-lg-6 mb-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title mb-4">
+                            <i class="bi bi-fonts me-2 text-primary"></i>
+                            تنظیمات فونت
+                        </h5>
+
+                        <div class="mb-3">
+                            <label asp-for="FontFamily" class="form-label">فونت اصلی</label>
+                            <select asp-for="FontFamily" class="form-select">
+                                <option value="IRANSans">ایران‌سنس (IRANSans)</option>
+                                <option value="Vazir">وزیر (Vazir)</option>
+                                <option value="Yekan">یکان (Yekan)</option>
+                                <option value="Tahoma">تاهوما (Tahoma)</option>
+                                <option value="Arial">آریال (Arial)</option>
+                            </select>
+                            <span asp-validation-for="FontFamily" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="FontSize" class="form-label">اندازه فونت: <span id="fontSizeValue">16</span> پیکسل</label>
+                            <input asp-for="FontSize" type="range" class="form-range" min="10" max="24" value="16" 
+                                   oninput="document.getElementById('fontSizeValue').textContent = this.value">
+                            <div class="d-flex justify-content-between small text-muted">
+                                <span>کوچک (10px)</span>
+                                <span>بزرگ (24px)</span>
+                            </div>
+                            <span asp-validation-for="FontSize" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- لوگو و Favicon -->
+            <div class="col-lg-6 mb-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title mb-4">
+                            <i class="bi bi-image me-2 text-primary"></i>
+                            تصاویر
+                        </h5>
+
+                        <div class="mb-3">
+                            <label asp-for="CustomLogoUrl" class="form-label">آدرس لوگو (URL)</label>
+                            <input asp-for="CustomLogoUrl" class="form-control" placeholder="https://example.com/logo.png" maxlength="500">
+                            <span asp-validation-for="CustomLogoUrl" class="text-danger small"></span>
+                            <small class="text-muted d-block mt-1">
+                                <i class="bi bi-info-circle me-1"></i>
+                                لوگوی سفارشی برای نمایش در هدر وب‌سایت
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="FaviconUrl" class="form-label">آدرس Favicon (URL)</label>
+                            <input asp-for="FaviconUrl" class="form-control" placeholder="https://example.com/favicon.ico" maxlength="500">
+                            <span asp-validation-for="FaviconUrl" class="text-danger small"></span>
+                            <small class="text-muted d-block mt-1">
+                                <i class="bi bi-info-circle me-1"></i>
+                                آیکون کوچک نمایش داده شده در تب مرورگر
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEO -->
+            <div class="col-lg-6 mb-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title mb-4">
+                            <i class="bi bi-search me-2 text-primary"></i>
+                            تنظیمات SEO
+                        </h5>
+
+                        <div class="mb-3">
+                            <label asp-for="SeoTitle" class="form-label">عنوان SEO</label>
+                            <input asp-for="SeoTitle" class="form-control" placeholder="نام رستوران شما" maxlength="100">
+                            <span asp-validation-for="SeoTitle" class="text-danger small"></span>
+                            <small class="text-muted d-block mt-1">
+                                <i class="bi bi-info-circle me-1"></i>
+                                عنوان نمایش داده شده در نتایج گوگل (حداکثر 100 کاراکتر)
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="SeoDescription" class="form-label">توضیحات SEO</label>
+                            <textarea asp-for="SeoDescription" class="form-control" rows="3" 
+                                      placeholder="توضیح کوتاهی درباره رستوران خود..." maxlength="200"></textarea>
+                            <span asp-validation-for="SeoDescription" class="text-danger small"></span>
+                            <small class="text-muted d-block mt-1">
+                                <i class="bi bi-info-circle me-1"></i>
+                                توضیحات نمایش داده شده در نتایج گوگل (حداکثر 200 کاراکتر)
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="SeoKeywords" class="form-label">کلمات کلیدی (با کاما جدا شوند)</label>
+                            <input asp-for="SeoKeywords" class="form-control" 
+                                   placeholder="رستوران، غذا، تهران، فست‌فود" maxlength="200">
+                            <span asp-validation-for="SeoKeywords" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Google Analytics & CSS/JS سفارشی -->
+            <div class="col-lg-12 mb-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title mb-4">
+                            <i class="bi bi-code-square me-2 text-primary"></i>
+                            تنظیمات پیشرفته
+                        </h5>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="GoogleAnalyticsId" class="form-label">Google Analytics ID</label>
+                                <input asp-for="GoogleAnalyticsId" class="form-control" 
+                                       placeholder="G-XXXXXXXXXX" maxlength="50">
+                                <span asp-validation-for="GoogleAnalyticsId" class="text-danger small"></span>
+                                <small class="text-muted d-block mt-1">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    شناسه Google Analytics برای آمارگیری بازدیدها
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CustomCss" class="form-label">CSS سفارشی (اختیاری)</label>
+                            <textarea asp-for="CustomCss" class="form-control font-monospace" rows="5" 
+                                      placeholder=".custom-class { color: red; }" maxlength="5000"></textarea>
+                            <span asp-validation-for="CustomCss" class="text-danger small"></span>
+                            <small class="text-muted d-block mt-1">
+                                <i class="bi bi-exclamation-triangle me-1"></i>
+                                فقط در صورت دانش کافی از CSS استفاده کنید
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CustomJs" class="form-label">JavaScript سفارشی (اختیاری)</label>
+                            <textarea asp-for="CustomJs" class="form-control font-monospace" rows="5" 
+                                      placeholder="console.log('Hello');" maxlength="5000"></textarea>
+                            <span asp-validation-for="CustomJs" class="text-danger small"></span>
+                            <small class="text-muted d-block mt-1">
+                                <i class="bi bi-exclamation-triangle me-1"></i>
+                                فقط در صورت دانش کافی از JavaScript استفاده کنید
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- دکمه‌های عملیات -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-check-circle me-2"></i>
+                                    ذخیره تغییرات
+                                </button>
+                                <a asp-action="Index" class="btn btn-outline-secondary btn-lg ms-2">
+                                    <i class="bi bi-x-circle me-2"></i>
+                                    انصراف
+                                </a>
+                            </div>
+                            <div>
+                                <a asp-action="Preview" target="_blank" class="btn btn-outline-info btn-lg">
+                                    <i class="bi bi-eye me-2"></i>
+                                    پیش‌نمایش
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        // همگام‌سازی Color Picker با Text Input
+        document.addEventListener('DOMContentLoaded', function() {
+            const colorInputs = document.querySelectorAll('input[type="color"]');
+            colorInputs.forEach(colorInput => {
+                const textInput = colorInput.nextElementSibling;
+                
+                // تغییر Color Picker
+                colorInput.addEventListener('input', function() {
+                    textInput.value = this.value.toUpperCase();
+                });
+                
+                // تغییر Text Input
+                textInput.addEventListener('input', function() {
+                    if (/^#[0-9A-F]{6}$/i.test(this.value)) {
+                        colorInput.value = this.value;
+                    }
+                });
+            });
+
+            // مقدار اولیه Font Size
+            const fontSizeInput = document.querySelector('input[name="FontSize"]');
+            if (fontSizeInput && fontSizeInput.value) {
+                document.getElementById('fontSizeValue').textContent = fontSizeInput.value;
+            }
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .form-control-color {
+            width: 60px;
+            height: 38px;
+            border-radius: 0.375rem 0 0 0.375rem;
+            border-right: 0;
+        }
+        
+        .input-group input[type="text"] {
+            border-radius: 0 0.375rem 0.375rem 0;
+        }
+        
+        .font-monospace {
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+        }
+    </style>
+}

@@ -1,0 +1,190 @@
+@model IEnumerable<EazyMenu.Application.Features.Website.DTOs.WebsiteTemplateDto>
+
+@{
+    ViewData["Title"] = "انتخاب قالب وب‌سایت";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1">
+                        <i class="bi bi-layout-text-window-reverse me-2"></i>
+                        انتخاب قالب
+                    </h2>
+                    <p class="text-muted mb-0">قالب دلخواه خود را انتخاب کنید</p>
+                </div>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-right me-2"></i>
+                    بازگشت
+                </a>
+            </div>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="alert alert-warning text-center py-5">
+                    <i class="bi bi-exclamation-triangle fs-1 d-block mb-3"></i>
+                    <h5>هیچ قالبی یافت نشد!</h5>
+                    <p class="mb-0 text-muted">در حال حاضر قالب فعالی موجود نیست.</p>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var template in Model)
+            {
+                <div class="col-lg-4 col-md-6">
+                    <div class="card template-card border-0 shadow-sm h-100">
+                        <!-- تصویر قالب -->
+                        <div class="template-preview position-relative">
+                            @if (!string.IsNullOrEmpty(template.ThumbnailUrl))
+                            {
+                                <img src="@template.ThumbnailUrl" alt="@template.Name" class="card-img-top">
+                            }
+                            else
+                            {
+                                <div class="placeholder-image d-flex align-items-center justify-content-center bg-light" style="height: 250px;">
+                                    <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                                </div>
+                            }
+                            
+                            <!-- بج رایگان -->
+                            @if (template.IsFree)
+                            {
+                                <span class="badge bg-success position-absolute top-0 start-0 m-3">
+                                    <i class="bi bi-check-circle me-1"></i>
+                                    رایگان
+                                </span>
+                            }
+                            
+                            <!-- بج نوع قالب -->
+                            <span class="badge bg-primary position-absolute top-0 end-0 m-3">
+                                @template.Type.ToString()
+                            </span>
+                        </div>
+
+                        <div class="card-body d-flex flex-column">
+                            <!-- نام قالب -->
+                            <h5 class="card-title mb-2">@template.Name</h5>
+                            <p class="text-muted small mb-3">@template.NameEn</p>
+                            
+                            <!-- توضیحات -->
+                            @if (!string.IsNullOrEmpty(template.Description))
+                            {
+                                <p class="card-text text-muted mb-3">@template.Description</p>
+                            }
+                            
+                            <!-- رنگ‌های پیش‌فرض - حذف شد به دلیل عدم وجود در DTO -->
+
+                            <!-- تعداد بخش‌ها -->
+                            <div class="mb-3">
+                                <small class="text-muted">
+                                    <i class="bi bi-grid-3x3-gap me-1"></i>
+                                    @template.Sections.Count بخش
+                                    <span class="mx-2">•</span>
+                                    @template.Sections.Count(s => s.IsRequired) بخش الزامی
+                                </small>
+                            </div>
+
+                            <!-- دکمه‌های عملیات -->
+                            <div class="mt-auto d-grid gap-2">
+                                @if (!string.IsNullOrEmpty(template.PreviewImageUrl))
+                                {
+                                    <button type="button" class="btn btn-sm btn-outline-info" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#previewModal_@template.Id">
+                                        <i class="bi bi-eye me-1"></i>
+                                        پیش‌نمایش
+                                    </button>
+                                }
+                                
+                                <form asp-action="SelectTemplate" method="post">
+                                    <input type="hidden" name="templateId" value="@template.Id" />
+                                    <button type="submit" class="btn btn-primary w-100" 
+                                            onclick="return confirm('آیا از انتخاب این قالب مطمئن هستید؟\n\nتوجه: تنظیمات قبلی حفظ می‌شود اما محتوای بخش‌ها تغییر خواهد کرد.')">
+                                        <i class="bi bi-check-circle me-1"></i>
+                                        انتخاب این قالب
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal پیش‌نمایش -->
+                @if (!string.IsNullOrEmpty(template.PreviewImageUrl))
+                {
+                    <div class="modal fade" id="previewModal_@template.Id" tabindex="-1">
+                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">پیش‌نمایش: @template.Name</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <img src="@template.PreviewImageUrl" alt="@template.Name" class="img-fluid">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">بستن</button>
+                                    <form asp-action="SelectTemplate" method="post" class="d-inline">
+                                        <input type="hidden" name="templateId" value="@template.Id" />
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="bi bi-check-circle me-1"></i>
+                                            انتخاب این قالب
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    }
+</div>
+
+@section Styles {
+    <style>
+        .template-card {
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .template-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15) !important;
+        }
+        
+        .template-preview {
+            overflow: hidden;
+            background: #f8f9fa;
+        }
+        
+        .template-preview img {
+            transition: transform 0.3s ease;
+            height: 250px;
+            object-fit: cover;
+        }
+        
+        .template-card:hover .template-preview img {
+            transform: scale(1.05);
+        }
+        
+        .color-sample {
+            border: 2px solid #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .badge {
+            font-weight: 600;
+            padding: 0.5rem 0.75rem;
+        }
+    </style>
+}

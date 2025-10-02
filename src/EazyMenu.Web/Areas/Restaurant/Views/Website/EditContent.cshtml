@@ -1,0 +1,310 @@
+@model EazyMenu.Web.Areas.Restaurant.Models.EditContentViewModel
+
+@{
+    ViewData["Title"] = $"ویرایش محتوا: {Model.SectionTitle}";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1">
+                        <i class="bi bi-pencil-square me-2"></i>
+                        ویرایش محتوا
+                    </h2>
+                    <p class="text-muted mb-0">
+                        بخش: <strong>@Model.SectionTitle</strong>
+                        @if (Model.IsRequired)
+                        {
+                            <span class="badge bg-danger ms-2">الزامی</span>
+                        }
+                    </p>
+                </div>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-right me-2"></i>
+                    بازگشت
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <form asp-action="EditContent" method="post" id="contentForm">
+        <input type="hidden" asp-for="SectionType" />
+        <input type="hidden" asp-for="SectionTitle" />
+        <input type="hidden" asp-for="IsRequired" />
+        
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+        <div class="row">
+            <!-- محتوای HTML -->
+            <div class="col-lg-8 mb-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">
+                            <i class="bi bi-file-earmark-code me-2 text-primary"></i>
+                            محتوای HTML
+                        </h5>
+
+                        <div class="mb-3">
+                            <label asp-for="CustomContent" class="form-label">
+                                محتوای سفارشی
+                                <span class="text-muted small">(HTML)</span>
+                            </label>
+                            <textarea asp-for="CustomContent" 
+                                      class="form-control font-monospace" 
+                                      rows="20" 
+                                      id="customContentEditor"
+                                      placeholder="<div class='section'>
+    <h2>عنوان بخش</h2>
+    <p>متن توضیحات...</p>
+</div>"></textarea>
+                            <span asp-validation-for="CustomContent" class="text-danger small"></span>
+                            <div class="mt-2 d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    حداکثر 20,000 کاراکتر
+                                </small>
+                                <small class="text-muted">
+                                    تعداد کاراکترها: <span id="charCount">0</span> / 20,000
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- راهنمای سریع HTML -->
+                        <div class="accordion" id="htmlGuideAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" 
+                                            data-bs-toggle="collapse" data-bs-target="#htmlGuide">
+                                        <i class="bi bi-book me-2"></i>
+                                        راهنمای سریع HTML
+                                    </button>
+                                </h2>
+                                <div id="htmlGuide" class="accordion-collapse collapse" 
+                                     data-bs-parent="#htmlGuideAccordion">
+                                    <div class="accordion-body">
+                                        <div class="row small">
+                                            <div class="col-md-6">
+                                                <h6 class="fw-bold">تگ‌های متنی:</h6>
+                                                <ul class="font-monospace">
+                                                    <li>&lt;h1&gt;عنوان اصلی&lt;/h1&gt;</li>
+                                                    <li>&lt;h2&gt;عنوان فرعی&lt;/h2&gt;</li>
+                                                    <li>&lt;p&gt;پاراگراف&lt;/p&gt;</li>
+                                                    <li>&lt;strong&gt;متن ضخیم&lt;/strong&gt;</li>
+                                                    <li>&lt;em&gt;متن کج&lt;/em&gt;</li>
+                                                </ul>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <h6 class="fw-bold">تگ‌های ساختاری:</h6>
+                                                <ul class="font-monospace">
+                                                    <li>&lt;div class="row"&gt;...&lt;/div&gt;</li>
+                                                    <li>&lt;ul&gt;&lt;li&gt;آیتم&lt;/li&gt;&lt;/ul&gt;</li>
+                                                    <li>&lt;a href="#"&gt;لینک&lt;/a&gt;</li>
+                                                    <li>&lt;img src="..." alt="..."&gt;</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- تنظیمات -->
+            <div class="col-lg-4 mb-4">
+                <div class="card border-0 shadow-sm mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">
+                            <i class="bi bi-gear me-2 text-primary"></i>
+                            تنظیمات
+                        </h5>
+
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input asp-for="UseDefaultContent" 
+                                       class="form-check-input" 
+                                       type="checkbox" 
+                                       id="useDefaultContent">
+                                <label class="form-check-label" for="useDefaultContent">
+                                    استفاده از محتوای پیش‌فرض
+                                </label>
+                            </div>
+                            <small class="text-muted d-block mt-1">
+                                <i class="bi bi-info-circle me-1"></i>
+                                در صورت فعال‌سازی، محتوای سفارشی نادیده گرفته می‌شود
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input asp-for="IsVisible" 
+                                       class="form-check-input" 
+                                       type="checkbox" 
+                                       id="isVisible">
+                                <label class="form-check-label" for="isVisible">
+                                    نمایش در وب‌سایت
+                                </label>
+                            </div>
+                            <small class="text-muted d-block mt-1">
+                                <i class="bi bi-info-circle me-1"></i>
+                                در صورت غیرفعال‌سازی، این بخش در وب‌سایت نمایش داده نمی‌شود
+                            </small>
+                        </div>
+
+                        @if (Model.IsRequired)
+                        {
+                            <div class="alert alert-warning mb-0">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                <strong>توجه:</strong> این بخش الزامی است و باید در وب‌سایت نمایش داده شود.
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- محتوای پیش‌فرض -->
+                @if (!string.IsNullOrEmpty(Model.DefaultContent))
+                {
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">
+                                <i class="bi bi-file-earmark me-2 text-primary"></i>
+                                محتوای پیش‌فرض
+                            </h5>
+                            <div class="default-content-preview p-3 bg-light rounded">
+                                <pre class="mb-0 small font-monospace" 
+                                     style="max-height: 300px; overflow-y: auto; white-space: pre-wrap;">@Model.DefaultContent</pre>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-secondary mt-2 w-100" 
+                                    onclick="copyDefaultContent()">
+                                <i class="bi bi-clipboard me-1"></i>
+                                کپی محتوای پیش‌فرض
+                            </button>
+                        </div>
+                    </div>
+                }
+
+                <!-- دکمه‌های عملیات -->
+                <div class="card border-0 shadow-sm mt-3">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">
+                            <i class="bi bi-lightning-charge me-2 text-primary"></i>
+                            عملیات
+                        </h5>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle me-2"></i>
+                                ذخیره تغییرات
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle me-2"></i>
+                                انصراف
+                            </a>
+                            <a asp-action="Preview" target="_blank" class="btn btn-outline-info">
+                                <i class="bi bi-eye me-2"></i>
+                                پیش‌نمایش وب‌سایت
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        // شمارش کاراکترها
+        document.addEventListener('DOMContentLoaded', function() {
+            const editor = document.getElementById('customContentEditor');
+            const charCount = document.getElementById('charCount');
+            
+            function updateCharCount() {
+                const length = editor.value.length;
+                charCount.textContent = length.toLocaleString('fa-IR');
+                
+                if (length > 20000) {
+                    charCount.parentElement.classList.add('text-danger');
+                    charCount.parentElement.classList.remove('text-muted');
+                } else {
+                    charCount.parentElement.classList.remove('text-danger');
+                    charCount.parentElement.classList.add('text-muted');
+                }
+            }
+            
+            editor.addEventListener('input', updateCharCount);
+            updateCharCount();
+        });
+
+        // کپی محتوای پیش‌فرض
+        function copyDefaultContent() {
+            const defaultContent = `@Html.Raw(Model.DefaultContent?.Replace("\r", "").Replace("\n", "\\n").Replace("'", "\\'"))`;
+            const editor = document.getElementById('customContentEditor');
+            
+            if (confirm('آیا مطمئن هستید که می‌خواهید محتوای فعلی را با محتوای پیش‌فرض جایگزین کنید؟')) {
+                editor.value = defaultContent;
+                editor.dispatchEvent(new Event('input'));
+                
+                // نمایش پیام موفقیت
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-success alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3';
+                alert.style.zIndex = '9999';
+                alert.innerHTML = `
+                    <i class="bi bi-check-circle me-2"></i>
+                    محتوای پیش‌فرض کپی شد!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                document.body.appendChild(alert);
+                
+                setTimeout(() => {
+                    alert.remove();
+                }, 3000);
+            }
+        }
+
+        // غیرفعال کردن ویرایشگر اگر UseDefaultContent فعال باشد
+        document.addEventListener('DOMContentLoaded', function() {
+            const useDefaultCheckbox = document.getElementById('useDefaultContent');
+            const editor = document.getElementById('customContentEditor');
+            
+            function toggleEditor() {
+                editor.disabled = useDefaultCheckbox.checked;
+                if (useDefaultCheckbox.checked) {
+                    editor.classList.add('bg-light');
+                } else {
+                    editor.classList.remove('bg-light');
+                }
+            }
+            
+            useDefaultCheckbox.addEventListener('change', toggleEditor);
+            toggleEditor();
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .font-monospace {
+            font-family: 'Courier New', Consolas, monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        
+        .default-content-preview {
+            border: 1px solid #dee2e6;
+        }
+        
+        #customContentEditor {
+            resize: vertical;
+        }
+        
+        #customContentEditor:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+    </style>
+}

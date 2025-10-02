@@ -15,6 +15,11 @@ public class WebsiteContentDto
     public bool UseDefaultContent { get; set; }
     public int DisplayOrder { get; set; }
     public bool IsVisible { get; set; }
+    
+    // اطلاعات Template Section برای نمایش در View
+    public string SectionTitle { get; set; } = string.Empty;
+    public bool IsRequired { get; set; }
+    public bool IsEditable { get; set; }
 }
 
 /// <summary>
