@@ -1,0 +1,344 @@
+@{
+    ViewData["Title"] = "درباره ما - EazyMenu";
+}
+
+@section Styles {
+<style>
+    .about-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 80px 0 60px;
+        margin-bottom: 60px;
+    }
+
+    .about-section {
+        padding: 60px 0;
+    }
+
+    .value-card {
+        text-align: center;
+        padding: 30px;
+        border-radius: 15px;
+        background: white;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        height: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .value-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    }
+
+    .value-icon {
+        font-size: 3rem;
+        color: #667eea;
+        margin-bottom: 20px;
+    }
+
+    .team-card {
+        text-align: center;
+        padding: 20px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+    }
+
+    .team-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+
+    .team-photo {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        margin: 0 auto 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: white;
+    }
+
+    .stats-box {
+        background: #f8f9fa;
+        padding: 40px 20px;
+        border-radius: 15px;
+        text-align: center;
+    }
+
+    .stat-number {
+        font-size: 3rem;
+        font-weight: 800;
+        color: #667eea;
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    .stat-label {
+        color: #718096;
+        font-size: 1.1rem;
+    }
+</style>
+}
+
+<!-- Hero Section -->
+<section class="about-hero">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="display-4 mb-4">درباره EazyMenu</h1>
+                <p class="lead">
+                    ما با هدف ساده‌سازی مدیریت رستوران‌ها و کافه‌ها در دنیای دیجیتال، پلتفرمی یکپارچه و کاربرپسند ایجاد کرده‌ایم
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mission & Vision -->
+<section class="about-section">
+    <div class="container">
+        <div class="row align-items-center mb-5">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <h2 class="mb-4">ماموریت ما</h2>
+                <p class="lead text-muted">
+                    ماموریت ما توانمندسازی رستوران‌ها و کافه‌های کوچک و متوسط در ایران با ارائه ابزارهای دیجیتال حرفه‌ای و مقرون‌به‌صرفه است.
+                </p>
+                <p class="text-muted">
+                    ما معتقدیم که هر کسب‌وکاری، بدون توجه به اندازه آن، باید بتواند از مزایای دنیای دیجیتال بهره‌مند شود. 
+                    EazyMenu با حذف پیچیدگی‌های فنی و ارائه قیمت‌گذاری منصفانه، این امکان را برای همه فراهم می‌کند.
+                </p>
+            </div>
+            <div class="col-lg-6">
+                <div class="stats-box">
+                    <div class="row">
+                        <div class="col-6 mb-4 mb-sm-0">
+                            <span class="stat-number">500+</span>
+                            <span class="stat-label">رستوران فعال</span>
+                        </div>
+                        <div class="col-6">
+                            <span class="stat-number">50K+</span>
+                            <span class="stat-label">سفارش ماهانه</span>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-6">
+                            <span class="stat-number">98%</span>
+                            <span class="stat-label">رضایت مشتری</span>
+                        </div>
+                        <div class="col-6">
+                            <span class="stat-number">3</span>
+                            <span class="stat-label">سال تجربه</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row align-items-center">
+            <div class="col-lg-6 order-lg-2 mb-4 mb-lg-0">
+                <h2 class="mb-4">چشم‌انداز ما</h2>
+                <p class="lead text-muted">
+                    تبدیل شدن به بزرگ‌ترین پلتفرم دیجیتال رستوران‌ها در ایران و منطقه
+                </p>
+                <p class="text-muted">
+                    ما در تلاشیم تا با بهره‌گیری از فناوری‌های نوین و گوش دادن به نیازهای واقعی کسب‌وکارها،
+                    استانداردهای جدیدی در صنعت خدمات غذایی ایجاد کنیم. هدف ما ایجاد یک اکوسیستم دیجیتال کامل است
+                    که از سفارش‌گیری تا مدیریت مالی، همه نیازهای رستوران‌ها را پوشش دهد.
+                </p>
+            </div>
+            <div class="col-lg-6 order-lg-1">
+                <div class="p-4 bg-light rounded-3">
+                    <h4 class="mb-3">اهداف کلیدی ما:</h4>
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            پوشش +1000 رستوران در سراسر کشور تا پایان سال
+                        </li>
+                        <li class="mb-3">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            توسعه اپلیکیشن موبایل اختصاصی
+                        </li>
+                        <li class="mb-3">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            یکپارچه‌سازی با سیستم‌های POS
+                        </li>
+                        <li class="mb-3">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            ارائه راه‌حل‌های هوش مصنوعی برای پیش‌بینی تقاضا
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Values -->
+<section class="about-section bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">ارزش‌های ما</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="bi bi-heart-fill"></i>
+                    </div>
+                    <h4>مشتری‌محوری</h4>
+                    <p class="text-muted">
+                        رضایت و موفقیت مشتریان ما، اولویت اول ماست. ما به دنبال ایجاد ارزش واقعی برای کسب‌وکارهای شما هستیم.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="bi bi-lightbulb-fill"></i>
+                    </div>
+                    <h4>نوآوری</h4>
+                    <p class="text-muted">
+                        همیشه به دنبال راه‌حل‌های خلاقانه و فناوری‌های نوین برای بهبود تجربه کاربری و افزایش کارایی هستیم.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h4>قابلیت اعتماد</h4>
+                    <p class="text-muted">
+                        شفافیت، صداقت و پایبندی به تعهدات، پایه و اساس کار ماست. اعتماد شما بزرگترین سرمایه ماست.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="bi bi-speedometer2"></i>
+                    </div>
+                    <h4>سرعت و کارایی</h4>
+                    <p class="text-muted">
+                        ما می‌دانیم که زمان شما ارزشمند است. سیستم ما برای سرعت، کارایی و سادگی بهینه شده است.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <h4>پشتیبانی قوی</h4>
+                    <p class="text-muted">
+                        تیم پشتیبانی ما همیشه در کنار شماست. از لحظه شروع تا موفقیت، همراه شما خواهیم بود.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+                    <h4>رشد مستمر</h4>
+                    <p class="text-muted">
+                        ما به‌طور مداوم در حال یادگیری و بهبود هستیم تا بهترین راه‌حل‌ها را به شما ارائه دهیم.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Team Section -->
+<section class="about-section">
+    <div class="container">
+        <h2 class="text-center mb-5">تیم ما</h2>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="team-card">
+                    <div class="team-photo">
+                        <i class="bi bi-person"></i>
+                    </div>
+                    <h5>محمد رضایی</h5>
+                    <p class="text-muted mb-3">مدیر عامل و بنیانگذار</p>
+                    <div class="social-links">
+                        <a href="#" class="text-muted me-2"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" class="text-muted me-2"><i class="bi bi-twitter"></i></a>
+                        <a href="#" class="text-muted"><i class="bi bi-envelope"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="team-card">
+                    <div class="team-photo">
+                        <i class="bi bi-person"></i>
+                    </div>
+                    <h5>سارا احمدی</h5>
+                    <p class="text-muted mb-3">مدیر فنی</p>
+                    <div class="social-links">
+                        <a href="#" class="text-muted me-2"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" class="text-muted me-2"><i class="bi bi-twitter"></i></a>
+                        <a href="#" class="text-muted"><i class="bi bi-envelope"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="team-card">
+                    <div class="team-photo">
+                        <i class="bi bi-person"></i>
+                    </div>
+                    <h5>علی کریمی</h5>
+                    <p class="text-muted mb-3">مدیر محصول</p>
+                    <div class="social-links">
+                        <a href="#" class="text-muted me-2"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" class="text-muted me-2"><i class="bi bi-twitter"></i></a>
+                        <a href="#" class="text-muted"><i class="bi bi-envelope"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="team-card">
+                    <div class="team-photo">
+                        <i class="bi bi-person"></i>
+                    </div>
+                    <h5>مریم محمدی</h5>
+                    <p class="text-muted mb-3">مدیر پشتیبانی</p>
+                    <div class="social-links">
+                        <a href="#" class="text-muted me-2"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" class="text-muted me-2"><i class="bi bi-twitter"></i></a>
+                        <a href="#" class="text-muted"><i class="bi bi-envelope"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="about-section bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="mb-4">آماده همکاری با ما هستید؟</h2>
+                <p class="lead text-muted mb-4">
+                    بیش از 500 رستوران به ما اعتماد کرده‌اند. حالا نوبت شماست!
+                </p>
+                <a asp-action="Register" asp-controller="Account" class="btn btn-primary btn-lg">
+                    <i class="bi bi-rocket-takeoff me-2"></i>شروع رایگان
+                </a>
+            </div>
+        </div>
+    </div>
+</section>

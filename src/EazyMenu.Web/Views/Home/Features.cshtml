@@ -1,0 +1,441 @@
+@{
+    ViewData["Title"] = "امکانات - EazyMenu";
+}
+
+@section Styles {
+<style>
+    .features-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 80px 0;
+        margin-bottom: 80px;
+    }
+
+    .feature-section {
+        padding: 80px 0;
+    }
+
+    .feature-section:nth-child(even) {
+        background: #f8f9fa;
+    }
+
+    .feature-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: white;
+        margin-bottom: 30px;
+    }
+
+    .feature-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        color: #1a202c;
+    }
+
+    .feature-description {
+        font-size: 1.1rem;
+        color: #4a5568;
+        line-height: 1.8;
+        margin-bottom: 30px;
+    }
+
+    .feature-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .feature-list li {
+        padding: 12px 0;
+        font-size: 1.05rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .feature-list li i {
+        color: #10b981;
+        margin-left: 15px;
+        font-size: 1.3rem;
+    }
+
+    .feature-image {
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        width: 100%;
+        height: auto;
+    }
+
+    .benefit-card {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        height: 100%;
+        transition: all 0.3s;
+    }
+
+    .benefit-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    }
+
+    .benefit-icon {
+        width: 60px;
+        height: 60px;
+        background: #f0f4ff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .benefit-icon i {
+        font-size: 1.8rem;
+        color: #667eea;
+    }
+
+    .integration-card {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        border: 2px solid #e2e8f0;
+        text-align: center;
+        transition: all 0.3s;
+    }
+
+    .integration-card:hover {
+        border-color: #667eea;
+        transform: scale(1.05);
+    }
+
+    .integration-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+    }
+
+    @@media (max-width: 768px) {
+        .feature-section {
+            padding: 50px 0;
+        }
+        
+        .feature-title {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+}
+
+<!-- Hero Section -->
+<section class="features-hero">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="display-4 mb-4">امکانات کامل برای مدیریت رستوران</h1>
+                <p class="lead">
+                    تمام ابزارهایی که برای دیجیتالی کردن کسب‌وکار خود نیاز دارید
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Feature 1: QR Code Menu -->
+<section class="feature-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <div class="feature-icon">
+                    <i class="bi bi-qr-code"></i>
+                </div>
+                <h2 class="feature-title">منوی دیجیتال با QR Code</h2>
+                <p class="feature-description">
+                    مشتریان شما با اسکن کد QR، به منوی دیجیتال دسترسی دارند. بدون نیاز به برنامه، بدون نیاز به تماس.
+                </p>
+                <ul class="feature-list">
+                    <li><i class="bi bi-check-circle-fill"></i> ساخت خودکار QR Code برای هر رستوران</li>
+                    <li><i class="bi bi-check-circle-fill"></i> منوی موبایل‌فرندلی و سریع</li>
+                    <li><i class="bi bi-check-circle-fill"></i> به‌روزرسانی لحظه‌ای قیمت‌ها و محصولات</li>
+                    <li><i class="bi bi-check-circle-fill"></i> دانلود و چاپ کد QR با کیفیت بالا</li>
+                    <li><i class="bi bi-check-circle-fill"></i> نمایش تصاویر و توضیحات کامل</li>
+                </ul>
+            </div>
+            <div class="col-lg-6">
+                <div class="text-center">
+                    <i class="bi bi-phone" style="font-size: 20rem; color: #667eea; opacity: 0.2;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Feature 2: Online Ordering -->
+<section class="feature-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 order-lg-2 mb-4 mb-lg-0">
+                <div class="feature-icon">
+                    <i class="bi bi-cart-check"></i>
+                </div>
+                <h2 class="feature-title">سفارش آنلاین هوشمند</h2>
+                <p class="feature-description">
+                    سیستم سفارش‌گیری قدرتمند که مشتریان را به صورت مستقیم به شما متصل می‌کند.
+                </p>
+                <ul class="feature-list">
+                    <li><i class="bi bi-check-circle-fill"></i> سفارش مستقیم بدون واسطه</li>
+                    <li><i class="bi bi-check-circle-fill"></i> محاسبه خودکار مبلغ نهایی</li>
+                    <li><i class="bi bi-check-circle-fill"></i> پرداخت آنلاین امن (زرین‌پال)</li>
+                    <li><i class="bi bi-check-circle-fill"></i> پیگیری وضعیت سفارش</li>
+                    <li><i class="bi bi-check-circle-fill"></i> اعلان SMS به مشتری و رستوران</li>
+                </ul>
+            </div>
+            <div class="col-lg-6 order-lg-1">
+                <div class="text-center">
+                    <i class="bi bi-basket" style="font-size: 20rem; color: #764ba2; opacity: 0.2;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Feature 3: Reservations -->
+<section class="feature-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <div class="feature-icon">
+                    <i class="bi bi-calendar-check"></i>
+                </div>
+                <h2 class="feature-title">مدیریت رزرو میز</h2>
+                <p class="feature-description">
+                    مشتریان می‌توانند آنلاین میز خود را رزرو کنند و شما کنترل کامل بر ظرفیت رستوران دارید.
+                </p>
+                <ul class="feature-list">
+                    <li><i class="bi bi-check-circle-fill"></i> رزرو آنلاین 24/7</li>
+                    <li><i class="bi bi-check-circle-fill"></i> تقویم رزرو با نمای روزانه/هفتگی</li>
+                    <li><i class="bi bi-check-circle-fill"></i> مدیریت ظرفیت و میزها</li>
+                    <li><i class="bi bi-check-circle-fill"></i> یادآوری خودکار SMS به مشتری</li>
+                    <li><i class="bi bi-check-circle-fill"></i> گزارش رزروها و نرخ حضور</li>
+                </ul>
+            </div>
+            <div class="col-lg-6">
+                <div class="text-center">
+                    <i class="bi bi-calendar3" style="font-size: 20rem; color: #667eea; opacity: 0.2;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Feature 4: Analytics -->
+<section class="feature-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 order-lg-2 mb-4 mb-lg-0">
+                <div class="feature-icon">
+                    <i class="bi bi-graph-up-arrow"></i>
+                </div>
+                <h2 class="feature-title">گزارش‌گیری و تحلیل پیشرفته</h2>
+                <p class="feature-description">
+                    داده‌های دقیق برای تصمیم‌گیری بهتر و رشد کسب‌وکار شما.
+                </p>
+                <ul class="feature-list">
+                    <li><i class="bi bi-check-circle-fill"></i> گزارش فروش روزانه/ماهانه</li>
+                    <li><i class="bi bi-check-circle-fill"></i> محبوب‌ترین محصولات</li>
+                    <li><i class="bi bi-check-circle-fill"></i> تحلیل رفتار مشتریان</li>
+                    <li><i class="bi bi-check-circle-fill"></i> پیش‌بینی فروش</li>
+                    <li><i class="bi bi-check-circle-fill"></i> نمودارهای تعاملی و داشبورد</li>
+                </ul>
+            </div>
+            <div class="col-lg-6 order-lg-1">
+                <div class="text-center">
+                    <i class="bi bi-bar-chart" style="font-size: 20rem; color: #764ba2; opacity: 0.2;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Feature 5: Notifications -->
+<section class="feature-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <div class="feature-icon">
+                    <i class="bi bi-bell"></i>
+                </div>
+                <h2 class="feature-title">اعلان‌های هوشمند SMS</h2>
+                <p class="feature-description">
+                    مشتریان و تیم شما همیشه در جریان آخرین وضعیت‌ها هستند.
+                </p>
+                <ul class="feature-list">
+                    <li><i class="bi bi-check-circle-fill"></i> اعلان سفارش جدید</li>
+                    <li><i class="bi bi-check-circle-fill"></i> تایید پرداخت</li>
+                    <li><i class="bi bi-check-circle-fill"></i> یادآوری رزرو</li>
+                    <li><i class="bi bi-check-circle-fill"></i> تخفیف‌ها و پیشنهادات ویژه</li>
+                    <li><i class="bi bi-check-circle-fill"></i> یکپارچه با کاوه‌نگار</li>
+                </ul>
+            </div>
+            <div class="col-lg-6">
+                <div class="text-center">
+                    <i class="bi bi-chat-dots" style="font-size: 20rem; color: #667eea; opacity: 0.2;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Feature 6: Website Builder -->
+<section class="feature-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 order-lg-2 mb-4 mb-lg-0">
+                <div class="feature-icon">
+                    <i class="bi bi-browser-chrome"></i>
+                </div>
+                <h2 class="feature-title">وب‌سایت اختصاصی رستوران</h2>
+                <p class="feature-description">
+                    وب‌سایت حرفه‌ای خود را در چند کلیک بسازید. بدون نیاز به برنامه‌نویس.
+                </p>
+                <ul class="feature-list">
+                    <li><i class="bi bi-check-circle-fill"></i> قالب‌های آماده و زیبا</li>
+                    <li><i class="bi bi-check-circle-fill"></i> سئو بهینه شده</li>
+                    <li><i class="bi bi-check-circle-fill"></i> موبایل‌فرندلی و سریع</li>
+                    <li><i class="bi bi-check-circle-fill"></i> یکپارچه با منو و سفارش</li>
+                    <li><i class="bi bi-check-circle-fill"></i> دامنه اختصاصی (yourrestaurant.com)</li>
+                </ul>
+            </div>
+            <div class="col-lg-6 order-lg-1">
+                <div class="text-center">
+                    <i class="bi bi-window" style="font-size: 20rem; color: #764ba2; opacity: 0.2;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Benefits Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">چرا EazyMenu را انتخاب کنیم؟</h2>
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="bi bi-lightning-charge"></i>
+                    </div>
+                    <h4>راه‌اندازی سریع</h4>
+                    <p>کمتر از 10 دقیقه زمان می‌برد تا رستوران خود را راه‌اندازی کنید</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="bi bi-phone"></i>
+                    </div>
+                    <h4>موبایل‌محور</h4>
+                    <p>بیش از 90% مشتریان از موبایل استفاده می‌کنند، ما برای این طراحی شده‌ایم</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h4>امنیت بالا</h4>
+                    <p>پرداخت‌های امن، رمزنگاری SSL، و پشتیبان‌گیری خودکار</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="bi bi-headset"></i>
+                    </div>
+                    <h4>پشتیبانی 24/7</h4>
+                    <p>تیم پشتیبانی ما همیشه آماده کمک به شماست</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="bi bi-arrow-clockwise"></i>
+                    </div>
+                    <h4>به‌روزرسانی مداوم</h4>
+                    <p>امکانات جدید به‌طور مرتب اضافه می‌شوند</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="bi bi-currency-dollar"></i>
+                    </div>
+                    <h4>بدون کمیسیون</h4>
+                    <p>ما از سفارش‌های شما کمیسیون نمی‌گیریم</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Integration Section -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">یکپارچگی با سرویس‌های محبوب</h2>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="integration-card">
+                    <div class="integration-icon">💳</div>
+                    <h5>زرین‌پال</h5>
+                    <p class="text-muted small">درگاه پرداخت</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="integration-card">
+                    <div class="integration-icon">📱</div>
+                    <h5>کاوه‌نگار</h5>
+                    <p class="text-muted small">ارسال SMS</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="integration-card">
+                    <div class="integration-icon">🧾</div>
+                    <h5>سیستم POS</h5>
+                    <p class="text-muted small">یکپارچگی صندوق</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-6">
+                <div class="integration-card">
+                    <div class="integration-icon">📊</div>
+                    <h5>Google Analytics</h5>
+                    <p class="text-muted small">تحلیل ترافیک</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="mb-4">آماده تجربه این امکانات؟</h2>
+                <p class="lead text-muted mb-4">
+                    14 روز رایگان، بدون نیاز به کارت اعتباری
+                </p>
+                <a asp-action="Register" asp-controller="Account" class="btn btn-primary btn-lg me-3">
+                    <i class="bi bi-rocket-takeoff me-2"></i>شروع رایگان
+                </a>
+                <a asp-action="Pricing" class="btn btn-outline-primary btn-lg">
+                    <i class="bi bi-tag me-2"></i>مشاهده قیمت‌ها
+                </a>
+            </div>
+        </div>
+    </div>
+</section>

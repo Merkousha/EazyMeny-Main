@@ -48,6 +48,46 @@ public class HomeController : Controller
         return View();
     }
 
+    /// <summary>
+    /// درباره ما - صفحه معرفی پلتفرم
+    /// </summary>
+    public IActionResult About()
+    {
+        return View();
+    }
+
+    /// <summary>
+    /// قیمت‌ها - صفحه پلن‌های اشتراک
+    /// </summary>
+    public IActionResult Pricing()
+    {
+        return View();
+    }
+
+    /// <summary>
+    /// امکانات - صفحه ویژگی‌های سیستم
+    /// </summary>
+    public IActionResult Features()
+    {
+        return View();
+    }
+
+    /// <summary>
+    /// تماس با ما - فرم ارتباط با پشتیبانی
+    /// </summary>
+    public IActionResult Contact()
+    {
+        return View();
+    }
+
+    /// <summary>
+    /// سوالات متداول
+    /// </summary>
+    public IActionResult FAQ()
+    {
+        return View();
+    }
+
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

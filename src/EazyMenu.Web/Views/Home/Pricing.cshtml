@@ -1,0 +1,584 @@
+@{
+    ViewData["Title"] = "قیمت‌ها - EazyMenu";
+}
+
+@section Styles {
+<style>
+    .pricing-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 80px 0 60px;
+        margin-bottom: 60px;
+    }
+
+    .pricing-toggle {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 50px;
+    }
+
+    .toggle-label {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin: 0 15px;
+    }
+
+    .toggle-switch {
+        position: relative;
+        width: 60px;
+        height: 30px;
+        background: #e2e8f0;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .toggle-switch.active {
+        background: #667eea;
+    }
+
+    .toggle-circle {
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 24px;
+        height: 24px;
+        background: white;
+        border-radius: 50%;
+        transition: all 0.3s;
+    }
+
+    .toggle-switch.active .toggle-circle {
+        left: 33px;
+    }
+
+    .pricing-card {
+        background: white;
+        border-radius: 20px;
+        padding: 40px 30px;
+        text-align: center;
+        border: 2px solid #e2e8f0;
+        transition: all 0.3s ease;
+        height: 100%;
+        position: relative;
+    }
+
+    .pricing-card:hover {
+        border-color: #667eea;
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
+    }
+
+    .pricing-card.featured {
+        border-color: #667eea;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        transform: scale(1.05);
+        box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+    }
+
+    .pricing-card.featured * {
+        color: white !important;
+    }
+
+    .pricing-badge {
+        background: #fbbf24;
+        color: #92400e;
+        padding: 8px 20px;
+        border-radius: 25px;
+        font-size: 0.9rem;
+        font-weight: 700;
+        display: inline-block;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .pricing-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+
+    .pricing-price {
+        font-size: 3.5rem;
+        font-weight: 800;
+        color: #667eea;
+        margin-bottom: 5px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+    }
+
+    .pricing-card.featured .pricing-price {
+        color: white;
+    }
+
+    .pricing-price small {
+        font-size: 1.5rem;
+        margin-right: 5px;
+    }
+
+    .pricing-period {
+        color: #718096;
+        font-size: 1.1rem;
+        margin-bottom: 30px;
+    }
+
+    .pricing-features {
+        list-style: none;
+        padding: 0;
+        margin: 30px 0;
+    }
+
+    .pricing-features li {
+        padding: 15px 0;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        font-size: 1.05rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .pricing-card.featured .pricing-features li {
+        border-bottom-color: rgba(255,255,255,0.1);
+    }
+
+    .pricing-features li:last-child {
+        border-bottom: none;
+    }
+
+    .pricing-features li i {
+        color: #10b981;
+        margin-left: 10px;
+        font-size: 1.2rem;
+    }
+
+    .pricing-card.featured .pricing-features li i {
+        color: #fbbf24;
+    }
+
+    .feature-disabled {
+        opacity: 0.4;
+    }
+
+    .feature-disabled i {
+        color: #ef4444 !important;
+    }
+
+    .comparison-section {
+        padding: 80px 0;
+        background: #f8f9fa;
+    }
+
+    .comparison-table {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+
+    .comparison-table thead {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .comparison-table th {
+        padding: 25px;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    .comparison-table td {
+        padding: 20px 25px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .comparison-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .check-icon {
+        color: #10b981;
+        font-size: 1.3rem;
+    }
+
+    .times-icon {
+        color: #ef4444;
+        font-size: 1.3rem;
+    }
+
+    .faq-section {
+        padding: 80px 0;
+    }
+
+    .accordion-button:not(.collapsed) {
+        background-color: #f8f9fa;
+        color: #667eea;
+    }
+
+    .accordion-button:focus {
+        box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+    }
+
+    @@media (max-width: 768px) {
+        .pricing-card.featured {
+            transform: scale(1);
+        }
+        
+        .pricing-price {
+            font-size: 2.5rem;
+        }
+    }
+</style>
+}
+
+<!-- Hero Section -->
+<section class="pricing-hero">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="display-4 mb-4">قیمت‌گذاری شفاف و منصفانه</h1>
+                <p class="lead">
+                    پلنی متناسب با نیاز کسب‌وکار خود انتخاب کنید. همه پلن‌ها شامل پشتیبانی و به‌روزرسانی رایگان هستند
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Toggle -->
+<div class="container">
+    <div class="pricing-toggle">
+        <span class="toggle-label" id="monthlyLabel">ماهانه</span>
+        <div class="toggle-switch" id="pricingToggle" onclick="togglePricing()">
+            <div class="toggle-circle"></div>
+        </div>
+        <span class="toggle-label" id="yearlyLabel">سالانه (20% تخفیف)</span>
+    </div>
+</div>
+
+<!-- Pricing Cards -->
+<section class="pb-5">
+    <div class="container">
+        <div class="row g-4 justify-content-center">
+            <!-- Basic Plan -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card pricing-card">
+                    <h3 class="pricing-title">پایه</h3>
+                    <div class="pricing-price">
+                        <span id="basicPrice">500,000</span>
+                        <small>تومان</small>
+                    </div>
+                    <p class="pricing-period">
+                        <span id="basicPeriod">در ماه</span>
+                    </p>
+                    <div class="d-grid">
+                        <a asp-action="Register" asp-controller="Account" class="btn btn-outline-primary btn-lg">
+                            انتخاب پلن پایه
+                        </a>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="bi bi-check-circle-fill"></i> تا 50 محصول</li>
+                        <li><i class="bi bi-check-circle-fill"></i> 5 دسته‌بندی</li>
+                        <li><i class="bi bi-check-circle-fill"></i> تا 100 سفارش/ماه</li>
+                        <li><i class="bi bi-check-circle-fill"></i> منوی دیجیتال با QR Code</li>
+                        <li><i class="bi bi-check-circle-fill"></i> سفارش آنلاین</li>
+                        <li><i class="bi bi-check-circle-fill"></i> پشتیبانی ایمیل (24 ساعته)</li>
+                        <li class="feature-disabled"><i class="bi bi-x-circle"></i> رزرو میز</li>
+                        <li class="feature-disabled"><i class="bi bi-x-circle"></i> وب‌سایت اختصاصی</li>
+                        <li class="feature-disabled"><i class="bi bi-x-circle"></i> گزارش‌گیری پیشرفته</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Standard Plan (Featured) -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card pricing-card featured">
+                    <span class="pricing-badge">محبوب‌ترین</span>
+                    <h3 class="pricing-title">استاندارد</h3>
+                    <div class="pricing-price">
+                        <span id="standardPrice">1,000,000</span>
+                        <small>تومان</small>
+                    </div>
+                    <p class="pricing-period">
+                        <span id="standardPeriod">در ماه</span>
+                    </p>
+                    <div class="d-grid">
+                        <a asp-action="Register" asp-controller="Account" class="btn btn-light btn-lg">
+                            شروع رایگان 14 روزه
+                        </a>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="bi bi-check-circle-fill"></i> تا 200 محصول</li>
+                        <li><i class="bi bi-check-circle-fill"></i> 15 دسته‌بندی</li>
+                        <li><i class="bi bi-check-circle-fill"></i> سفارش نامحدود</li>
+                        <li><i class="bi bi-check-circle-fill"></i> منوی دیجیتال با QR Code</li>
+                        <li><i class="bi bi-check-circle-fill"></i> سفارش آنلاین</li>
+                        <li><i class="bi bi-check-circle-fill"></i> رزرو میز</li>
+                        <li><i class="bi bi-check-circle-fill"></i> گزارش‌گیری پایه</li>
+                        <li><i class="bi bi-check-circle-fill"></i> پشتیبانی تلفنی (12 ساعته)</li>
+                        <li class="feature-disabled"><i class="bi bi-x-circle"></i> وب‌سایت اختصاصی</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Premium Plan -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card pricing-card">
+                    <h3 class="pricing-title">حرفه‌ای</h3>
+                    <div class="pricing-price">
+                        <span id="premiumPrice">2,000,000</span>
+                        <small>تومان</small>
+                    </div>
+                    <p class="pricing-period">
+                        <span id="premiumPeriod">در ماه</span>
+                    </p>
+                    <div class="d-grid">
+                        <a asp-action="Register" asp-controller="Account" class="btn btn-outline-primary btn-lg">
+                            انتخاب پلن حرفه‌ای
+                        </a>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="bi bi-check-circle-fill"></i> محصولات نامحدود</li>
+                        <li><i class="bi bi-check-circle-fill"></i> دسته‌بندی نامحدود</li>
+                        <li><i class="bi bi-check-circle-fill"></i> سفارش نامحدود</li>
+                        <li><i class="bi bi-check-circle-fill"></i> همه امکانات استاندارد</li>
+                        <li><i class="bi bi-check-circle-fill"></i> وب‌سایت اختصاصی</li>
+                        <li><i class="bi bi-check-circle-fill"></i> گزارش‌گیری پیشرفته</li>
+                        <li><i class="bi bi-check-circle-fill"></i> تحلیل رفتار مشتری</li>
+                        <li><i class="bi bi-check-circle-fill"></i> یکپارچگی با سیستم POS</li>
+                        <li><i class="bi bi-check-circle-fill"></i> پشتیبانی اختصاصی 24/7</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Comparison Table -->
+<section class="comparison-section">
+    <div class="container">
+        <h2 class="text-center mb-5">مقایسه جامع پلن‌ها</h2>
+        <div class="table-responsive">
+            <table class="table comparison-table">
+                <thead>
+                    <tr>
+                        <th>قابلیت</th>
+                        <th class="text-center">پایه</th>
+                        <th class="text-center">استاندارد</th>
+                        <th class="text-center">حرفه‌ای</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>تعداد محصولات</td>
+                        <td class="text-center">50</td>
+                        <td class="text-center">200</td>
+                        <td class="text-center">نامحدود</td>
+                    </tr>
+                    <tr>
+                        <td>تعداد دسته‌بندی</td>
+                        <td class="text-center">5</td>
+                        <td class="text-center">15</td>
+                        <td class="text-center">نامحدود</td>
+                    </tr>
+                    <tr>
+                        <td>سفارش ماهانه</td>
+                        <td class="text-center">100</td>
+                        <td class="text-center">نامحدود</td>
+                        <td class="text-center">نامحدود</td>
+                    </tr>
+                    <tr>
+                        <td>منوی دیجیتال + QR Code</td>
+                        <td class="text-center"><i class="bi bi-check-circle-fill check-icon"></i></td>
+                        <td class="text-center"><i class="bi bi-check-circle-fill check-icon"></i></td>
+                        <td class="text-center"><i class="bi bi-check-circle-fill check-icon"></i></td>
+                    </tr>
+                    <tr>
+                        <td>سفارش آنلاین</td>
+                        <td class="text-center"><i class="bi bi-check-circle-fill check-icon"></i></td>
+                        <td class="text-center"><i class="bi bi-check-circle-fill check-icon"></i></td>
+                        <td class="text-center"><i class="bi bi-check-circle-fill check-icon"></i></td>
+                    </tr>
+                    <tr>
+                        <td>رزرو میز</td>
+                        <td class="text-center"><i class="bi bi-x-circle times-icon"></i></td>
+                        <td class="text-center"><i class="bi bi-check-circle-fill check-icon"></i></td>
+                        <td class="text-center"><i class="bi bi-check-circle-fill check-icon"></i></td>
+                    </tr>
+                    <tr>
+                        <td>وب‌سایت اختصاصی</td>
+                        <td class="text-center"><i class="bi bi-x-circle times-icon"></i></td>
+                        <td class="text-center"><i class="bi bi-x-circle times-icon"></i></td>
+                        <td class="text-center"><i class="bi bi-check-circle-fill check-icon"></i></td>
+                    </tr>
+                    <tr>
+                        <td>گزارش‌گیری</td>
+                        <td class="text-center">پایه</td>
+                        <td class="text-center">متوسط</td>
+                        <td class="text-center">پیشرفته</td>
+                    </tr>
+                    <tr>
+                        <td>یکپارچگی POS</td>
+                        <td class="text-center"><i class="bi bi-x-circle times-icon"></i></td>
+                        <td class="text-center"><i class="bi bi-x-circle times-icon"></i></td>
+                        <td class="text-center"><i class="bi bi-check-circle-fill check-icon"></i></td>
+                    </tr>
+                    <tr>
+                        <td>پشتیبانی</td>
+                        <td class="text-center">ایمیل</td>
+                        <td class="text-center">تلفن + ایمیل</td>
+                        <td class="text-center">اختصاصی 24/7</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-section">
+    <div class="container">
+        <h2 class="text-center mb-5">سوالات متداول درباره قیمت‌گذاری</h2>
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="accordion" id="pricingFAQ">
+                    <div class="accordion-item">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                آیا می‌توانم پلن خود را تغییر دهم؟
+                            </button>
+                        </h3>
+                        <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#pricingFAQ">
+                            <div class="accordion-body">
+                                بله، شما می‌توانید در هر زمان پلن خود را ارتقاء یا کاهش دهید. تغییرات از ابتدای دوره بعدی اعمال خواهد شد.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                آیا هزینه راه‌اندازی وجود دارد؟
+                            </button>
+                        </h3>
+                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+                            <div class="accordion-body">
+                                خیر، هیچ هزینه راه‌اندازی یا مخفی وجود ندارد. فقط هزینه اشتراک ماهانه یا سالانه را پرداخت می‌کنید.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                آیا می‌توانم قبل از پرداخت، سیستم را امتحان کنم؟
+                            </button>
+                        </h3>
+                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+                            <div class="accordion-body">
+                                بله! پلن استاندارد شامل 14 روز دوره آزمایشی رایگان است. بدون نیاز به کارت اعتباری.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                آیا تخفیف سالانه دارید؟
+                            </button>
+                        </h3>
+                        <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+                            <div class="accordion-body">
+                                بله، با انتخاب پرداخت سالانه، 20% تخفیف دریافت می‌کنید. این تخفیف به‌طور خودکار در زمان انتخاب پلن اعمال می‌شود.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                                اگر از محدودیت سفارش پلن خود عبور کنم، چه اتفاقی می‌افتد؟
+                            </button>
+                        </h3>
+                        <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+                            <div class="accordion-body">
+                                سیستم به شما اطلاع می‌دهد تا پلن خود را ارتقاء دهید. تا زمان ارتقاء، سفارش‌های جدید پذیرفته نخواهد شد.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq6">
+                                آیا می‌توانم اشتراک خود را لغو کنم؟
+                            </button>
+                        </h3>
+                        <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+                            <div class="accordion-body">
+                                بله، شما می‌توانید در هر زمان اشتراک خود را لغو کنید. دسترسی شما تا پایان دوره پرداخت شده ادامه خواهد داشت.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="mb-4">آماده شروع هستید؟</h2>
+                <p class="lead text-muted mb-4">
+                    14 روز رایگان، بدون نیاز به کارت اعتباری
+                </p>
+                <a asp-action="Register" asp-controller="Account" class="btn btn-primary btn-lg me-3">
+                    <i class="bi bi-rocket-takeoff me-2"></i>شروع رایگان
+                </a>
+                <a asp-action="Contact" class="btn btn-outline-primary btn-lg">
+                    <i class="bi bi-chat-dots me-2"></i>تماس با فروش
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+<script>
+    let isYearly = false;
+    
+    const prices = {
+        basic: { monthly: 500000, yearly: 400000 },
+        standard: { monthly: 1000000, yearly: 800000 },
+        premium: { monthly: 2000000, yearly: 1600000 }
+    };
+    
+    function togglePricing() {
+        isYearly = !isYearly;
+        const toggle = document.getElementById('pricingToggle');
+        toggle.classList.toggle('active');
+        
+        updatePrices();
+    }
+    
+    function updatePrices() {
+        const period = isYearly ? 'yearly' : 'monthly';
+        const periodText = isYearly ? 'در سال' : 'در ماه';
+        
+        // Update prices
+        document.getElementById('basicPrice').textContent = prices.basic[period].toLocaleString();
+        document.getElementById('standardPrice').textContent = prices.standard[period].toLocaleString();
+        document.getElementById('premiumPrice').textContent = prices.premium[period].toLocaleString();
+        
+        // Update periods
+        document.getElementById('basicPeriod').textContent = periodText;
+        document.getElementById('standardPeriod').textContent = periodText;
+        document.getElementById('premiumPeriod').textContent = periodText;
+    }
+</script>
+}

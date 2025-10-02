@@ -1,0 +1,203 @@
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<EazyMenu.Infrastructure.Identity.ApplicationIdentityUser> UserManager
+
+@{
+    var user = await UserManager.GetUserAsync(User);
+    var roles = user != null ? await UserManager.GetRolesAsync(user) : new List<string>();
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h3 class="mb-4">خوش آمدید، @user?.FullName!</h3>
+        </div>
+    </div>
+
+    @if (roles.Contains("RestaurantOwner"))
+    {
+        <!-- داشبورد صاحب رستوران -->
+        <div class="row g-4">
+            <!-- کارت اشتراک -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="bi bi-credit-card me-2"></i>اشتراک فعلی</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted">
+                            برای مشاهده جزئیات اشتراک یا تمدید آن، به بخش مدیریت اشتراک مراجعه کنید.
+                        </p>
+                        <div class="d-grid gap-2 mt-auto">
+                            <a asp-action="ChoosePlan" asp-controller="Subscription" class="btn btn-outline-primary">
+                                <i class="bi bi-arrow-clockwise me-2"></i>
+                                تمدید یا ارتقاء اشتراک
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- کارت رستوران -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="bi bi-building me-2"></i>رستوران من</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted">
+                            مدیریت اطلاعات رستوران، منو، محصولات و دسته‌بندی‌ها
+                        </p>
+                        <div class="d-grid gap-2 mt-auto">
+                            <a asp-area="Restaurant" asp-controller="Product" asp-action="Index" class="btn btn-outline-success">
+                                <i class="bi bi-card-list me-2"></i>
+                                مدیریت منو
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- کارت سفارشات -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-warning">
+                        <h5 class="mb-0"><i class="bi bi-cart me-2"></i>سفارشات</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted">
+                            مشاهده و مدیریت سفارشات دریافتی از مشتریان
+                        </p>
+                        <div class="d-grid gap-2 mt-auto">
+                            <a asp-area="Restaurant" asp-controller="Order" asp-action="Index" class="btn btn-outline-warning">
+                                <i class="bi bi-list-check me-2"></i>
+                                مشاهده سفارشات
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- کارت منوی عمومی -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card shadow-sm h-100 border-info">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="bi bi-qr-code me-2"></i>منوی دیجیتال</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted mb-3">
+                            مشتریان شما می‌توانند منوی رستوران را به صورت آنلاین مشاهده کنند
+                        </p>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-info" onclick="viewPublicMenu()" title="مشاهده منوی عمومی">
+                                <i class="bi bi-eye me-2"></i>
+                                مشاهده منو
+                            </button>
+                            <button class="btn btn-outline-info" onclick="copyMenuLink()" title="کپی لینک منو">
+                                <i class="bi bi-link-45deg me-2"></i>
+                                کپی لینک منو
+                            </button>
+                            <a asp-area="Restaurant" asp-controller="QRCode" asp-action="Index" class="btn btn-outline-info">
+                                <i class="bi bi-qr-code me-2"></i>
+                                دانلود QR Code
+                            </a>
+                        </div>
+                        <small class="text-muted mt-2 d-block" id="menuLinkDisplay">
+                            <i class="bi bi-info-circle me-1"></i>
+                            لینک منو: <span class="fw-bold" id="restaurantSlugDisplay">در حال بارگذاری...</span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>نکته:</strong> برای استفاده کامل از امکانات، مطمئن شوید که اشتراک فعالی دارید.
+                </div>
+            </div>
+        </div>
+
+        @section Scripts {
+            <script>
+                // دریافت Slug رستوران از سرور
+                let restaurantSlug = '@ViewBag.RestaurantSlug';
+
+                if (restaurantSlug && restaurantSlug !== '') {
+                    updateSlugDisplay();
+                }
+
+                function updateSlugDisplay() {
+                    const menuUrl = window.location.origin + '/menu/' + restaurantSlug;
+                    document.getElementById('restaurantSlugDisplay').textContent = menuUrl;
+                }
+
+                function viewPublicMenu() {
+                    if (!restaurantSlug || restaurantSlug === '') {
+                        alert('لطفاً ابتدا رستوران خود را ایجاد کنید');
+                        return;
+                    }
+                    window.open('/menu/' + restaurantSlug, '_blank');
+                }
+
+                function copyMenuLink() {
+                    if (!restaurantSlug || restaurantSlug === '') {
+                        alert('لطفاً ابتدا رستوران خود را ایجاد کنید');
+                        return;
+                    }
+
+                    const menuUrl = window.location.origin + '/menu/' + restaurantSlug;
+                    
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(menuUrl)
+                            .then(() => {
+                                const btn = event.target.closest('button');
+                                const originalText = btn.innerHTML;
+                                btn.innerHTML = '<i class="bi bi-check-circle me-2"></i>کپی شد!';
+                                btn.classList.remove('btn-outline-info');
+                                btn.classList.add('btn-success');
+                                
+                                setTimeout(() => {
+                                    btn.innerHTML = originalText;
+                                    btn.classList.remove('btn-success');
+                                    btn.classList.add('btn-outline-info');
+                                }, 2000);
+                            })
+                            .catch(() => {
+                                fallbackCopyToClipboard(menuUrl);
+                            });
+                    } else {
+                        fallbackCopyToClipboard(menuUrl);
+                    }
+                }
+
+                function fallbackCopyToClipboard(text) {
+                    const textarea = document.createElement('textarea');
+                    textarea.value = text;
+                    textarea.style.position = 'fixed';
+                    textarea.style.opacity = '0';
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    
+                    try {
+                        document.execCommand('copy');
+                        alert('لینک منو کپی شد:\n' + text);
+                    } catch (err) {
+                        alert('خطا در کپی کردن. لینک منو:\n' + text);
+                    }
+                    
+                    document.body.removeChild(textarea);
+                }
+            </script>
+        }
+    }
+    else
+    {
+        <!-- داشبورد پیش‌فرض -->
+        <div class="text-center">
+            <h1 class="display-4">خوش آمدید!</h1>
+            <p class="lead">به پنل مدیریت EazyMenu خوش آمدید</p>
+        </div>
+    }
+</div>

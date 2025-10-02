@@ -1,0 +1,517 @@
+@{
+    ViewData["Title"] = "سوالات متداول - EazyMenu";
+}
+
+@section Styles {
+<style>
+    .faq-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 80px 0 60px;
+        margin-bottom: 60px;
+    }
+
+    .faq-search {
+        max-width: 600px;
+        margin: 0 auto -40px;
+        position: relative;
+        z-index: 10;
+    }
+
+    .faq-search input {
+        height: 60px;
+        border-radius: 30px;
+        padding: 0 60px 0 30px;
+        font-size: 1.1rem;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .faq-search button {
+        position: absolute;
+        left: 10px;
+        top: 10px;
+        height: 40px;
+        width: 40px;
+        border-radius: 50%;
+        border: none;
+        background: #667eea;
+        color: white;
+    }
+
+    .category-tabs {
+        margin-bottom: 40px;
+    }
+
+    .category-tabs .nav-link {
+        border: 2px solid #e2e8f0;
+        border-radius: 25px;
+        padding: 12px 30px;
+        margin: 0 10px;
+        color: #4a5568;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+    .category-tabs .nav-link:hover {
+        border-color: #667eea;
+        color: #667eea;
+    }
+
+    .category-tabs .nav-link.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-color: #667eea;
+        color: white;
+    }
+
+    .accordion-item {
+        border: none;
+        margin-bottom: 15px;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .accordion-button {
+        font-size: 1.1rem;
+        font-weight: 600;
+        padding: 20px 25px;
+        background: white;
+    }
+
+    .accordion-button:not(.collapsed) {
+        background: #f8f9fa;
+        color: #667eea;
+        box-shadow: none;
+    }
+
+    .accordion-button:focus {
+        box-shadow: none;
+        border-color: #667eea;
+    }
+
+    .accordion-button::after {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23667eea'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+    }
+
+    .accordion-body {
+        padding: 20px 25px;
+        font-size: 1.05rem;
+        line-height: 1.7;
+        color: #4a5568;
+    }
+
+    .faq-icon {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: white;
+        margin: 0 auto 30px;
+    }
+
+    .cta-box {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 50px;
+        border-radius: 20px;
+        text-align: center;
+        margin-top: 60px;
+    }
+
+    @@media (max-width: 768px) {
+        .category-tabs .nav-link {
+            margin: 5px 0;
+        }
+        
+        .faq-hero {
+            padding: 50px 0 30px;
+        }
+    }
+</style>
+}
+
+<!-- Hero Section -->
+<section class="faq-hero">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="display-4 mb-4">سوالات متداول</h1>
+                <p class="lead mb-5">
+                    پاسخ سوالات خود را پیدا کنید
+                </p>
+                
+                <div class="faq-search">
+                    <input type="text" class="form-control" id="searchFAQ" placeholder="جستجو در سوالات...">
+                    <button type="button">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="pb-5">
+    <div class="container">
+        <!-- Category Tabs -->
+        <ul class="nav nav-pills category-tabs justify-content-center" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#general" type="button">
+                    عمومی
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pricing" type="button">
+                    قیمت‌گذاری
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#technical" type="button">
+                    فنی
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#support" type="button">
+                    پشتیبانی
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content mt-4">
+            <!-- General Tab -->
+            <div class="tab-pane fade show active" id="general">
+                <div class="row">
+                    <div class="col-lg-10 mx-auto">
+                        <div class="accordion" id="generalAccordion">
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#g1">
+                                        EazyMenu چیست؟
+                                    </button>
+                                </h3>
+                                <div id="g1" class="accordion-collapse collapse show" data-bs-parent="#generalAccordion">
+                                    <div class="accordion-body">
+                                        EazyMenu یک پلتفرم مدیریت رستوران است که به شما کمک می‌کند کسب‌وکار خود را دیجیتال کنید. با منوی دیجیتال، سفارش آنلاین، رزرو میز، و گزارش‌گیری پیشرفته.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#g2">
+                                        چه نوع کسب‌وکارهایی می‌توانند از EazyMenu استفاده کنند؟
+                                    </button>
+                                </h3>
+                                <div id="g2" class="accordion-collapse collapse" data-bs-parent="#generalAccordion">
+                                    <div class="accordion-body">
+                                        رستوران‌ها، کافه‌ها، فست‌فودها، رستوران‌های زنجیره‌ای، کافی‌شاپ‌ها، و هر کسب‌وکار خدمات غذایی می‌تواند از EazyMenu استفاده کند.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#g3">
+                                        آیا نیاز به دانش فنی دارم؟
+                                    </button>
+                                </h3>
+                                <div id="g3" class="accordion-collapse collapse" data-bs-parent="#generalAccordion">
+                                    <div class="accordion-body">
+                                        خیر، EazyMenu طوری طراحی شده که کاملاً ساده و کاربرپسند باشد. هیچ نیازی به دانش برنامه‌نویسی یا فنی ندارید.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#g4">
+                                        چقدر طول می‌کشد تا رستوران خود را راه‌اندازی کنم؟
+                                    </button>
+                                </h3>
+                                <div id="g4" class="accordion-collapse collapse" data-bs-parent="#generalAccordion">
+                                    <div class="accordion-body">
+                                        کمتر از 10 دقیقه! فقط ثبت‌نام کنید، اطلاعات رستوران را وارد کنید، محصولات خود را اضافه کنید و QR Code خود را دانلود کنید.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#g5">
+                                        آیا می‌توانم چند رستوران داشته باشم؟
+                                    </button>
+                                </h3>
+                                <div id="g5" class="accordion-collapse collapse" data-bs-parent="#generalAccordion">
+                                    <div class="accordion-body">
+                                        بله، می‌توانید چندین رستوران را با یک حساب کاربری مدیریت کنید. هر رستوران پلن اشتراک جداگانه‌ای دارد.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pricing Tab -->
+            <div class="tab-pane fade" id="pricing">
+                <div class="row">
+                    <div class="col-lg-10 mx-auto">
+                        <div class="accordion" id="pricingAccordion">
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#p1">
+                                        چه پلن‌هایی وجود دارد؟
+                                    </button>
+                                </h3>
+                                <div id="p1" class="accordion-collapse collapse show" data-bs-parent="#pricingAccordion">
+                                    <div class="accordion-body">
+                                        سه پلن داریم: پایه (500 هزار تومان/ماه)، استاندارد (1 میلیون تومان/ماه)، و حرفه‌ای (2 میلیون تومان/ماه). با پرداخت سالانه 20% تخفیف دریافت می‌کنید.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#p2">
+                                        آیا دوره آزمایشی رایگان دارید؟
+                                    </button>
+                                </h3>
+                                <div id="p2" class="accordion-collapse collapse" data-bs-parent="#pricingAccordion">
+                                    <div class="accordion-body">
+                                        بله، پلن استاندارد 14 روز دوره آزمایشی رایگان دارد. بدون نیاز به کارت اعتباری.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#p3">
+                                        آیا کمیسیون از سفارش‌ها می‌گیرید؟
+                                    </button>
+                                </h3>
+                                <div id="p3" class="accordion-collapse collapse" data-bs-parent="#pricingAccordion">
+                                    <div class="accordion-body">
+                                        خیر، ما هیچ کمیسیونی از سفارش‌های شما نمی‌گیریم. فقط هزینه اشتراک ماهانه یا سالانه را پرداخت می‌کنید.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#p4">
+                                        آیا می‌توانم پلن خود را تغییر دهم؟
+                                    </button>
+                                </h3>
+                                <div id="p4" class="accordion-collapse collapse" data-bs-parent="#pricingAccordion">
+                                    <div class="accordion-body">
+                                        بله، در هر زمان می‌توانید پلن خود را ارتقاء یا کاهش دهید. تغییرات از ابتدای دوره بعدی اعمال می‌شود.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#p5">
+                                        روش‌های پرداخت چیست؟
+                                    </button>
+                                </h3>
+                                <div id="p5" class="accordion-collapse collapse" data-bs-parent="#pricingAccordion">
+                                    <div class="accordion-body">
+                                        پرداخت از طریق درگاه زرین‌پال انجام می‌شود. تمام کارت‌های بانکی ایرانی پذیرفته می‌شود.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Technical Tab -->
+            <div class="tab-pane fade" id="technical">
+                <div class="row">
+                    <div class="col-lg-10 mx-auto">
+                        <div class="accordion" id="technicalAccordion">
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#t1">
+                                        QR Code چگونه کار می‌کند؟
+                                    </button>
+                                </h3>
+                                <div id="t1" class="accordion-collapse collapse show" data-bs-parent="#technicalAccordion">
+                                    <div class="accordion-body">
+                                        پس از ثبت رستوران و محصولات، یک کد QR اختصاصی برای شما ساخته می‌شود. مشتریان با اسکن این کد، به منوی دیجیتال شما دسترسی پیدا می‌کنند.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#t2">
+                                        آیا نیاز به نصب برنامه است؟
+                                    </button>
+                                </h3>
+                                <div id="t2" class="accordion-collapse collapse" data-bs-parent="#technicalAccordion">
+                                    <div class="accordion-body">
+                                        خیر، منوی شما یک وب‌سایت است که در مرورگر موبایل باز می‌شود. مشتریان نیازی به نصب برنامه ندارند.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#t3">
+                                        آیا می‌توانم منوی خود را به‌روزرسانی کنم؟
+                                    </button>
+                                </h3>
+                                <div id="t3" class="accordion-collapse collapse" data-bs-parent="#technicalAccordion">
+                                    <div class="accordion-body">
+                                        بله، تغییرات شما به‌صورت لحظه‌ای در منوی دیجیتال اعمال می‌شود. قیمت‌ها، محصولات، و تصاویر را هر زمان به‌روز کنید.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#t4">
+                                        آیا با سیستم POS یکپارچه می‌شود؟
+                                    </button>
+                                </h3>
+                                <div id="t4" class="accordion-collapse collapse" data-bs-parent="#technicalAccordion">
+                                    <div class="accordion-body">
+                                        در پلن حرفه‌ای، امکان یکپارچگی با سیستم‌های POS محبوب وجود دارد. با پشتیبانی تماس بگیرید.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#t5">
+                                        امنیت داده‌ها چگونه است؟
+                                    </button>
+                                </h3>
+                                <div id="t5" class="accordion-collapse collapse" data-bs-parent="#technicalAccordion">
+                                    <div class="accordion-body">
+                                        ما از SSL برای رمزنگاری استفاده می‌کنیم. پشتیبان‌گیری روزانه از داده‌ها انجام می‌شود. اطلاعات پرداخت در سرورهای ما ذخیره نمی‌شود.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Support Tab -->
+            <div class="tab-pane fade" id="support">
+                <div class="row">
+                    <div class="col-lg-10 mx-auto">
+                        <div class="accordion" id="supportAccordion">
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#s1">
+                                        چگونه با پشتیبانی تماس بگیرم؟
+                                    </button>
+                                </h3>
+                                <div id="s1" class="accordion-collapse collapse show" data-bs-parent="#supportAccordion">
+                                    <div class="accordion-body">
+                                        از طریق ایمیل (support@eazymenu.ir)، تلفن (021-12345678)، یا فرم تماس در سایت می‌توانید با ما در ارتباط باشید.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#s2">
+                                        پشتیبانی چند ساعته است؟
+                                    </button>
+                                </h3>
+                                <div id="s2" class="accordion-collapse collapse" data-bs-parent="#supportAccordion">
+                                    <div class="accordion-body">
+                                        پلن پایه: پشتیبانی ایمیل 24 ساعته | پلن استاندارد: تلفنی + ایمیل 12 ساعته | پلن حرفه‌ای: پشتیبانی اختصاصی 24/7
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#s3">
+                                        آیا آموزش دارید؟
+                                    </button>
+                                </h3>
+                                <div id="s3" class="accordion-collapse collapse" data-bs-parent="#supportAccordion">
+                                    <div class="accordion-body">
+                                        بله، ویدیوهای آموزشی، مقالات راهنما، و وبینارهای رایگان برای کاربران جدید داریم.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#s4">
+                                        اگر مشکل فنی داشتم چکار کنم؟
+                                    </button>
+                                </h3>
+                                <div id="s4" class="accordion-collapse collapse" data-bs-parent="#supportAccordion">
+                                    <div class="accordion-body">
+                                        تیم پشتیبانی فنی ما در اسرع وقت پاسخگوی شما خواهد بود. برای مشکلات فوری با تلفن تماس بگیرید.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#s5">
+                                        آیا به راه‌اندازی کمک می‌کنید؟
+                                    </button>
+                                </h3>
+                                <div id="s5" class="accordion-collapse collapse" data-bs-parent="#supportAccordion">
+                                    <div class="accordion-body">
+                                        بله، در پلن حرفه‌ای، یک نفر از تیم ما برای راه‌اندازی اولیه با شما همکاری می‌کند.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Box -->
+        <div class="cta-box">
+            <div class="faq-icon">
+                <i class="bi bi-question-circle"></i>
+            </div>
+            <h2 class="mb-3">سوال خود را پیدا نکردید؟</h2>
+            <p class="lead mb-4">تیم پشتیبانی ما آماده پاسخگویی به سوالات شماست</p>
+            <a asp-action="Contact" class="btn btn-light btn-lg me-3">
+                <i class="bi bi-chat-dots me-2"></i>تماس با پشتیبانی
+            </a>
+            <a asp-action="Register" asp-controller="Account" class="btn btn-outline-light btn-lg">
+                <i class="bi bi-rocket-takeoff me-2"></i>شروع رایگان
+            </a>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+<script>
+    document.getElementById('searchFAQ').addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        const accordionItems = document.querySelectorAll('.accordion-item');
+        
+        accordionItems.forEach(item => {
+            const text = item.textContent.toLowerCase();
+            if (text.includes(searchTerm)) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    });
+</script>
+}
