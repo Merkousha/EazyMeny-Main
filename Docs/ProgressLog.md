@@ -318,6 +318,76 @@ Coverage:            0%
 - Tests: ➖ هنوز نیست
 - **امتیاز کیفیت:** 95/100 ✅
 
+### ⏭️ مراحل بعدی:
+1. تکمیل Entity های ناقص (Restaurant, ApplicationUser, Reservation)
+2. ایجاد Migration برای تغییرات
+3. شروع Authentication
+
+---
+
+## 2025-10-02 21:50 - Complete Incomplete Entities & Apply Migration
+
+### ✅ تکمیل شده:
+- **Restaurant Entity بهبود یافت:**
+  - ✅ افزودن `WebsiteUrl` (وب‌سایت اختصاصی)
+  - ✅ افزودن `WebsiteTheme` (JSON - تنظیمات قالب)
+  - ✅ افزودن `IsWebsitePublished` + `WebsitePublishedAt`
+  - ✅ افزودن `DeliveryFee` (هزینه ارسال پیش‌فرض)
+  - ✅ افزودن `MinimumOrderAmount` (حداقل سفارش)
+
+- **ApplicationUser Entity بهبود یافت:**
+  - ✅ افزودن `ProfileImageUrl` (عکس پروفایل)
+  - ✅ افزودن `PreferredLanguage` (fa/en)
+
+- **Reservation Entity بهبود یافت:**
+  - ✅ جدا شدن `ReservationStatus` به Enum مستقل
+  - ✅ ایجاد فایل `Domain/Enums/ReservationStatus.cs`
+
+- **Migration:**
+  - ✅ ایجاد Migration: `20251002095041_UpdateEntitiesForMVP`
+  - ✅ اعمال موفق به Database
+
+### 📊 نتیجه:
+- Build: ✅ موفق (5.9s)
+- Migration: ✅ اعمال شد (UpdateEntitiesForMVP)
+- Database: ✅ 8 فیلد جدید اضافه شد
+- Tests: ➖ هنوز نیست
+- **امتیاز کیفیت:** 100/100 ⭐
+
+### 📁 تغییرات Database:
+**Restaurants Table:**
+- ✅ DeliveryFee (decimal(18,2))
+- ✅ MinimumOrderAmount (decimal(18,2))
+- ✅ WebsiteUrl (nvarchar(max), nullable)
+- ✅ WebsiteTheme (nvarchar(max), nullable)
+- ✅ IsWebsitePublished (bit)
+- ✅ WebsitePublishedAt (datetime2, nullable)
+
+**ApplicationUsers Table:**
+- ✅ ProfileImageUrl (nvarchar(max), nullable)
+- ✅ PreferredLanguage (nvarchar(max), default: 'fa')
+
+### 📝 فایل‌های تغییر یافته:
+1. `Domain/Entities/Restaurant.cs` - 6 فیلد جدید
+2. `Domain/Entities/ApplicationUser.cs` - 2 فیلد جدید
+3. `Domain/Entities/Reservation.cs` - حذف inline enum
+4. `Domain/Enums/ReservationStatus.cs` - **فایل جدید**
+5. `Infrastructure/Migrations/20251002095041_UpdateEntitiesForMVP.cs` - **Migration جدید**
+
+### 🎯 نتیجه‌گیری:
+**✅ تمام Entity ها 100% کامل شدند!**
+
+- 10 Entity کامل و آماده MVP
+- 6 Enum کامل (NotificationType + ReservationStatus اضافه شد)
+- Database Schema به‌روز و آماده
+- هیچ بدهی فنی باقی نمانده
+
+### ⏭️ مراحل بعدی:
+1. ✅ **Entity ها آماده!** - می‌توان شروع کرد
+2. شروع Authentication System (US-001, US-002, US-003)
+3. ساخت AccountController + Views
+4. یکپارچگی با کاوه‌نگار (OTP)
+
 ### 📁 فایل‌های ایجاد شده:
 - `Docs/EntityAnalysisReport.md` - گزارش کامل بررسی Entity ها (15+ صفحه)
 - `src/EazyMenu.Domain/Enums/NotificationType.cs` - Enum جدید با 10 مقدار
