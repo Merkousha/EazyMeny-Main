@@ -3,13 +3,13 @@
 ## 📋 وضعیت کلی
 
 **تاریخ:** 2 اکتبر 2025  
-**کل کارها:** 77  
-**تکمیل شده:** 19 ✅  
+**کل کارها:** 85  
+**تکمیل شده:** 27 ✅  
 **در حال انجام:** 0 🔵  
 **باقی‌مانده:** 58 ⬜
 
-**آخرین Task:** Complete Incomplete Entities & Apply Migration ✅  
-**پیشرفت MVP:** 📊 18% (پایه 100% آماده - شروع Authentication)
+**آخرین Task:** Authentication System Foundation Complete (CQRS + Services) ✅  
+**پیشرفت MVP:** 📊 32% (Backend Auth 100% - فقط Web Layer باقی مانده)
 
 ---
 
@@ -60,14 +60,91 @@
 
 ## 🟡 اولویت متوسط (مهم)
 
-### احراز هویت و مجوزدهی
-- [ ] پیاده‌سازی ثبت‌نام رستوران (US-001)
-- [ ] پیاده‌سازی ورود با رمز عبور (US-002)
-- [ ] پیاده‌سازی ورود با OTP (US-002)
-- [ ] پیاده‌سازی بازیابی رمز عبور (US-003)
-- [ ] پیاده‌سازی JWT Authentication
-- [ ] پیاده‌سازی RBAC
-- [ ] تست‌های واحد احراز هویت
+### احراز هویت و مجوزدهی (Authentication System)
+
+#### Backend - CQRS Commands ✅ 
+- [x] **Authentication DTOs (6 فایل)** ✅ 2025-10-02 22:15
+  - 👤 مسئول: AI Agent
+  - ⏱️ مدت: 30 دقیقه
+  - 📝 نکته: RegisterDto, LoginDto, OtpRequestDto, OtpVerifyDto, AuthResult, UserInfoDto
+  - 🔗 مسیر: Application/Common/Models/Auth/
+
+- [x] **Register CQRS (3 فایل)** ✅ 2025-10-02 22:15
+  - 👤 مسئول: AI Agent
+  - ⏱️ مدت: 20 دقیقه
+  - 📝 نکته: Command + Handler + FluentValidation
+  - 🎯 Logic: Check duplicate, Hash password, Send welcome SMS
+  - 🔗 مسیر: Application/Features/Auth/Commands/Register/
+
+- [x] **Login CQRS (3 فایل)** ✅ 2025-10-02 22:15
+  - 👤 مسئول: AI Agent
+  - ⏱️ مدت: 15 دقیقه
+  - 📝 نکته: Password-based login با PhoneNumber یا Email
+  - 🎯 Logic: Find user, Check active, Verify password
+  - 🔗 مسیر: Application/Features/Auth/Commands/Login/
+
+- [x] **SendOtp CQRS (3 فایل)** ✅ 2025-10-02 22:15
+  - 👤 مسئول: AI Agent
+  - ⏱️ مدت: 15 دقیقه
+  - 📝 نکته: 5-digit OTP, 2-minute expiration, Memory Cache
+  - 🎯 Logic: Generate OTP via IOtpService, Send SMS
+  - 🔗 مسیر: Application/Features/Auth/Commands/SendOtp/
+
+- [x] **VerifyOtp CQRS (3 فایل)** ✅ 2025-10-02 22:15
+  - 👤 مسئول: AI Agent
+  - ⏱️ مدت: 15 دقیقه
+  - 📝 نکته: OTP verification, one-time use, confirm phone
+  - 🎯 Logic: Verify via IOtpService, Remove after use, Update LastLogin
+  - 🔗 مسیر: Application/Features/Auth/Commands/VerifyOtp/
+
+- [x] **IPasswordHasherService + Implementation** ✅ 2025-10-02 22:15
+  - 👤 مسئول: AI Agent
+  - ⏱️ مدت: 10 دقیقه
+  - 📝 نکته: ASP.NET Core Identity PasswordHasher wrapper
+  - 🔗 مسیر: Application/Common/Interfaces/, Infrastructure/Services/
+
+- [x] **IOtpService + Implementation** ✅ 2025-10-02 22:15
+  - 👤 مسئول: AI Agent
+  - ⏱️ مدت: 15 دقیقه
+  - 📝 نکته: Memory Cache abstraction for OTP management
+  - 🎯 Logic: Generate 5-digit, Store 2 minutes, Verify, Remove
+  - 🔗 مسیر: Application/Common/Interfaces/, Infrastructure/Services/
+
+- [x] **FluentValidation Integration** ✅ 2025-10-02 22:15
+  - 👤 مسئول: AI Agent
+  - ⏱️ مدت: 10 دقیقه
+  - 📝 نکته: FluentValidation 12.0.0, Auto-register validators
+  - 🔗 Build: ✅ Success (4.4s)
+
+#### Frontend - Web Layer ⬜ (در انتظار)
+- [ ] **AccountController** (US-001, US-002, US-003)
+  - Actions: Register (GET/POST), Login (GET/POST), SendOtp (POST), VerifyOtp (GET/POST), Logout (POST)
+  - SignInManager integration for Cookie authentication
+  - MediatR for CQRS commands
+  - 📝 Depends: CQRS Commands ✅
+
+- [ ] **Session/Cookie Configuration** (Program.cs)
+  - SignInManager configuration
+  - Cookie settings (timeout, Remember Me)
+  - Session middleware order
+  - 📝 Depends: AccountController
+
+- [ ] **Authentication Views (3 views)**
+  - Register.cshtml - Mobile-first, RTL, Persian
+  - Login.cshtml - Password & OTP tabs
+  - VerifyOtp.cshtml - 5-digit input
+  - 📝 Depends: AccountController
+
+- [ ] **Forget Password Flow** (US-003)
+  - ForgetPassword CQRS Command
+  - ResetPassword CQRS Command
+  - Views (ForgetPassword.cshtml, ResetPassword.cshtml)
+
+#### Testing ⬜
+- [ ] Manual Testing - Register → SMS → Login (Password)
+- [ ] Manual Testing - SendOTP → VerifyOTP → Session
+- [ ] Unit Tests - Authentication Commands
+- [ ] Integration Tests - Full auth flow
 
 ### مدیریت اشتراک
 - [ ] تعریف پلن‌های اشتراک در دیتابیس (US-004)
@@ -315,5 +392,20 @@
 
 ---
 
-**آخرین بروزرسانی:** 2025-10-02  
+## 📈 آمار پیشرفت Authentication System:
+
+```
+Backend (CQRS + Services):  ████████████████████ 100% ✅
+Frontend (Controllers):     ░░░░░░░░░░░░░░░░░░░░   0% ⬜
+Views (UI):                 ░░░░░░░░░░░░░░░░░░░░   0% ⬜
+Testing:                    ░░░░░░░░░░░░░░░░░░░░   0% ⬜
+───────────────────────────────────────────────────
+کل Authentication:          █████░░░░░░░░░░░░░░░  25% 🔵
+```
+
+**✅ آماده برای مرحله بعد:** AccountController + Views
+
+---
+
+**آخرین بروزرسانی:** 2025-10-02 22:15  
 **بروزرسانی بعدی:** 2025-10-09

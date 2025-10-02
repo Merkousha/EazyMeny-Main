@@ -437,6 +437,158 @@ Coverage:            0%
 
 ---
 
+## 2025-10-02 22:15 - Authentication System Foundation Complete
+
+### ✅ تکمیل شده:
+- **Authentication DTOs (6 فایل):**
+  - RegisterDto.cs - ثبت‌نام با تمام اعتبارسنجی‌ها
+  - LoginDto.cs - ورود با رمز عبور یا OTP
+  - OtpRequestDto.cs - درخواست کد یکبار مصرف
+  - OtpVerifyDto.cs - تایید OTP
+  - AuthResult.cs - نتیجه احراز هویت یکپارچه
+  - UserInfoDto.cs - اطلاعات کاربر احراز شده
+
+- **CQRS Commands با FluentValidation (12 فایل):**
+  - **Register:** Command + Handler + Validator
+    - Validation: نام حداقل 3 کاراکتر، شماره 09xxxxxxxxx، ایمیل معتبر، رمز پیچیده
+    - Handler: بررسی تکراری، Hash password، ارسال SMS خوش‌آمد
+  - **Login:** Command + Handler + Validator
+    - Validation: شماره/ایمیل الزامی، رمز حداقل 6 کاراکتر
+    - Handler: جستجو با شماره یا ایمیل، تایید فعال بودن، Verify password
+  - **SendOtp:** Command + Handler + Validator
+    - Validation: شماره 09xxxxxxxxx، کد 5 رقمی
+    - Handler: تولید OTP، ذخیره در Cache (2 دقیقه)، ارسال SMS
+  - **VerifyOtp:** Command + Handler + Validator
+    - Validation: شماره و کد الزامی، کد فقط عددی
+    - Handler: تایید OTP، حذف بعد از استفاده، تایید شماره، بروزرسانی LastLogin
+
+- **Services:**
+  - ✅ IPasswordHasherService + Implementation (ASP.NET Core Identity PasswordHasher)
+  - ✅ IOtpService + OtpService (IMemoryCache - 5 digit codes, 2 min expiration)
+
+- **Configuration:**
+  - ✅ FluentValidation.DependencyInjectionExtensions 12.0.0 نصب شد
+  - ✅ AutoMapper validators از Assembly
+  - ✅ IPasswordHasherService در DI ثبت شد
+  - ✅ IOtpService در DI ثبت شد
+  - ✅ AddMemoryCache برای OTP
+
+### 📊 نتیجه:
+- Build: ✅ موفق (4.4s)
+- Migration: ➖ تغییری در Schema نبود
+- Tests: ➖ هنوز نیست
+- **معماری:** Session-based Cookie Authentication (NO JWT)
+
+### 🔧 مشکلات حل شده:
+1. ❌ **Build Error:** IMemoryCache in Application layer
+   - ✅ Solution: Created IOtpService interface abstraction
+2. ❌ **6 Errors:** SendOtpCommandHandler & VerifyOtpCommandHandler referencing IMemoryCache directly
+   - ✅ Solution: Refactored to use IOtpService
+3. ❌ **Missing Registration:** IOtpService not in DI
+   - ✅ Solution: Added to Infrastructure/DependencyInjection.cs
+
+### 📁 فایل‌های ایجاد شده (20 فایل):
+
+**Application/Common/Models/Auth/ (6 DTOs):**
+1. RegisterDto.cs
+2. LoginDto.cs
+3. OtpRequestDto.cs
+4. OtpVerifyDto.cs
+5. AuthResult.cs
+6. UserInfoDto.cs
+
+**Application/Features/Auth/Commands/ (12 files):**
+7. Register/RegisterCommand.cs
+8. Register/RegisterCommandHandler.cs
+9. Register/RegisterCommandValidator.cs
+10. Login/LoginCommand.cs
+11. Login/LoginCommandHandler.cs
+12. Login/LoginCommandValidator.cs
+13. SendOtp/SendOtpCommand.cs
+14. SendOtp/SendOtpCommandHandler.cs (✅ refactored)
+15. SendOtp/SendOtpCommandValidator.cs
+16. VerifyOtp/VerifyOtpCommand.cs
+17. VerifyOtp/VerifyOtpCommandHandler.cs (✅ refactored)
+18. VerifyOtp/VerifyOtpCommandValidator.cs
+
+**Application/Common/Interfaces/ (1 interface):**
+19. IPasswordHasherService.cs
+20. IOtpService.cs
+
+**Infrastructure/Services/ (2 implementations):**
+21. PasswordHasherService.cs
+22. OtpService.cs
+
+**Updated Files:**
+23. Application/DependencyInjection.cs (AddValidatorsFromAssembly)
+24. Infrastructure/DependencyInjection.cs (+ IPasswordHasherService, + IOtpService, + AddMemoryCache)
+
+### 🎯 Authentication Flow Ready:
+
+**1. Password-based Registration:**
+```
+User → RegisterCommand → Handler:
+  ✅ Check duplicate phone/email
+  ✅ Hash password (IPasswordHasherService)
+  ✅ Create ApplicationUser
+  ✅ Send welcome SMS
+  ✅ Return AuthResult
+```
+
+**2. Password-based Login:**
+```
+User → LoginCommand → Handler:
+  ✅ Find by phone OR email
+  ✅ Check IsActive
+  ✅ Verify password (IPasswordHasherService)
+  ✅ Return AuthResult + UserInfo
+```
+
+**3. OTP-based Login (Passwordless):**
+```
+User → SendOtpCommand → Handler:
+  ✅ Generate 5-digit OTP (IOtpService)
+  ✅ Store in cache (2 min)
+  ✅ Send SMS (ISmsService)
+  ✅ Return expiration time
+
+User → VerifyOtpCommand → Handler:
+  ✅ Verify OTP (IOtpService)
+  ✅ Remove after use
+  ✅ Confirm phone if needed
+  ✅ Update LastLoginAt
+  ✅ Return AuthResult + UserInfo
+```
+
+### 🔍 نکات مهم:
+- ✅ Clean Architecture رعایت شد (Application → Interfaces, Infrastructure → Implementations)
+- ✅ CQRS Pattern با MediatR
+- ✅ FluentValidation برای تمام Commands
+- ✅ Persian error messages در Validators
+- ✅ OTP با Memory Cache (5 digit, 2 min expiration)
+- ✅ Password hashing با ASP.NET Core Identity
+- ⚠️ Session/Cookie authentication هنوز پیاده نشده (Web layer)
+
+### ⏭️ مراحل بعدی:
+1. ✅ **CQRS Commands آماده!** - Backend logic تکمیل شد
+2. ✅ **Services آماده!** - OTP, Password Hasher, SMS
+3. ⬜ **AccountController** - ایجاد Controller برای Register, Login, SendOtp, VerifyOtp
+4. ⬜ **Session Configuration** - SignInManager, Cookie settings در Program.cs
+5. ⬜ **Views** - Register.cshtml, Login.cshtml, VerifyOtp.cshtml (RTL, Mobile-first)
+6. ⬜ **Testing** - Manual testing با Kavenegar SMS
+
+### 📦 Packages Updated:
+- FluentValidation.DependencyInjectionExtensions 12.0.0 (Application)
+- Microsoft.Extensions.Caching.Memory (از Framework - برای IOtpService)
+
+### 🎨 Design Considerations:
+- AuthResult یکپارچه برای هر دو روش Login (Password & OTP)
+- Token و RefreshToken در AuthResult nullable هستند (برای API future)
+- UserInfoDto شامل PreferredLanguage برای RTL/LTR switching
+- RememberMe support در Login و VerifyOtp (30 days)
+
+---
+
 **آخرین به‌روزرسانی توسط:** AI Agent  
-**تاریخ:** 2025-10-02 21:30  
-**نسخه:** 1.2
+**تاریخ:** 2025-10-02 22:15  
+**نسخه:** 1.3

@@ -29,6 +29,11 @@ public static class DependencyInjection
         services.AddHttpClient<ISmsService, KavenegarSmsService>();
         services.AddHttpClient<IPaymentService, ZarinpalPaymentService>();
         services.AddScoped<IQRCodeService, QRCodeService>();
+        services.AddScoped<IPasswordHasherService, PasswordHasherService>();
+        services.AddScoped<IOtpService, OtpService>();
+        
+        // Memory Cache برای OTP
+        services.AddMemoryCache();
 
         return services;
     }
