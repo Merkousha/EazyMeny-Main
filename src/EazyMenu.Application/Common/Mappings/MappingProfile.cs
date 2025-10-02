@@ -39,5 +39,14 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.PreferredLanguage, opt => opt.MapFrom(src => src.PreferredLanguage))
             .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt));
+
+        // Reservation Mappings
+        CreateMap<Reservation, Common.Models.Reservation.ReservationDto>()
+            .ForMember(dest => dest.RestaurantName, opt => opt.MapFrom(src => src.Restaurant != null ? src.Restaurant.Name : ""))
+            .ForMember(dest => dest.RestaurantPhone, opt => opt.MapFrom(src => src.Restaurant != null ? src.Restaurant.PhoneNumber : ""))
+            .ForMember(dest => dest.RestaurantAddress, opt => opt.MapFrom(src => src.Restaurant != null ? src.Restaurant.Address : ""));
+
+        CreateMap<Reservation, Common.Models.Reservation.ReservationListDto>()
+            .ForMember(dest => dest.RestaurantName, opt => opt.MapFrom(src => src.Restaurant != null ? src.Restaurant.Name : ""));
     }
 }
