@@ -2,202 +2,287 @@
 
 @{
     ViewData["Title"] = "مدیریت رستوران‌ها";
+    ViewData["Breadcrumb"] = "<li class=\"breadcrumb-item\"><a href=\"/Admin\">پنل مدیریت</a></li><li class=\"breadcrumb-item active\">رستوران‌ها</li>";
 }
 
-<div class="container-fluid mt-4">
-    <!-- Header -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <h2>
-                    <i class="bi bi-shop"></i>
-                    مدیریت رستوران‌ها
-                </h2>
+<!--begin::Actions Row-->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
                 <a asp-action="Create" class="btn btn-primary">
-                    <i class="bi bi-plus-circle"></i>
-                    افزودن رستوران جدید
+                    <i class="bi bi-plus-circle me-2"></i>افزودن رستوران جدید
                 </a>
             </div>
-        </div>
-    </div>
-
-    <!-- Alert Messages -->
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle"></i>
-            @TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
-
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="bi bi-exclamation-triangle"></i>
-            @TempData["Error"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
-
-    <!-- Restaurants Table -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    @if (Model == null || !Model.Any())
-                    {
-                        <div class="text-center py-5">
-                            <i class="bi bi-shop" style="font-size: 4rem; color: #ccc;"></i>
-                            <p class="mt-3 text-muted">هنوز رستورانی ثبت نشده است</p>
-                            <a asp-action="Create" class="btn btn-primary mt-2">
-                                <i class="bi bi-plus-circle"></i>
-                                ایجاد اولین رستوران
-                            </a>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>نام رستوران</th>
-                                        <th>آدرس</th>
-                                        <th>تلفن</th>
-                                        <th>صاحب رستوران</th>
-                                        <th>وضعیت</th>
-                                        <th>امکانات</th>
-                                        <th>QR Code</th>
-                                        <th>تاریخ ایجاد</th>
-                                        <th>عملیات</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var restaurant in Model)
-                                    {
-                                        <tr>
-                                            <td>
-                                                <strong>@restaurant.Name</strong>
-                                                @if (!string.IsNullOrEmpty(restaurant.Slug))
-                                                {
-                                                    <br />
-                                                    <small class="text-muted">/@restaurant.Slug</small>
-                                                }
-                                            </td>
-                                            <td>
-                                                <small>@restaurant.Address</small>
-                                            </td>
-                                            <td>
-                                                <span dir="ltr">@restaurant.PhoneNumber</span>
-                                            </td>
-                                            <td>
-                                                @restaurant.OwnerName
-                                            </td>
-                                            <td>
-                                                @if (restaurant.IsActive)
-                                                {
-                                                    <span class="badge bg-success">فعال</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="badge bg-secondary">غیرفعال</span>
-                                                }
-                                            </td>
-                                            <td>
-                                                @if (restaurant.AcceptOnlineOrders)
-                                                {
-                                                    <i class="bi bi-bag-check text-success" title="سفارش آنلاین"></i>
-                                                }
-                                                @if (restaurant.AcceptReservations)
-                                                {
-                                                    <i class="bi bi-calendar-check text-primary" title="رزرو میز"></i>
-                                                }
-                                            </td>
-                                            <td>
-                                                @if (!string.IsNullOrEmpty(restaurant.QRCodeUrl))
-                                                {
-                                                    <a href="@restaurant.QRCodeUrl" target="_blank" class="btn btn-sm btn-outline-secondary">
-                                                        <i class="bi bi-qr-code"></i>
-                                                    </a>
-                                                }
-                                            </td>
-                                            <td>
-                                                <small class="text-muted">
-                                                    @restaurant.CreatedAt.ToString("yyyy/MM/dd")
-                                                </small>
-                                            </td>
-                                            <td>
-                                                <div class="btn-group" role="group">
-                                                    <a asp-action="Details" asp-route-id="@restaurant.Id" 
-                                                       class="btn btn-sm btn-info" title="جزئیات">
-                                                        <i class="bi bi-eye"></i>
-                                                    </a>
-                                                    <a asp-action="Edit" asp-route-id="@restaurant.Id" 
-                                                       class="btn btn-sm btn-warning" title="ویرایش">
-                                                        <i class="bi bi-pencil"></i>
-                                                    </a>
-                                                    <button type="button" class="btn btn-sm btn-danger" 
-                                                            data-bs-toggle="modal" 
-                                                            data-bs-target="#deleteModal@(restaurant.Id)"
-                                                            title="حذف">
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
-                                                </div>
-
-                                                <!-- Delete Confirmation Modal -->
-                                                <div class="modal fade" id="deleteModal@(restaurant.Id)" tabindex="-1" aria-hidden="true">
-                                                    <div class="modal-dialog">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title">تایید حذف</h5>
-                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <p>آیا از حذف رستوران <strong>@restaurant.Name</strong> اطمینان دارید؟</p>
-                                                                <p class="text-danger">
-                                                                    <i class="bi bi-exclamation-triangle"></i>
-                                                                    این عملیات قابل بازگشت نیست!
-                                                                </p>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
-                                                                <form asp-action="Delete" asp-route-id="@restaurant.Id" method="post" class="d-inline">
-                                                                    @Html.AntiForgeryToken()
-                                                                    <button type="submit" class="btn btn-danger">حذف</button>
-                                                                </form>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <!-- Statistics -->
-                        <div class="mt-3">
-                            <small class="text-muted">
-                                <i class="bi bi-info-circle"></i>
-                                تعداد کل: @Model.Count رستوران |
-                                فعال: @Model.Count(r => r.IsActive) |
-                                غیرفعال: @Model.Count(r => !r.IsActive)
-                            </small>
-                        </div>
-                    }
-                </div>
+            <div class="input-group" style="max-width: 300px;">
+                <input type="text" class="form-control" placeholder="جستجو..." id="searchInput">
+                <button class="btn btn-outline-secondary" type="button">
+                    <i class="bi bi-search"></i>
+                </button>
             </div>
         </div>
     </div>
 </div>
+<!--end::Actions Row-->
+
+<!--begin::Alerts-->
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle me-2"></i>@TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+<!--end::Alerts-->
+
+<!--begin::Stats Cards-->
+<div class="row mb-4">
+    <div class="col-lg-3 col-6">
+        <div class="small-box text-bg-primary">
+            <div class="inner">
+                <h3>@(Model?.Count ?? 0)</h3>
+                <p>تعداد کل رستوران‌ها</p>
+            </div>
+            <i class="small-box-icon bi bi-shop"></i>
+            <a href="#" class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
+                مشاهده بیشتر <i class="bi bi-link-45deg"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-6">
+        <div class="small-box text-bg-success">
+            <div class="inner">
+                <h3>@(Model?.Count(r => r.IsActive) ?? 0)</h3>
+                <p>رستوران‌های فعال</p>
+            </div>
+            <i class="small-box-icon bi bi-check-circle"></i>
+            <a href="#" class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
+                مشاهده بیشتر <i class="bi bi-link-45deg"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-6">
+        <div class="small-box text-bg-warning">
+            <div class="inner">
+                <h3>@(Model?.Count(r => !r.IsActive) ?? 0)</h3>
+                <p>رستوران‌های غیرفعال</p>
+            </div>
+            <i class="small-box-icon bi bi-x-circle"></i>
+            <a href="#" class="small-box-footer link-dark link-underline-opacity-0 link-underline-opacity-50-hover">
+                مشاهده بیشتر <i class="bi bi-link-45deg"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-6">
+        <div class="small-box text-bg-info">
+            <div class="inner">
+                <h3>@(Model?.Count(r => r.CreatedAt.Date == DateTime.Today) ?? 0)</h3>
+                <p>امروز ایجاد شده</p>
+            </div>
+            <i class="small-box-icon bi bi-calendar-plus"></i>
+            <a href="#" class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
+                مشاهده بیشتر <i class="bi bi-link-45deg"></i>
+            </a>
+        </div>
+    </div>
+</div>
+<!--end::Stats Cards-->
+
+<!--begin::Restaurants Table-->
+<div class="card mb-4">
+    <div class="card-header">
+        <h3 class="card-title">لیست رستوران‌ها</h3>
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-lte-toggle="card-collapse">
+                <i data-lte-icon="expand" class="bi bi-plus-lg"></i>
+                <i data-lte-icon="collapse" class="bi bi-dash-lg"></i>
+            </button>
+            <button type="button" class="btn btn-tool" data-lte-toggle="card-refresh">
+                <i data-lte-icon="refresh" class="bi bi-arrow-clockwise"></i>
+            </button>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        @if (Model == null || !Model.Any())
+        {
+            <div class="p-4 text-center">
+                <i class="bi bi-inbox display-1 text-muted"></i>
+                <h5 class="mt-3">هیچ رستورانی یافت نشد</h5>
+                <p class="text-muted">برای افزودن رستوران جدید روی دکمه "افزودن رستوران جدید" کلیک کنید.</p>
+                <a asp-action="Create" class="btn btn-primary mt-2">
+                    <i class="bi bi-plus-circle me-2"></i>افزودن اولین رستوران
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-striped table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th style="width: 10px">#</th>
+                            <th>نام رستوران</th>
+                            <th>آدرس</th>
+                            <th>تلفن</th>
+                            <th>صاحب رستوران</th>
+                            <th style="width: 100px">وضعیت</th>
+                            <th>امکانات</th>
+                            <th>QR Code</th>
+                            <th>تاریخ ایجاد</th>
+                            <th style="width: 150px" class="text-center">عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int counter = 1;
+                        }
+                        @foreach (var restaurant in Model)
+                        {
+                            <tr>
+                                <td>@counter</td>
+                                <td>
+                                    <strong>@restaurant.Name</strong>
+                                    @if (!string.IsNullOrEmpty(restaurant.Slug))
+                                    {
+                                        <br />
+                                        <small class="text-muted">/@restaurant.Slug</small>
+                                    }
+                                </td>
+                                <td><small>@restaurant.Address</small></td>
+                                <td dir="ltr" class="text-end">@restaurant.PhoneNumber</td>
+                                <td>
+                                    <span class="badge text-bg-secondary">@restaurant.OwnerName</span>
+                                </td>
+                                <td>
+                                    @if (restaurant.IsActive)
+                                    {
+                                        <span class="badge text-bg-success">فعال</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge text-bg-danger">غیرفعال</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (restaurant.AcceptOnlineOrders)
+                                    {
+                                        <i class="bi bi-bag-check text-success" title="سفارش آنلاین"></i>
+                                    }
+                                    @if (restaurant.AcceptReservations)
+                                    {
+                                        <i class="bi bi-calendar-check text-primary" title="رزرو میز"></i>
+                                    }
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(restaurant.QRCodeUrl))
+                                    {
+                                        <a href="@restaurant.QRCodeUrl" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                            <i class="bi bi-qr-code"></i>
+                                        </a>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="text-muted">@restaurant.CreatedAt.ToString("yyyy/MM/dd")</span>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group" role="group">
+                                        <a asp-action="Details" asp-route-id="@restaurant.Id" class="btn btn-sm btn-info" title="مشاهده جزئیات">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@restaurant.Id" class="btn btn-sm btn-warning" title="ویرایش">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal@(restaurant.Id)" title="حذف">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+
+                                    <!-- Delete Modal -->
+                                    <div class="modal fade" id="deleteModal@(restaurant.Id)" tabindex="-1">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-danger text-white">
+                                                    <h5 class="modal-title">
+                                                        <i class="bi bi-exclamation-triangle me-2"></i>تایید حذف
+                                                    </h5>
+                                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p class="mb-0">آیا از حذف رستوران "<strong>@restaurant.Name</strong>" اطمینان دارید؟</p>
+                                                    <small class="text-muted">این عملیات قابل بازگشت نیست.</small>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                        <i class="bi bi-x-lg me-2"></i>انصراف
+                                                    </button>
+                                                    <form asp-action="Delete" asp-route-id="@restaurant.Id" method="post" class="d-inline">
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" class="btn btn-danger">
+                                                            <i class="bi bi-trash me-2"></i>حذف قطعی
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            counter++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+    @if (Model != null && Model.Any())
+    {
+        <div class="card-footer clearfix">
+            <ul class="pagination pagination-sm m-0 float-end">
+                <li class="page-item"><a class="page-link" href="#">«</a></li>
+                <li class="page-item active"><a class="page-link" href="#">۱</a></li>
+                <li class="page-item"><a class="page-link" href="#">۲</a></li>
+                <li class="page-item"><a class="page-link" href="#">۳</a></li>
+                <li class="page-item"><a class="page-link" href="#">»</a></li>
+            </ul>
+        </div>
+    }
+</div>
+<!--end::Restaurants Table-->
 
 @section Scripts {
     <script>
         // Auto-dismiss alerts after 5 seconds
         setTimeout(function() {
-            $('.alert').alert('close');
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
         }, 5000);
+
+        // Simple search functionality
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('keyup', function() {
+                const searchValue = this.value.toLowerCase();
+                const tableRows = document.querySelectorAll('tbody tr');
+                
+                tableRows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchValue) ? '' : 'none';
+                });
+            });
+        }
     </script>
 }

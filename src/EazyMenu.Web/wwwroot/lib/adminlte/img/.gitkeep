@@ -1,0 +1,3 @@
+// Placeholder for AdminLTE images
+// Logo and user avatars will be added here
+// For now, using CDN fallbacks in _AdminLayout.cshtml

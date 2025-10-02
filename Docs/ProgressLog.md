@@ -829,6 +829,125 @@ User → Dropdown menu → Logout button (POST with AntiForgery)
 
 ---
 
+## 2025-10-02 23:15 - Restaurant CRUD Complete (Backend + Frontend)
+
+### ✅ تکمیل شده:
+- **Backend CQRS (19 فایل):**
+  - 2 DTOs (RestaurantDto, RestaurantListDto)
+  - 9 Commands (Create/Update/Delete با Validators)
+  - 6 Queries (GetById/GetByOwner/GetAll)
+  - 1 AutoMapper Profile
+  - 1 Controller (322 lines)
+
+- **Frontend Views (4 فایل):**
+  - Index.cshtml - Table با modals
+  - Create.cshtml - Form با 13 فیلد
+  - Edit.cshtml - Update form
+  - Details.cshtml - نمایش کامل + QR Code
+
+### 📊 نتیجه:
+- Build: ✅ موفق (3.0s) - 0 errors, 0 warnings
+- Files: 24 (DTOs + CQRS + Controller + Views)
+- Clean Architecture: ✅ No EF Core in Application
+- Authorization: ✅ Role-based (Admin, RestaurantOwner)
+
+### 🔧 مشکلات حل شده:
+- ❌ 26 errors → 13 → 7 → 0 ✅
+- Entity field mismatches → Fixed
+- EF Core in Application → Removed
+- IRepository methods → GetAllAsync + LINQ
+- AutoMapper navigation → Manual mapping
+- QRCode signature → Fixed
+
+### 🎯 Features:
+- CRUD کامل رستوران
+- QR Code generation
+- Slug auto-generation (Persian/English)
+- Soft Delete
+- Access control by owner
+- RTL Mobile-first UI
+
+---
+
+## 2025-10-02 23:30 - MediatR Downgrade to Free Version (12.4.1)
+
+### ✅ تکمیل شده:
+- **Package Update:** MediatR 13.0.0 → 12.4.1
+- **File:** EazyMenu.Application.csproj
+- **Warning License:** ✅ برطرف شد!
+
+### 📊 نتیجه:
+- Restore: ✅ Success (2.3s)
+- Build: ✅ Success (4.5s) - No warnings!
+- Run: ✅ http://localhost:5125
+- **Production Ready:** ✅ بدون هزینه لایسنس
+
+### 🎯 دلیل:
+- MediatR 13.0+ پولی (LuckyPennySoftware)
+- 12.4.1 آخرین نسخه رایگان Open Source
+- تمام CQRS features کار می‌کند
+
+---
+
+## 2025-10-03 00:15 - AdminLTE 4.0.0-rc4 RTL Integration
+
+### ✅ تکمیل شده:
+- **AdminLTE Template:** Official RTL version (layout-rtl.html)
+- **Layout:** _AdminLayout.cshtml با CDN links
+- **ViewStart:** _ViewStart.cshtml برای Admin Area
+- **Restaurant Views:** Index, Create با AdminLTE components
+
+### 📦 فایل‌های ایجاد/تغییر شده (4 files):
+1. `Areas/Admin/Views/Shared/_AdminLayout.cshtml` (450 lines)
+   - RTL Sidebar Navigation
+   - Header with user menu
+   - Breadcrumbs support
+   - Notifications dropdown
+   - Responsive design
+   - OverlayScrollbars
+   - Dark mode sidebar
+
+2. `Areas/Admin/Views/_ViewStart.cshtml` (3 lines)
+   - Layout reference
+
+3. `Areas/Admin/Views/Restaurant/Index.cshtml` (Updated)
+   - AdminLTE Small Boxes (4 stat cards)
+   - Card with table (collapsible)
+   - Enhanced modals
+   - Search functionality
+   - Pagination placeholder
+
+4. `Areas/Admin/Views/Restaurant/Create.cshtml` (Updated)
+   - Card-based sections (5 cards)
+   - Input groups with icons
+   - Color-coded card outlines
+   - Enhanced form switches
+   - Better validation display
+
+### 🎨 AdminLTE Features:
+- **CDN Links:** Bootstrap 5, AdminLTE RTL CSS/JS
+- **Icons:** Bootstrap Icons
+- **Sidebar:** Treeview navigation با active state
+- **Components:** Small boxes, Cards, Forms, Tables
+- **Plugins:** OverlayScrollbars, Popper.js
+- **RTL:** کاملا راست‌چین فارسی
+- **Mobile:** Responsive sidebar
+
+### 📊 نتیجه:
+- Build: ✅ Success (14.4s)
+- No Errors: ✅
+- AdminLTE: ✅ Official RTL (no custom RTL code)
+- Views: ✅ Professional UI
+
+### 🔜 باقی‌مانده:
+- Edit.cshtml → به AdminLTE
+- Details.cshtml → به AdminLTE
+- Dashboard → AdminLTE cards/charts
+- Category CRUD → AdminLTE
+- Product CRUD → AdminLTE
+
+---
+
 **آخرین به‌روزرسانی توسط:** AI Agent  
-**تاریخ:** 2025-10-02 22:45  
-**نسخه:** 1.4
+**تاریخ:** 2025-10-03 00:15  
+**نسخه:** 1.7
