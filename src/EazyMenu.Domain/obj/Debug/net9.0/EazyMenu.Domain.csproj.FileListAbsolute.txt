@@ -1,0 +1,11 @@
+D:\Git\EazyMeny-Main\src\EazyMenu.Domain\obj\Debug\net9.0\EazyMenu.Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\Git\EazyMeny-Main\src\EazyMenu.Domain\obj\Debug\net9.0\EazyMenu.Domain.AssemblyInfoInputs.cache
+D:\Git\EazyMeny-Main\src\EazyMenu.Domain\obj\Debug\net9.0\EazyMenu.Domain.AssemblyInfo.cs
+D:\Git\EazyMeny-Main\src\EazyMenu.Domain\obj\Debug\net9.0\EazyMenu.Domain.csproj.CoreCompileInputs.cache
+D:\Git\EazyMeny-Main\src\EazyMenu.Domain\bin\Debug\net9.0\EazyMenu.Domain.deps.json
+D:\Git\EazyMeny-Main\src\EazyMenu.Domain\bin\Debug\net9.0\EazyMenu.Domain.dll
+D:\Git\EazyMeny-Main\src\EazyMenu.Domain\bin\Debug\net9.0\EazyMenu.Domain.pdb
+D:\Git\EazyMeny-Main\src\EazyMenu.Domain\obj\Debug\net9.0\EazyMenu.Domain.dll
+D:\Git\EazyMeny-Main\src\EazyMenu.Domain\obj\Debug\net9.0\refint\EazyMenu.Domain.dll
+D:\Git\EazyMeny-Main\src\EazyMenu.Domain\obj\Debug\net9.0\EazyMenu.Domain.pdb
+D:\Git\EazyMeny-Main\src\EazyMenu.Domain\obj\Debug\net9.0\ref\EazyMenu.Domain.dll
