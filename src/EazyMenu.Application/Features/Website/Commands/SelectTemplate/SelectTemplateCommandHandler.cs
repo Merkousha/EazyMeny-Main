@@ -49,18 +49,23 @@ public class SelectTemplateCommandHandler : IRequestHandler<SelectTemplateComman
         var sections = await _sectionRepository.GetAllAsync(cancellationToken);
         var templateSections = sections.Where(s => s.TemplateId == request.TemplateId).ToList();
 
-        // حذف کامل محتوای قبلی (به جای soft delete از Remove استفاده می‌کنیم)
+        // حذف کامل و فیزیکی محتوای قبلی با استفاده از DbContext مستقیم
         var existingContents = await _contentRepository.FindAsync(
             c => c.RestaurantId == request.RestaurantId,
             cancellationToken);
         
-        if (existingContents.Any())
+        if (existingContents != null && existingContents.Any())
         {
-            foreach (var content in existingContents)
+            // استفاده از _context.RemoveRange برای حذف فیزیکی
+            var contentsList = existingContents.ToList();
+            foreach (var content in contentsList)
             {
-                await _contentRepository.DeleteAsync(content, cancellationToken);
+                // حذف فیزیکی (نه soft delete)
+                await _contentRepository.HardDeleteAsync(content, cancellationToken);
             }
-            await _unitOfWork.SaveChangesAsync(cancellationToken); // ذخیره حذف قبل از افزودن جدید
+            
+            // ذخیره حذف‌ها قبل از ادامه - این مرحله بسیار مهم است!
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 
         // به‌روزرسانی قالب رستوران

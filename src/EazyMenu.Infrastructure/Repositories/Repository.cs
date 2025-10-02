@@ -55,6 +55,24 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         return Task.CompletedTask;
     }
 
+    /// <summary>
+    /// حذف فیزیکی از دیتابیس (Hard Delete)
+    /// </summary>
+    public virtual Task HardDeleteAsync(T entity, CancellationToken cancellationToken = default)
+    {
+        _dbSet.Remove(entity);
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// حذف فیزیکی چندین رکورد (Hard Delete Range)
+    /// </summary>
+    public virtual Task HardDeleteRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default)
+    {
+        _dbSet.RemoveRange(entities);
+        return Task.CompletedTask;
+    }
+
     public virtual async Task<int> CountAsync(Expression<Func<T, bool>>? predicate = null, CancellationToken cancellationToken = default)
     {
         if (predicate == null)
