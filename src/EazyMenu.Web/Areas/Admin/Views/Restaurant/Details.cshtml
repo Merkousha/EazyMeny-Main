@@ -364,10 +364,10 @@
         <!--begin::Action Buttons-->
         <div class="card">
             <div class="card-body">
-                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning w-100 mb-2">
+                <a asp-area="Admin" asp-controller="Restaurant" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning w-100 mb-2">
                     <i class="bi bi-pencil me-2"></i>ویرایش رستوران
                 </a>
-                <a asp-action="Index" class="btn btn-secondary w-100">
+                <a asp-area="Admin" asp-controller="Restaurant" asp-action="Index" class="btn btn-secondary w-100">
                     <i class="bi bi-arrow-right me-2"></i>بازگشت به لیست
                 </a>
             </div>

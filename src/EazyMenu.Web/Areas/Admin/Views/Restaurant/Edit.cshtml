@@ -8,7 +8,7 @@
 <!--begin::Row-->
 <div class="row">
     <div class="col-lg-10 mx-auto">
-        <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+        <form asp-area="Admin" asp-controller="Restaurant" asp-action="Edit" asp-route-id="@Model.Id" method="post">
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="Id" />
 
@@ -200,7 +200,7 @@
             <div class="card">
                 <div class="card-footer">
                     <div class="d-flex justify-content-between align-items-center">
-                        <a asp-action="Index" class="btn btn-secondary">
+                        <a asp-area="Admin" asp-controller="Restaurant" asp-action="Index" class="btn btn-secondary">
                             <i class="bi bi-arrow-right me-2"></i>بازگشت به لیست
                         </a>
                         <button type="submit" class="btn btn-primary">
