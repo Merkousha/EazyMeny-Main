@@ -52,8 +52,6 @@
                                 <span class="text-muted small">(HTML)</span>
                             </label>
                             <textarea asp-for="CustomContent" 
-                                      class="form-control font-monospace" 
-                                      rows="20" 
                                       id="customContentEditor"
                                       placeholder="<div class='section'>
     <h2>عنوان بخش</h2>
@@ -63,7 +61,7 @@
                             <div class="mt-2 d-flex justify-content-between align-items-center">
                                 <small class="text-muted">
                                     <i class="bi bi-info-circle me-1"></i>
-                                    حداکثر 20,000 کاراکتر
+                                    حداکثر 20,000 کاراکتر - ویرایشگر WYSIWYG فعال است
                                 </small>
                                 <small class="text-muted">
                                     تعداد کاراکترها: <span id="charCount">0</span> / 20,000
@@ -217,14 +215,67 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     
+    <!-- TinyMCE CDN -->
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    
     <script>
-        // شمارش کاراکترها
+        let editorInstance = null;
+        
+        // Initialize TinyMCE
         document.addEventListener('DOMContentLoaded', function() {
-            const editor = document.getElementById('customContentEditor');
-            const charCount = document.getElementById('charCount');
-            
-            function updateCharCount() {
-                const length = editor.value.length;
+            tinymce.init({
+                selector: '#customContentEditor',
+                height: 500,
+                menubar: false,
+                directionality: 'rtl', // RTL Support
+                language: 'fa_IR',
+                language_url: '/js/tinymce-lang-fa.js', // Optional: Persian language pack
+                plugins: [
+                    'advlist', 'autolink', 'lists', 'link', 'image', 'charmap',
+                    'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                    'insertdatetime', 'media', 'table', 'help', 'wordcount', 'directionality'
+                ],
+                toolbar: 'undo redo | formatselect | bold italic underline strikethrough | ' +
+                         'alignleft aligncenter alignright alignjustify | ' +
+                         'bullist numlist outdent indent | ltr rtl | ' +
+                         'link image media | table | forecolor backcolor | ' +
+                         'code fullscreen | removeformat help',
+                content_style: 'body { font-family:IRANSans,Tahoma,Arial,sans-serif; font-size:14px; direction:rtl; }',
+                
+                // Image Upload (Simple - you can enhance with actual upload endpoint)
+                images_upload_handler: function (blobInfo, success, failure) {
+                    // For now, convert to base64 (not recommended for production)
+                    var reader = new FileReader();
+                    reader.onload = function() {
+                        success(reader.result);
+                    };
+                    reader.readAsDataURL(blobInfo.blob());
+                },
+                
+                // Auto-save to textarea for form submission
+                setup: function(editor) {
+                    editorInstance = editor;
+                    
+                    editor.on('init', function() {
+                        updateCharCount();
+                        checkUseDefaultContent();
+                    });
+                    
+                    editor.on('change keyup', function() {
+                        editor.save(); // Save to textarea
+                        updateCharCount();
+                    });
+                }
+            });
+        });
+
+        // شمارش کاراکترها
+        function updateCharCount() {
+            if (editorInstance) {
+                const content = editorInstance.getContent({format: 'text'});
+                const length = content.length;
+                const charCount = document.getElementById('charCount');
+                
                 charCount.textContent = length.toLocaleString('fa-IR');
                 
                 if (length > 20000) {
@@ -235,19 +286,16 @@
                     charCount.parentElement.classList.add('text-muted');
                 }
             }
-            
-            editor.addEventListener('input', updateCharCount);
-            updateCharCount();
-        });
+        }
 
         // کپی محتوای پیش‌فرض
         function copyDefaultContent() {
             const defaultContent = `@Html.Raw(Model.DefaultContent?.Replace("\r", "").Replace("\n", "\\n").Replace("'", "\\'"))`;
-            const editor = document.getElementById('customContentEditor');
             
             if (confirm('آیا مطمئن هستید که می‌خواهید محتوای فعلی را با محتوای پیش‌فرض جایگزین کنید؟')) {
-                editor.value = defaultContent;
-                editor.dispatchEvent(new Event('input'));
+                if (editorInstance) {
+                    editorInstance.setContent(defaultContent);
+                }
                 
                 // نمایش پیام موفقیت
                 const alert = document.createElement('div');
@@ -267,21 +315,30 @@
         }
 
         // غیرفعال کردن ویرایشگر اگر UseDefaultContent فعال باشد
-        document.addEventListener('DOMContentLoaded', function() {
+        function checkUseDefaultContent() {
             const useDefaultCheckbox = document.getElementById('useDefaultContent');
-            const editor = document.getElementById('customContentEditor');
             
             function toggleEditor() {
-                editor.disabled = useDefaultCheckbox.checked;
-                if (useDefaultCheckbox.checked) {
-                    editor.classList.add('bg-light');
-                } else {
-                    editor.classList.remove('bg-light');
+                if (editorInstance) {
+                    if (useDefaultCheckbox.checked) {
+                        editorInstance.mode.set('readonly');
+                        document.querySelector('.tox-tinymce').style.opacity = '0.6';
+                    } else {
+                        editorInstance.mode.set('design');
+                        document.querySelector('.tox-tinymce').style.opacity = '1';
+                    }
                 }
             }
             
             useDefaultCheckbox.addEventListener('change', toggleEditor);
             toggleEditor();
+        }
+
+        // Form Submit - Ensure TinyMCE content is saved
+        document.getElementById('contentForm').addEventListener('submit', function(e) {
+            if (editorInstance) {
+                editorInstance.save();
+            }
         });
     </script>
 }
@@ -298,13 +355,22 @@
             border: 1px solid #dee2e6;
         }
         
-        #customContentEditor {
-            resize: vertical;
+        /* TinyMCE RTL Support */
+        .tox-tinymce {
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
         }
         
-        #customContentEditor:disabled {
-            cursor: not-allowed;
-            opacity: 0.6;
+        .tox .tox-toolbar__primary {
+            background: #f8f9fa !important;
+        }
+        
+        /* Loading State */
+        #customContentEditor {
+            min-height: 500px;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            padding: 10px;
         }
     </style>
 }

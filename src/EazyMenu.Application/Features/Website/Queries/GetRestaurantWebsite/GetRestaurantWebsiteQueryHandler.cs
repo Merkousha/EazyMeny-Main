@@ -89,6 +89,7 @@ public class GetRestaurantWebsiteQueryHandler : IRequestHandler<GetRestaurantWeb
                 NameEn = template.NameEn,
                 Description = template.Description,
                 Type = template.Type,
+                TemplatePath = template.TemplatePath,
                 ThumbnailUrl = template.ThumbnailUrl,
                 PreviewImageUrl = template.PreviewImageUrl,
                 IsFree = template.IsFree,
@@ -130,18 +131,25 @@ public class GetRestaurantWebsiteQueryHandler : IRequestHandler<GetRestaurantWeb
             Contents = contents
                 .Where(c => c.IsVisible)
                 .OrderBy(c => c.DisplayOrder)
-                .Select(c => new WebsiteContentDto
+                .Select(c =>
                 {
-                    Id = c.Id,
-                    RestaurantId = c.RestaurantId,
-                    TemplateId = c.TemplateId,
-                    SectionType = c.SectionType,
-                    Content = c.UseDefaultContent 
-                        ? templateSections.FirstOrDefault(s => s.SectionType == c.SectionType)?.DefaultContent ?? ""
-                        : c.Content,
-                    UseDefaultContent = c.UseDefaultContent,
-                    DisplayOrder = c.DisplayOrder,
-                    IsVisible = c.IsVisible
+                    var section = templateSections.FirstOrDefault(s => s.SectionType == c.SectionType);
+                    return new WebsiteContentDto
+                    {
+                        Id = c.Id,
+                        RestaurantId = c.RestaurantId,
+                        TemplateId = c.TemplateId,
+                        SectionType = c.SectionType,
+                        Content = c.UseDefaultContent 
+                            ? section?.DefaultContent ?? ""
+                            : c.Content,
+                        UseDefaultContent = c.UseDefaultContent,
+                        DisplayOrder = c.DisplayOrder,
+                        IsVisible = c.IsVisible,
+                        SectionTitle = section?.Title ?? c.SectionType.ToString(),
+                        IsRequired = section?.IsRequired ?? false,
+                        IsEditable = section?.IsEditable ?? true
+                    };
                 })
                 .ToList()
         };

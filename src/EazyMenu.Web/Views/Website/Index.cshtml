@@ -1,0 +1,183 @@
+@model EazyMenu.Application.Features.Website.DTOs.RestaurantWebsiteDto
+@using EazyMenu.Domain.Enums
+
+@{
+    ViewData["Title"] = Model.Customization?.SeoTitle ?? Model.RestaurantName;
+    Layout = null; // بدون Layout - صفحه کامل سفارشی
+    var customization = Model.Customization;
+    var template = Model.Template;
+}
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- SEO Meta Tags -->
+    <title>@ViewData["Title"]</title>
+    <meta name="description" content="@(customization?.SeoDescription ?? $"وب‌سایت {Model.RestaurantName}")" />
+    <meta name="keywords" content="@(customization?.SeoKeywords ?? "رستوران, غذا, منو")" />
+    <meta name="author" content="@Model.RestaurantName" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="@Context.Request.Scheme://@Context.Request.Host@Context.Request.Path" />
+    <meta property="og:title" content="@ViewData["Title"]" />
+    <meta property="og:description" content="@(customization?.SeoDescription ?? "")" />
+    @if (!string.IsNullOrEmpty(customization?.SocialImageUrl))
+    {
+        <meta property="og:image" content="@customization.SocialImageUrl" />
+    }
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="@Context.Request.Scheme://@Context.Request.Host@Context.Request.Path" />
+    <meta property="twitter:title" content="@ViewData["Title"]" />
+    <meta property="twitter:description" content="@(customization?.SeoDescription ?? "")" />
+    @if (!string.IsNullOrEmpty(customization?.SocialImageUrl))
+    {
+        <meta property="twitter:image" content="@customization.SocialImageUrl" />
+    }
+    
+    <!-- Favicon -->
+    @if (!string.IsNullOrEmpty(customization?.FaviconUrl))
+    {
+        <link rel="icon" type="image/x-icon" href="@customization.FaviconUrl" />
+    }
+    
+    <!-- Template CSS -->
+    @if (template != null && !string.IsNullOrEmpty(template.TemplatePath))
+    {
+        <link rel="stylesheet" href="@template.TemplatePath" />
+    }
+    
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary-color: @(customization?.PrimaryColor ?? "#FF6B35");
+            --secondary-color: @(customization?.SecondaryColor ?? "#004E89");
+            --text-color: @(customization?.TextColor ?? "#333333");
+            --background-color: @(customization?.BackgroundColor ?? "#FFFFFF");
+            --font-family: @(customization?.FontFamily ?? "IRANSans"), sans-serif;
+            --font-size: @(customization?.FontSize ?? 16)px;
+        }
+        
+        body {
+            font-family: var(--font-family);
+            font-size: var(--font-size);
+            color: var(--text-color);
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 0;
+            direction: rtl;
+        }
+        
+        /* Preview Banner */
+        .preview-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            z-index: 9999;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .preview-banner + * {
+            margin-top: 50px;
+        }
+        
+        /* Custom Logo Override */
+        @if (!string.IsNullOrEmpty(customization?.CustomLogoUrl))
+        {
+            <text>
+        .header-logo,
+        .logo,
+        .site-logo {
+            background-image: url('@customization.CustomLogoUrl') !important;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+            </text>
+        }
+    </style>
+    
+    <!-- Custom CSS from Customization -->
+    @if (!string.IsNullOrEmpty(customization?.CustomCss))
+    {
+        <style>
+            @Html.Raw(customization.CustomCss)
+        </style>
+    }
+    
+    <!-- Google Analytics -->
+    @if (!string.IsNullOrEmpty(customization?.GoogleAnalyticsId))
+    {
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=@customization.GoogleAnalyticsId"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '@customization.GoogleAnalyticsId');
+        </script>
+    }
+</head>
+<body>
+    <!-- Preview Banner (اگر در حالت پیش‌نمایش باشد) -->
+    @if (ViewBag.IsPreview == true)
+    {
+        <div class="preview-banner">
+            <i class="bi bi-eye"></i>
+            <strong>@ViewBag.PreviewMessage</strong>
+        </div>
+    }
+
+    <!-- Website Content -->
+    <div class="website-container">
+        @foreach (var content in Model.Contents.Where(c => c.IsVisible).OrderBy(c => c.DisplayOrder))
+        {
+            <section class="website-section section-@content.SectionType.ToString().ToLower()" 
+                     id="section-@content.SectionType.ToString().ToLower()"
+                     data-section-type="@content.SectionType">
+                @if (content.UseDefaultContent && !string.IsNullOrEmpty(content.Content))
+                {
+                    @* محتوای پیش‌فرض از Template Section *@
+                    @Html.Raw(content.Content)
+                }
+                else if (!string.IsNullOrEmpty(content.Content))
+                {
+                    @* محتوای سفارشی *@
+                    @Html.Raw(content.Content)
+                }
+                else
+                {
+                    @* اگر محتوا خالی باشد *@
+                    <div class="empty-section">
+                        <p>این بخش هنوز محتوایی ندارد.</p>
+                    </div>
+                }
+            </section>
+        }
+    </div>
+
+    <!-- Custom JavaScript from Customization -->
+    @if (!string.IsNullOrEmpty(customization?.CustomJs))
+    {
+        <script>
+            @Html.Raw(customization.CustomJs)
+        </script>
+    }
+    
+    <!-- Bootstrap Icons (for preview banner) -->
+    @if (ViewBag.IsPreview == true)
+    {
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    }
+</body>
+</html>

@@ -12,6 +12,7 @@ public class WebsiteTemplateDto
     public string NameEn { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public TemplateType Type { get; set; }
+    public string TemplatePath { get; set; } = string.Empty;
     public string ThumbnailUrl { get; set; } = string.Empty;
     public string PreviewImageUrl { get; set; } = string.Empty;
     public bool IsFree { get; set; }
