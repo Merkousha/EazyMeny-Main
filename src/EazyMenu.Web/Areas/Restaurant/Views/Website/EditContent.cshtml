@@ -297,7 +297,7 @@
 
         // غیرفعال کردن ویرایشگر اگر UseDefaultContent فعال باشد
         function checkUseDefaultContent() {
-            var useDefaultCheckbox = $('#UseDefaultContent');
+            var useDefaultCheckbox = $('#useDefaultContent');
             
             function toggleEditor() {
                 if (useDefaultCheckbox.is(':checked')) {
@@ -315,7 +315,7 @@
 
         // Form Submit - Ensure content is saved
         $('#contentForm').on('submit', function(e) {
-            if (!$('#UseDefaultContent').is(':checked')) {
+            if (!$('#useDefaultContent').is(':checked')) {
                 var content = $('#summernoteEditor').summernote('code');
                 $('textarea[name="CustomContent"]').val(content);
             }

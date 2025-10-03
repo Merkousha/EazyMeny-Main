@@ -102,6 +102,7 @@ public class GetRestaurantWebsiteQueryHandler : IRequestHandler<GetRestaurantWeb
                         SectionType = s.SectionType,
                         Title = s.Title,
                         TitleEn = s.TitleEn,
+                        DefaultContent = s.DefaultContent,
                         IsRequired = s.IsRequired,
                         IsEditable = s.IsEditable,
                         DisplayOrder = s.DisplayOrder
@@ -129,20 +130,22 @@ public class GetRestaurantWebsiteQueryHandler : IRequestHandler<GetRestaurantWeb
                 CustomJs = customization.CustomJs
             },
             Contents = contents
-                .Where(c => c.IsVisible)
                 .OrderBy(c => c.DisplayOrder)
                 .Select(c =>
                 {
                     var section = templateSections.FirstOrDefault(s => s.SectionType == c.SectionType);
+                    var defaultContent = section?.DefaultContent ?? string.Empty;
+                    var displayContent = c.UseDefaultContent ? defaultContent : c.Content;
+
                     return new WebsiteContentDto
                     {
                         Id = c.Id,
                         RestaurantId = c.RestaurantId,
                         TemplateId = c.TemplateId,
                         SectionType = c.SectionType,
-                        Content = c.UseDefaultContent 
-                            ? section?.DefaultContent ?? ""
-                            : c.Content,
+                        Content = displayContent,
+                        CustomContent = c.Content,
+                        DefaultContent = defaultContent,
                         UseDefaultContent = c.UseDefaultContent,
                         DisplayOrder = c.DisplayOrder,
                         IsVisible = c.IsVisible,
@@ -151,6 +154,7 @@ public class GetRestaurantWebsiteQueryHandler : IRequestHandler<GetRestaurantWeb
                         IsEditable = section?.IsEditable ?? true
                     };
                 })
+                .Where(dto => request.IncludeHiddenSections || dto.IsVisible)
                 .ToList()
         };
 

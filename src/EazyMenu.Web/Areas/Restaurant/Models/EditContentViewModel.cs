@@ -17,8 +17,8 @@ public class EditContentViewModel
     public bool IsEditable { get; set; }
     
     // محتوا
-    public string? CustomContent { get; set; }
-    public string? DefaultContent { get; set; }
+    public string CustomContent { get; set; } = string.Empty;
+    public string DefaultContent { get; set; } = string.Empty;
     public bool UseDefaultContent { get; set; }
     public bool IsVisible { get; set; } = true;
 }

@@ -29,6 +29,7 @@ public class TemplateSectionDto
     public SectionType SectionType { get; set; }
     public string Title { get; set; } = string.Empty;
     public string TitleEn { get; set; } = string.Empty;
+    public string DefaultContent { get; set; } = string.Empty;
     public bool IsRequired { get; set; }
     public bool IsEditable { get; set; }
     public int DisplayOrder { get; set; }

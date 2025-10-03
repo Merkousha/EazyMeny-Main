@@ -60,6 +60,7 @@ public class GetAllTemplatesQueryHandler : IRequestHandler<GetAllTemplatesQuery,
                     SectionType = s.SectionType,
                     Title = s.Title,
                     TitleEn = s.TitleEn,
+                    DefaultContent = s.DefaultContent,
                     IsRequired = s.IsRequired,
                     IsEditable = s.IsEditable,
                     DisplayOrder = s.DisplayOrder

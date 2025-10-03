@@ -43,7 +43,8 @@ public class WebsiteController : BaseRestaurantController
             var query = new GetRestaurantWebsiteQuery
             {
                 RestaurantId = restaurantId,
-                OnlyPublished = false
+                OnlyPublished = false,
+                IncludeHiddenSections = true
             };
 
             var website = await _mediator.Send(query);
@@ -150,7 +151,8 @@ public class WebsiteController : BaseRestaurantController
             var query = new GetRestaurantWebsiteQuery
             {
                 RestaurantId = restaurantId,
-                OnlyPublished = false
+                OnlyPublished = false,
+                IncludeHiddenSections = true
             };
 
             var website = await _mediator.Send(query);
@@ -241,6 +243,13 @@ public class WebsiteController : BaseRestaurantController
             var content = website.Contents.FirstOrDefault(c => c.SectionType == sectionType);
             var section = website.Template.Sections.FirstOrDefault(s => s.SectionType == sectionType);
 
+            var defaultContent = content?.DefaultContent ?? section?.DefaultContent ?? string.Empty;
+            var editorContent = content == null
+                ? defaultContent
+                : content.UseDefaultContent
+                    ? defaultContent
+                    : content.CustomContent;
+
             var viewModel = new EditContentViewModel
             {
                 RestaurantId = restaurantId,
@@ -249,8 +258,8 @@ public class WebsiteController : BaseRestaurantController
                 SectionTitle = section?.Title ?? sectionType.ToString(),
                 IsRequired = section?.IsRequired ?? false,
                 IsEditable = section?.IsEditable ?? true,
-                CustomContent = content?.Content,
-                DefaultContent = null, // Template sections don't store default content in DTO
+                CustomContent = editorContent,
+                DefaultContent = defaultContent,
                 UseDefaultContent = content?.UseDefaultContent ?? true,
                 IsVisible = content?.IsVisible ?? true
             };
@@ -288,7 +297,8 @@ public class WebsiteController : BaseRestaurantController
                 var websiteQuery = new GetRestaurantWebsiteQuery
                 {
                     RestaurantId = restaurantId,
-                    OnlyPublished = false
+                    OnlyPublished = false,
+                    IncludeHiddenSections = true
                 };
 
                 var website = await _mediator.Send(websiteQuery);
@@ -299,6 +309,12 @@ public class WebsiteController : BaseRestaurantController
                     viewModel.SectionTitle = section?.Title ?? viewModel.SectionType.ToString();
                     viewModel.IsRequired = section?.IsRequired ?? false;
                     viewModel.IsEditable = section?.IsEditable ?? true;
+                    viewModel.DefaultContent = section?.DefaultContent ?? string.Empty;
+                    var content = website.Contents.FirstOrDefault(c => c.SectionType == viewModel.SectionType);
+                    if (content != null && !content.UseDefaultContent && string.IsNullOrEmpty(viewModel.CustomContent))
+                    {
+                        viewModel.CustomContent = content.CustomContent;
+                    }
                 }
                 
                 return View(viewModel);
@@ -331,7 +347,8 @@ public class WebsiteController : BaseRestaurantController
                 var websiteQuery = new GetRestaurantWebsiteQuery
                 {
                     RestaurantId = restaurantId,
-                    OnlyPublished = false
+                    OnlyPublished = false,
+                    IncludeHiddenSections = true
                 };
 
                 var website = await _mediator.Send(websiteQuery);
@@ -342,6 +359,12 @@ public class WebsiteController : BaseRestaurantController
                     viewModel.SectionTitle = section?.Title ?? viewModel.SectionType.ToString();
                     viewModel.IsRequired = section?.IsRequired ?? false;
                     viewModel.IsEditable = section?.IsEditable ?? true;
+                    viewModel.DefaultContent = section?.DefaultContent ?? string.Empty;
+                    var content = website.Contents.FirstOrDefault(c => c.SectionType == viewModel.SectionType);
+                    if (content != null && !content.UseDefaultContent && string.IsNullOrEmpty(viewModel.CustomContent))
+                    {
+                        viewModel.CustomContent = content.CustomContent;
+                    }
                 }
             }
             catch
