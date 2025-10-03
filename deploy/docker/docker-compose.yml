@@ -1,0 +1,65 @@
+version: "3.9"
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: ${SQL_CONTAINER_NAME}
+    restart: unless-stopped
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${EAZY_SQL_SA_PASSWORD}
+      MSSQL_PID: "Express"
+    ports:
+      - "${SQL_PORT}:1433"
+    volumes:
+      - sql-data:/var/opt/mssql
+    networks:
+      - eazymenu-net
+
+  eazymenu-web:
+    build:
+      context: ${HOST_SRC_DIR}
+      dockerfile: deploy/docker/web/Dockerfile
+    image: eazymenu-web:latest
+    container_name: eazymenu-web
+    restart: unless-stopped
+    depends_on:
+      - sqlserver
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${EAZY_ENVIRONMENT}
+      ASPNETCORE_URLS: http://0.0.0.0:8080
+      ConnectionStrings__DefaultConnection: "Server=${SQL_CONTAINER_NAME},1433;Database=${SQL_DB_NAME};User Id=${SQL_APP_USER};Password=${EAZY_SQL_APP_PASSWORD};Encrypt=True;TrustServerCertificate=True;MultipleActiveResultSets=True;"
+    ports:
+      - "${WEB_PORT}:8080"
+    networks:
+      - eazymenu-net
+
+  migrator:
+    image: mcr.microsoft.com/dotnet/sdk:9.0
+    container_name: eazymenu-migrator
+    working_dir: /workspace
+    volumes:
+      - ${HOST_SRC_DIR}:/workspace
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${EAZY_ENVIRONMENT}
+      ConnectionStrings__DefaultConnection: ${MIGRATIONS_CONNECTION_STRING}
+    entrypoint:
+      - bash
+      - -c
+      - >
+        dotnet restore src/EazyMenu.Web/EazyMenu.Web.csproj &&
+        dotnet ef database update --project src/EazyMenu.Infrastructure/EazyMenu.Infrastructure.csproj --startup-project src/EazyMenu.Web/EazyMenu.Web.csproj --context EazyMenu.Infrastructure.Data.ApplicationDbContext
+    depends_on:
+      - sqlserver
+    networks:
+      - eazymenu-net
+
+networks:
+  eazymenu-net:
+    name: eazymenu-net
+    driver: bridge
+
+volumes:
+  sql-data:
+    external: true
+    name: ${SQL_VOLUME_NAME}
