@@ -267,3 +267,4 @@ ehthumbs.db
 Thumbs.db
 src/EazyMenu.Web/appsettings.Development.json
 src/EazyMenu.Web/appsettings.Development.json
+deploy/scripts/migrate-helpio-env.sh
