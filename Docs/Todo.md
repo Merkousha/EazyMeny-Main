@@ -2,15 +2,16 @@
 
 ## 📋 وضعیت کلی
 
-**تاریخ:** 3 اکتبر 2025 23:50  
+**تاریخ:** 4 اکتبر 2025 01:30  
 **کل فیچرها:** 18  
 **تکمیل شده:** 11 ✅ (MVP Core Features - 100%)  
-**تکمیل شده جزئی:** 2 🔵 (Notifications 30%, Reporting 20%)  
-**باقی‌مانده:** 5 ⬜ (Phase 2 Features)
+**تکمیل شده جزئی:** 3 🔵 (Website Builder 95%, Notifications 30%, Reporting 20%)  
+**باقی‌مانده:** 4 ⬜ (Phase 2 Features)
 
-**آخرین Task:** Todo.md Updated with Feature-Level Analysis ✅  
-**پیشرفت کلی:** 📊 64% (11 فیچر کامل از 18)  
-**پیشرفت MVP:** 📊 100% - MVP COMPLETE! 🎉🎉🎉
+**آخرین Task:** Website Builder Bug Report 🐛⚠️  
+**پیشرفت کلی:** 📊 69% (11 کامل + 3 جزئی از 18)  
+**پیشرفت MVP:** 📊 100% - MVP COMPLETE! 🎉  
+**Phase 2 Status:** 📊 Website Builder 95% (Debug Save Issue Tomorrow)
 
 **🎯 فیچرهای باقی‌مانده برای Phase 2:**
 - ⬜ سیستم رزرو میز (US-011) - 0%
@@ -117,7 +118,7 @@
 
 ---
 
-### 🔵 تکمیل شده جزئی - 2 فیچر (20-30%)
+### 🔵 تکمیل شده جزئی - 3 فیچر (20-95%)
 
 #### 11. وب‌سایت عمومی (Public Website) ✅ 100%
 **تکمیل شده:**
@@ -132,7 +133,50 @@
 
 **User Stories:** US-013 (Public Pages)
 
-#### 12. اعلان‌ها (Notifications) 🔵 30%
+#### 12. ساخت وب‌سایت اختصاصی (Website Builder) 🔵 95%
+**تکمیل شده:**
+- ✅ Domain Entities (WebsiteTemplate, WebsiteContent, TemplateSection, WebsiteCustomization)
+- ✅ Entity Configurations + Migration (4 tables created)
+- ✅ CQRS Commands (SelectTemplate, UpdateContent, PublishWebsite, UpdateCustomization)
+- ✅ CQRS Queries (GetAllTemplates, GetRestaurantWebsite)
+- ✅ Template System (5 responsive CSS templates: Modern, Classic, Elegant, Minimal, Colorful)
+- ✅ Database Seeding (5 templates + 30 sections)
+- ✅ Restaurant Area Controller (9 actions: Index, Templates, SelectTemplate, Customize, EditContent, Publish, Unpublish, Preview)
+- ✅ Restaurant Area Views (4 views: Index, Templates, Customize, EditContent)
+- ✅ Rich Text Editor Integration:
+  - ❌ TinyMCE (requires API key)
+  - ❌ Quill.js (initialization issues)
+  - ✅ Summernote (jQuery-based, RTL support, Persian language) ✅
+- ✅ Public Website Rendering (Route: /Website/{slug})
+- ✅ Dynamic CSS injection + SEO meta tags
+- ✅ Custom colors/fonts/logo support
+- ✅ Publish/Unpublish functionality
+
+**باقیمانده:**
+- ⚠️ **BUG: Save Content Issue** (Critical - فردا Debug)
+  - Editor works perfectly (Summernote loads, RTL, Persian)
+  - Form submits without error
+  - Content NOT persisting to database (silent failure)
+  - **Debug Plan:**
+    1. Check `UpdateContentCommandHandler` logging
+    2. Verify `SaveChangesAsync()` execution
+    3. Query database after POST
+    4. Inspect browser Network tab (POST payload)
+    5. Verify Summernote → hidden textarea sync
+    6. Check form encoding
+  - **Estimate:** 30-45 min debug time
+- ⬜ Image upload for content (2-3h)
+- ⬜ Template preview before selection (1h)
+- ⬜ Drag & drop page builder (Optional - 10-15h)
+
+**User Story:** US-012  
+**زمان صرف شده:** 6 hours (Domain → Templates → Editor → Bug fixes)  
+**زمان باقیمانده:** 30-45 min (Debug) + 3-4h (Image upload + Preview)  
+**Status:** 🟡 95% Complete - 1 Critical Bug Remaining
+
+---
+
+#### 13. اعلان‌ها (Notifications) 🔵 30%
 **تکمیل شده:**
 - ✅ Notification Entity (Title, Message, Type, IsRead)
 - ✅ NotificationType Enum (10 مقدار)
@@ -147,7 +191,7 @@
 
 **زمان تخمینی:** 6-8 ساعت
 
-#### 13. گزارش‌گیری (Reporting) 🔵 20%
+#### 14. گزارش‌گیری (Reporting) 🔵 20%
 **تکمیل شده:**
 - ✅ Dashboard Stats (Total Restaurants, Active Subscriptions, Today Orders, Monthly Revenue)
 - ✅ Restaurant Dashboard (OrderCount, ProductCount)
@@ -163,9 +207,9 @@
 
 ---
 
-### ⬜ شروع نشده - 5 فیچر (0%)
+### ⬜ شروع نشده - 4 فیچر (0%)
 
-#### 14. سیستم رزرو میز (Reservation System) ⬜ 0%
+#### 15. سیستم رزرو میز (Reservation System) ⬜ 0%
 **Entity:** ✅ Reservation Entity موجود است (Customer, DateTime, NumberOfGuests, Status)
 
 **نیاز به توسعه:**
@@ -180,21 +224,6 @@
 **User Story:** US-011  
 **زمان تخمینی:** 12-15 ساعت  
 **اولویت:** Medium - Optional for MVP
-
-#### 15. سازنده وب‌سایت (Website Builder) ⬜ 0%
-**نیاز به توسعه:**
-- ⬜ WebsitePage Entity (Title, Content, Slug, IsPublished)
-- ⬜ PageBuilder Commands (Create, Update, Delete, Publish)
-- ⬜ WYSIWYG Editor Integration (TinyMCE یا CKEditor)
-- ⬜ Template System (چند قالب آماده)
-- ⬜ WebsiteController (Public + Admin)
-- ⬜ Dynamic Routing (/restaurant/{slug}/{page-slug})
-- ⬜ Image Gallery Management
-- ⬜ SEO Settings (Meta Title, Description)
-
-**User Story:** US-012  
-**زمان تخمینی:** 20-25 ساعت  
-**اولویت:** Low - Phase 2 Feature
 
 #### 16. تمدید خودکار اشتراک (Auto-Renewal) ⬜ 0%
 **نیاز به توسعه:**
@@ -245,27 +274,59 @@
 
 ### آمار کلی:
 - **تکمیل شده:** 11 فیچر (100%)
-- **تکمیل شده جزئی:** 2 فیچر (20-30%)
-- **شروع نشده:** 5 فیچر (0%)
+- **تکمیل شده جزئی:** 3 فیچر (20-95%)
+- **شروع نشده:** 4 فیچر (0%)
 - **جمع کل:** 18 فیچر
 
 ### محاسبه درصد پیشرفت:
 ```
 Completed: 11 × 100% = 1100
-Partial: (30% + 20%) = 50
-Total: (1100 + 50) / 1800 = 63.9%
+Partial: (95% + 30% + 20%) = 145
+Total: (1100 + 145) / 1800 = 69.2%
 ```
 
-**پیشرفت واقعی پروژه: 64% (نه 99%)**
+**پیشرفت واقعی پروژه: 69% ⬆️ (Was 64%)**
 
 ### MVP Status:
 - **Core MVP (11 features):** ✅ 100% Complete
 - **Extended MVP (Notifications, Reporting):** 🔵 25% Complete
-- **Phase 2 (Reservation, Website Builder):** ⬜ 0%
+- **Phase 2 (Website Builder):** 🔵 95% Complete (1 bug remaining)
+- **Phase 2 (Reservation, Auto-Renewal):** ⬜ 0%
 
 ---
 
 ## 🚀 توصیه‌های بعدی (Next Steps)
+
+### 🔥 اولویت فوری (Tomorrow Morning):
+**Debug Website Builder Save Issue (30-45 min)**
+
+**مشکل:** محتوای ویرایشگر ذخیره نمی‌شود (silent failure)
+
+**Debug Checklist:**
+- [ ] Open `UpdateContentCommandHandler.cs`
+- [ ] Add logging: `_logger.LogInformation("Saving {Section}", command.SectionType)`
+- [ ] Set breakpoint in Handler
+- [ ] Test POST with browser DevTools Network tab
+- [ ] Query database: `SELECT * FROM WebsiteContents WHERE RestaurantId = 'X'`
+- [ ] Verify Summernote updates hidden textarea
+- [ ] Check form submit event timing
+- [ ] Test with manual textarea input (bypass Summernote)
+
+**Expected Fix:**
+Likely issue: Summernote `onChange` callback not firing before form submit.
+```javascript
+$('#contentForm').on('submit', function(e) {
+    var content = $('#summernoteEditor').summernote('code');
+    $('textarea[name="CustomContent"]').val(content);
+});
+```
+
+**After Fix:**
+- ✅ Website Builder 100% Complete!
+- ✅ US-012 Fully Implemented
+- ✅ Phase 2 Task #1 Done
+
+---
 
 ### گزینه 1: آماده‌سازی برای Production (5-8 ساعت)
 **اولویت بالا - برای Launch سریع**
