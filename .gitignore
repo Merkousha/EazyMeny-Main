@@ -266,3 +266,4 @@ lerna-debug.log*
 ehthumbs.db
 Thumbs.db
 src/EazyMenu.Web/appsettings.Development.json
+src/EazyMenu.Web/appsettings.Development.json
