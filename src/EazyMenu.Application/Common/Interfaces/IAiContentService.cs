@@ -33,10 +33,7 @@ public interface IAiContentService
     /// <returns>داده‌های باینری تصویر</returns>
     Task<byte[]> GenerateProductImageAsync(
         Guid restaurantId,
-        string description,
-        string style = "واقعی",
-        int width = 512,
-        int height = 512,
+        string productName,
         CancellationToken cancellationToken = default);
 
     /// <summary>

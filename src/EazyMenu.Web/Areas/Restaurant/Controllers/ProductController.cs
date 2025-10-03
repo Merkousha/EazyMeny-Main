@@ -110,6 +110,7 @@ public class ProductController : BaseRestaurantController
             var command = new UpdateProductCommand
             {
                 Id = product.Id,
+                RestaurantId = product.RestaurantId,  // ✅ اضافه شد
                 CategoryId = product.CategoryId,
                 Name = product.Name,
                 NameEn = product.NameEn,
@@ -123,7 +124,15 @@ public class ProductController : BaseRestaurantController
                 IsNew = product.IsNew,
                 IsAvailable = product.IsAvailable,
                 DisplayOrder = product.DisplayOrder,
-                IsActive = product.IsActive
+                IsActive = product.IsActive,
+                
+                // فیلدهای اضافی
+                Image1Url = product.Image1Url,
+                Image2Url = product.Image2Url,
+                Image3Url = product.Image3Url,
+                StockQuantity = product.StockQuantity ?? 0,
+                Options = product.Options,
+                NutritionalInfo = product.NutritionalInfo
             };
 
             return View(command);
@@ -150,6 +159,9 @@ public class ProductController : BaseRestaurantController
                 TempData["Error"] = "شناسه محصول نامعتبر است";
                 return RedirectToAction(nameof(Index));
             }
+
+            // ✅ امنیت: RestaurantId را از session بگیر، نه از فرم
+            command.RestaurantId = GetRestaurantId();
 
             if (!ModelState.IsValid)
             {
@@ -254,7 +266,7 @@ public class ProductController : BaseRestaurantController
             var command = new GenerateProductImageCommand
             {
                 RestaurantId = restaurantId,
-                ProductId = request.ProductId,
+                ProductId = request.ProductId ?? Guid.Empty,
                 Description = request.Description,
                 Style = request.Style ?? "واقعی",
                 Width = request.Width,
@@ -263,15 +275,48 @@ public class ProductController : BaseRestaurantController
 
             var result = await _mediator.Send(command);
 
+            if (result.IsSuccess && result.ImageData != null && result.ImageData.Length > 0)
+            {
+                // تبدیل به Base64 برای نمایش فوری در مرورگر
+                var base64Image = Convert.ToBase64String(result.ImageData);
+                var imageDataUrl = $"data:image/png;base64,{base64Image}";
+
+                // ذخیره در wwwroot برای استفاده بعدی
+                var webRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                var uploadsFolder = Path.Combine(webRootPath, "images", "ai-generated", restaurantId.ToString());
+                
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+
+                var fileName = $"{Guid.NewGuid()}.png";
+                var filePath = Path.Combine(uploadsFolder, fileName);
+                await System.IO.File.WriteAllBytesAsync(filePath, result.ImageData);
+
+                // URL قابل دسترسی از مرورگر
+                var publicUrl = $"/images/ai-generated/{restaurantId}/{fileName}";
+
+                _logger.LogInformation("تصویر با موفقیت تولید و ذخیره شد: {FilePath}", publicUrl);
+
+                return Json(new
+                {
+                    success = true,
+                    data = new
+                    {
+                        imageUrl = publicUrl,
+                        imageDataUrl = imageDataUrl, // برای نمایش فوری
+                        imageSize = result.ImageData.Length,
+                        tempPath = result.TemporaryPath
+                    },
+                    message = "تصویر با موفقیت تولید شد"
+                });
+            }
+
             return Json(new
             {
-                success = result.IsSuccess,
-                data = result.IsSuccess ? new
-                {
-                    imageUrl = result.TemporaryPath,
-                    imageSize = result.ImageData?.Length ?? 0
-                } : null,
-                message = result.IsSuccess ? "تصویر با موفقیت تولید شد" : result.ErrorMessage
+                success = false,
+                message = result.ErrorMessage ?? "خطا در تولید تصویر"
             });
         }
         catch (Exception ex)
@@ -328,7 +373,7 @@ public class GenerateContentRequest
 /// </summary>
 public class GenerateImageRequest
 {
-    public Guid ProductId { get; set; }
+    public Guid? ProductId { get; set; }
     public string Description { get; set; } = string.Empty;
     public string? Style { get; set; }
     public int Width { get; set; } = 512;

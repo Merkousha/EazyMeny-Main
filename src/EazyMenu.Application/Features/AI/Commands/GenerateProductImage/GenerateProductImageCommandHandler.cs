@@ -1,4 +1,6 @@
 ﻿using EazyMenu.Application.Common.Interfaces;
+using EazyMenu.Application.Features.Products.Queries.GetProductById;
+using EazyMenu.Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -11,13 +13,17 @@ public class GenerateProductImageCommandHandler : IRequestHandler<GenerateProduc
 {
     private readonly IAiContentService _aiContentService;
     private readonly ILogger<GenerateProductImageCommandHandler> _logger;
+    private readonly IRepository<Product> _productRepository;
 
     public GenerateProductImageCommandHandler(
         IAiContentService aiContentService,
-        ILogger<GenerateProductImageCommandHandler> logger)
+        ILogger<GenerateProductImageCommandHandler> logger,
+                IRepository<Product> productRepository)
     {
         _aiContentService = aiContentService;
         _logger = logger;
+        _productRepository = productRepository;
+
     }
 
     public async Task<GenerateProductImageResult> Handle(GenerateProductImageCommand request, CancellationToken cancellationToken)
@@ -27,12 +33,11 @@ public class GenerateProductImageCommandHandler : IRequestHandler<GenerateProduc
             _logger.LogInformation("تولید تصویر برای محصول {ProductId} در رستوران {RestaurantId}", 
                 request.ProductId, request.RestaurantId);
 
+            var product = await _productRepository.GetByIdAsync(request.ProductId, cancellationToken);
+
             var imageData = await _aiContentService.GenerateProductImageAsync(
                 request.RestaurantId,
-                request.Description,
-                request.Style,
-                request.Width,
-                request.Height,
+               product.Name,
                 cancellationToken);
 
             if (imageData != null && imageData.Length > 0)

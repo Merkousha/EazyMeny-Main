@@ -1,4 +1,4 @@
-using EazyMenu.Application.Common.Models.Product;
+﻿using EazyMenu.Application.Common.Models.Product;
 using EazyMenu.Application.Features.Products.Commands.CreateProduct;
 using EazyMenu.Application.Features.Products.Commands.DeleteProduct;
 using EazyMenu.Application.Features.Products.Commands.UpdateProduct;
@@ -125,8 +125,8 @@ public class ProductController : Controller
             IsNew = product.IsNew,
             IsPopular = product.IsPopular,
             IsSpicy = product.IsSpicy,
-            IsVegetarian = product.IsVegetarian,
-            StockQuantity = product.StockQuantity,
+            IsVegetarian = product.IsVegetarian,    
+            StockQuantity = product.StockQuantity ?? 0,
             PreparationTime = product.PreparationTime,
             Options = product.Options,
             NutritionalInfo = product.NutritionalInfo

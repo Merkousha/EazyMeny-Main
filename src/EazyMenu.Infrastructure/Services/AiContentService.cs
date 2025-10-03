@@ -1,10 +1,14 @@
-﻿using EazyMenu.Application.Common.Interfaces;
+﻿using System.ClientModel;
+using System.Text;
+using System.Text.Json;
+using EazyMenu.Application.Common.Interfaces;
 using Microsoft.Extensions.Logging;
+using Microsoft.Identity.Client;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
-using System.Text;
-using System.Text.Json;
+using OpenAI;
+using OpenAI.Images;
 
 namespace EazyMenu.Infrastructure.Services;
 
@@ -89,10 +93,7 @@ public class AiContentService : IAiContentService
 
     public async Task<byte[]> GenerateProductImageAsync(
         Guid restaurantId,
-        string description,
-        string style = "واقعی",
-        int width = 512,
-        int height = 512,
+        string productName,
         CancellationToken cancellationToken = default)
     {
         try
@@ -106,16 +107,29 @@ public class AiContentService : IAiContentService
                 throw new InvalidOperationException("تنظیمات هوش مصنوعی یافت نشد.");
             }
 
+
             // ساخت prompt برای تولید تصویر
-            var imagePrompt = BuildImagePrompt(description, style);
+            var imagePrompt = BuildImagePrompt(productName);
 
-            // TODO: پیاده‌سازی تولید تصویر با DALL-E یا Stable Diffusion
-            // این قسمت بستگی به سرویس تصویری که استفاده می‌کنید دارد
+            var kernel = await BuildImageKernelAsync(restaurantId, cancellationToken);
 
-            _logger.LogWarning("تولید تصویر هنوز پیاده‌سازی نشده است");
+            // Generate the image
+            GeneratedImage generatedImage = await kernel.GenerateImageAsync(imagePrompt);
 
-            // برای الان یک آرایه خالی برمی‌گردانیم
-            return Array.Empty<byte>();
+            // API به صورت پیش‌فرض ImageBytes برمی‌گرداند (نه ImageUri)
+            if (generatedImage.ImageBytes != null)
+            {
+                var imageData = generatedImage.ImageBytes.ToArray();
+                
+                _logger.LogInformation("تصویر با موفقیت تولید شد برای رستوران {RestaurantId}. حجم: {Size} بایت", 
+                    restaurantId, imageData.Length);
+                
+                return imageData;
+            }
+            else
+            {
+                throw new InvalidOperationException("تصویر تولید شده خالی است.");
+            }
         }
         catch (Exception ex)
         {
@@ -193,7 +207,22 @@ public class AiContentService : IAiContentService
 
         return builder.Build();
     }
+    private async Task<ImageClient> BuildImageKernelAsync(Guid restaurantId, CancellationToken cancellationToken)
+    {
+        var baseUrl = await _settingsProvider.GetBaseUrlAsync(restaurantId, cancellationToken);
+        var apiKey = await _settingsProvider.GetApiKeyAsync(restaurantId, cancellationToken);
+        var modelName = "gpt-image-1";
 
+        ApiKeyCredential key = new ApiKeyCredential(apiKey);
+        OpenAIClientOptions options = new OpenAIClientOptions
+        {
+            Endpoint = new Uri(baseUrl)
+        };
+        ImageClient client = new(modelName, key, options);
+
+
+        return client;
+    }
     private string BuildProductDescriptionPrompt(string productName, string ingredients, string tone)
     {
         var toneDescription = tone switch
@@ -223,17 +252,11 @@ public class AiContentService : IAiContentService
 ";
     }
 
-    private string BuildImagePrompt(string description, string style)
+    private string BuildImagePrompt(string productName)
     {
-        var styleDescription = style switch
-        {
-            "واقعی" => "realistic, photographic, high quality food photography",
-            "مینیمال" => "minimalist, clean, simple composition",
-            "هنری" => "artistic, creative, stylized illustration",
-            _ => "realistic, appetizing, professional food photography"
-        };
 
-        return $"A delicious {description}, {styleDescription}, well-lit, appetizing presentation, high quality, 4k";
+
+        return $"A realistic and cozy café menu illustration in a square format, with a warm and inviting atmosphere. The setting features soft natural lighting, a rustic wooden table surface, and a neutral-toned background that remains consistent across all menu items. In the center of the composition, prominently display a {productName} on a simple ceramic plate, rendered with realistic textures and fine detail. Surrounding elements such as cups, saucers, small green plants, and scattered coffee beans remain subtle in the background to create a cohesive café ambiance, while keeping the focus on the {productName}. The artistic style is realistic with a touch of minimalism, using soft shadows and a balanced composition. Colors stay within a warm palette of browns, creams, and muted earthy tones. The perspective is slightly top-down, always centered on the {productName}. No text or labels should appear anywhere in the image.";
     }
 
     private string BuildChatSystemPrompt(string menuContext)

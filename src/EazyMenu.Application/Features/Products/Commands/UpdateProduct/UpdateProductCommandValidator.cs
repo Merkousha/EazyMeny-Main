@@ -1,4 +1,4 @@
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace EazyMenu.Application.Features.Products.Commands.UpdateProduct;
 
@@ -42,11 +42,11 @@ public class UpdateProductCommandValidator : AbstractValidator<UpdateProductComm
             .GreaterThanOrEqualTo(0).WithMessage("ترتیب نمایش نباید منفی باشد.");
 
         RuleFor(x => x.StockQuantity)
-            .GreaterThanOrEqualTo(0).WithMessage("موجودی نباید منفی باشد.")
-            .When(x => x.StockQuantity.HasValue);
+            .GreaterThanOrEqualTo(0).WithMessage("موجودی نباید منفی باشد.");
 
         RuleFor(x => x.PreparationTime)
-            .GreaterThan(0).WithMessage("زمان آماده‌سازی باید بیشتر از صفر باشد.");
+            .GreaterThan(0).WithMessage("زمان آماده‌سازی باید بیشتر از صفر باشد.")
+            .When(x => x.PreparationTime.HasValue);
 
         RuleFor(x => x.Image1Url)
             .MaximumLength(500).WithMessage("آدرس تصویر اول نباید بیش از 500 کاراکتر باشد.")

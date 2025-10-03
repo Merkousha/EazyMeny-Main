@@ -76,8 +76,63 @@
                                     </div>
                                 </div>
 
+                                <!-- تصویر غذا -->
+                                <div class="card mb-3">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <h6 class="mb-0">تصویر محصول</h6>
+                                        <button type="button" class="btn btn-sm btn-outline-primary" id="generateImageBtn">
+                                            <i class="fas fa-wand-magic-sparkles"></i> تولید تصویر با AI
+                                        </button>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3 text-center">
+                                            <img id="productImagePreview" src="/images/products/default.png" alt="پیش‌نمایش تصویر" class="img-fluid rounded mb-2" style="max-height:220px;object-fit:cover;">
+                                        </div>
+                                        <input type="file" name="ImageFile" id="ImageFile" class="form-control mb-2" accept="image/*">
+                                        <small class="text-muted">یک تصویر آپلود کنید یا با هوش مصنوعی تولید نمایید.</small>
+                                    </div>
+                                </div>
                                 <!-- قیمت‌گذاری -->
                                 <div class="card mb-3">
+<!-- Modal تولید تصویر با AI -->
+<div class="modal fade" id="aiImageModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">تولید تصویر با هوش مصنوعی</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">توضیح کوتاه برای تصویر (مثلاً: پیتزای مارگاریتا با پنیر کشدار)</label>
+                    <input type="text" class="form-control" id="aiImagePrompt" placeholder="توضیح تصویر...">
+                </div>
+                <div id="aiImageProgress" style="display:none;">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <p class="mt-2">در حال تولید تصویر با هوش مصنوعی...</p>
+                    </div>
+                </div>
+                <div id="aiImageResult" style="display:none;">
+                    <div class="alert alert-success"><i class="fas fa-check-circle"></i> تصویر با موفقیت تولید شد!</div>
+                    <div class="text-center">
+                        <img id="aiGeneratedImage" src="#" alt="تصویر تولید شده" class="img-fluid rounded mb-2" style="max-height:220px;object-fit:cover;">
+                    </div>
+                </div>
+                <div id="aiImageError" style="display:none;" class="alert alert-danger"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">بستن</button>
+                <button type="button" class="btn btn-primary" id="generateImageAiBtn">
+                    <i class="fas fa-magic"></i> تولید تصویر
+                </button>
+                <button type="button" class="btn btn-success" id="applyImageBtn" style="display:none;">
+                    <i class="fas fa-check"></i> اعمال تصویر
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
                                     <div class="card-header">
                                         <h6 class="mb-0">قیمت‌گذاری</h6>
                                     </div>
@@ -236,6 +291,76 @@
     <partial name="_ValidationScriptsPartial" />
     
     <script>
+        // پیش‌نمایش تصویر آپلودی
+        document.getElementById('ImageFile').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (ev) {
+                    document.getElementById('productImagePreview').src = ev.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Modal AI Image
+        const aiImageModal = new bootstrap.Modal(document.getElementById('aiImageModal'));
+        let generatedImageUrl = null;
+        document.getElementById('generateImageBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('aiImagePrompt').value = document.getElementById('Name').value || '';
+            document.getElementById('aiImageProgress').style.display = 'none';
+            document.getElementById('aiImageResult').style.display = 'none';
+            document.getElementById('aiImageError').style.display = 'none';
+            document.getElementById('applyImageBtn').style.display = 'none';
+            aiImageModal.show();
+        });
+        document.getElementById('generateImageAiBtn').addEventListener('click', async function() {
+            const prompt = document.getElementById('aiImagePrompt').value;
+            if (!prompt) {
+                alert('لطفاً توضیح تصویر را وارد کنید');
+                return;
+            }
+            document.getElementById('aiImageProgress').style.display = 'block';
+            document.getElementById('aiImageResult').style.display = 'none';
+            document.getElementById('aiImageError').style.display = 'none';
+            this.disabled = true;
+            try {
+                // فراخوانی API سمت سرور برای تولید تصویر (نمونه)
+                const response = await fetch('@Url.Action("GenerateImage")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify({ 
+                        description: prompt 
+                    })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    generatedImageUrl = result.data.imageUrl;
+                    document.getElementById('aiGeneratedImage').src = generatedImageUrl;
+                    document.getElementById('aiImageProgress').style.display = 'none';
+                    document.getElementById('aiImageResult').style.display = 'block';
+                    document.getElementById('applyImageBtn').style.display = 'inline-block';
+                } else {
+                    throw new Error(result.message || 'خطا در تولید تصویر');
+                }
+            } catch (error) {
+                document.getElementById('aiImageProgress').style.display = 'none';
+                document.getElementById('aiImageError').style.display = 'block';
+                document.getElementById('aiImageError').textContent = error.message;
+            } finally {
+                this.disabled = false;
+            }
+        });
+        document.getElementById('applyImageBtn').addEventListener('click', function() {
+            if (generatedImageUrl) {
+                document.getElementById('productImagePreview').src = generatedImageUrl;
+                aiImageModal.hide();
+            }
+        });
         const aiModal = new bootstrap.Modal(document.getElementById('aiContentModal'));
         let generatedContent = null;
 

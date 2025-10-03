@@ -1,4 +1,4 @@
-using EazyMenu.Application.Common.Interfaces;
+﻿using EazyMenu.Application.Common.Interfaces;
 using EazyMenu.Domain.Entities;
 using MediatR;
 
@@ -55,7 +55,17 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
         product.Description = request.Description;
         product.Price = request.Price;
         product.DiscountedPrice = request.DiscountedPrice;
-        product.Image1Url = request.Image1Url;
+        
+        // اگر تصویر AI تولید شده باشد، از آن استفاده کن
+        if (!string.IsNullOrEmpty(request.GeneratedImageUrl))
+        {
+            product.Image1Url = request.GeneratedImageUrl;
+        }
+        else
+        {
+            product.Image1Url = request.Image1Url;
+        }
+        
         product.Image2Url = request.Image2Url;
         product.Image3Url = request.Image3Url;
         product.DisplayOrder = request.DisplayOrder;
@@ -66,7 +76,7 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
         product.IsSpicy = request.IsSpicy;
         product.IsVegetarian = request.IsVegetarian;
         product.StockQuantity = request.StockQuantity;
-        product.PreparationTime = request.PreparationTime;
+        product.PreparationTime = request.PreparationTime ?? 0;
         product.Options = request.Options;
         product.NutritionalInfo = request.NutritionalInfo;
 
