@@ -1,0 +1,206 @@
+﻿@model EazyMenu.Application.Common.Models.AI.AiSettingsDto
+
+@{
+    ViewData["Title"] = "تنظیمات هوش مصنوعی";
+    Layout = "~/Areas/Restaurant/Views/Shared/_RestaurantLayout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-flex align-items-center">
+                        <h5 class="mb-0">تنظیمات هوش مصنوعی</h5>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- راهنما -->
+                    <div class="alert alert-info" role="alert">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>راهنما:</strong> برای استفاده از قابلیت‌های هوش مصنوعی، ابتدا باید تنظیمات API را وارد کنید.
+                        می‌توانید از OpenAI، Azure OpenAI یا سرویس‌های مشابه استفاده کنید.
+                    </div>
+
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle"></i> @TempData["Success"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle"></i> @TempData["Error"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <form action="/Restaurant/AiSettings/Save" method="post" >
+                        @Html.AntiForgeryToken()
+                        
+                        <div class="row">
+                            <!-- Base URL -->
+                            <div class="col-md-12 mb-3">
+                                <label for="baseUrl" class="form-label">آدرس پایه API (Base URL) <span class="text-danger">*</span></label>
+                                <input type="url" class="form-control" id="baseUrl" name="BaseUrl" 
+                                       value="@Model?.BaseUrl" required 
+                                       placeholder="https://api.openai.com/v1 یا Azure endpoint">
+                                <small class="form-text text-muted">
+                                    برای OpenAI: https://api.openai.com/v1 | برای Azure: https://YOUR-RESOURCE-NAME.openai.azure.com
+                                </small>
+                            </div>
+
+                            <!-- API Key -->
+                            <div class="col-md-12 mb-3">
+                                <label for="apiKey" class="form-label">کلید API <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="apiKey" name="ApiKey" 
+                                           value="@Model?.ApiKey" required 
+                                           placeholder="sk-...">
+                                    <button class="btn btn-outline-secondary" type="button" id="toggleApiKey">
+                                        <i class="fas fa-eye" id="toggleIcon"></i>
+                                    </button>
+                                </div>
+                                <small class="form-text text-muted">
+                                    کلید API خود را از پنل سرویس‌دهنده دریافت کنید. این اطلاعات محرمانه است.
+                                </small>
+                            </div>
+
+                            <!-- Model Name -->
+                            <div class="col-md-6 mb-3">
+                                <label for="modelName" class="form-label">نام مدل / Deployment <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="modelName" name="ModelName" 
+                                       value="@Model?.ModelName" required 
+                                       placeholder="gpt-4 یا deployment name">
+                                <small class="form-text text-muted">
+                                    برای OpenAI: gpt-4, gpt-3.5-turbo | برای Azure: نام deployment خود
+                                </small>
+                            </div>
+
+                            <!-- Timeout -->
+                            <div class="col-md-6 mb-3">
+                                <label for="timeoutSeconds" class="form-label">زمان انقضا (ثانیه)</label>
+                                <input type="number" class="form-control" id="timeoutSeconds" name="TimeoutSeconds" 
+                                       value="@(Model?.TimeoutSeconds ?? 30)" min="5" max="300">
+                                <small class="form-text text-muted">
+                                    مدت زمانی که برای دریافت پاسخ منتظر می‌مانیم (5 تا 300 ثانیه)
+                                </small>
+                            </div>
+
+                            <!-- Environment -->
+                            <div class="col-md-12 mb-3">
+                                <label for="environment" class="form-label">محیط</label>
+                                <select class="form-select" id="environment" name="Environment">
+                                    <option value="Production" selected="@(Model?.Environment == "Production")">Production</option>
+                                    <option value="Development" selected="@(Model?.Environment == "Development")">Development</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> ذخیره تنظیمات
+                            </button>
+                            <button type="button" class="btn btn-info" id="testConnectionBtn">
+                                <i class="fas fa-plug"></i> تست اتصال
+                            </button>
+                            <a href="@Url.Action("Index", "Dashboard")" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> انصراف
+                            </a>
+                        </div>
+                    </form>
+
+                    <!-- نتیجه تست اتصال -->
+                    <div id="testResult" class="mt-3" style="display:none;"></div>
+                </div>
+            </div>
+
+            <!-- راهنمای استفاده -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6 class="mb-0">قابلیت‌های هوش مصنوعی</h6>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        <li><strong>تولید توضیحات محصول:</strong> AI به صورت خودکار توضیحات جذاب برای محصولات شما می‌نویسد</li>
+                        <li><strong>تولید تصویر محصول:</strong> (به زودی) تصاویر باکیفیت از محصولات تولید می‌کند</li>
+                        <li><strong>چت هوشمند:</strong> مشتریان می‌توانند با AI در مورد منو سوال بپرسند</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // نمایش/مخفی کردن API Key
+        document.getElementById('toggleApiKey').addEventListener('click', function() {
+            const apiKeyInput = document.getElementById('apiKey');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (apiKeyInput.type === 'password') {
+                apiKeyInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                apiKeyInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        });
+
+        // تست اتصال
+        document.getElementById('testConnectionBtn').addEventListener('click', async function() {
+            const btn = this;
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> در حال تست...';
+
+            try {
+                const response = await fetch('/Restaurant/AiSettings/TestConnection', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+                const testResult = document.getElementById('testResult');
+                
+                if (result.success) {
+                    testResult.className = 'alert alert-success mt-3';
+                    testResult.innerHTML = `
+                        <i class="fas fa-check-circle"></i>
+                        <strong>اتصال موفق!</strong><br>
+                        ${result.message}<br>
+                        <small>زمان پاسخ: ${result.responseTime} میلی‌ثانیه</small>
+                    `;
+                } else {
+                    testResult.className = 'alert alert-danger mt-3';
+                    testResult.innerHTML = `
+                        <i class="fas fa-exclamation-circle"></i>
+                        <strong>اتصال ناموفق!</strong><br>
+                        ${result.message}
+                    `;
+                }
+                
+                testResult.style.display = 'block';
+            } catch (error) {
+                const testResult = document.getElementById('testResult');
+                testResult.className = 'alert alert-danger mt-3';
+                testResult.innerHTML = `
+                    <i class="fas fa-exclamation-circle"></i>
+                    خطا در تست اتصال: ${error.message}
+                `;
+                testResult.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        });
+    </script>
+}

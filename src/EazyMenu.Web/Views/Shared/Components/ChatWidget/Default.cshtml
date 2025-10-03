@@ -1,0 +1,235 @@
+﻿@model Guid
+
+@* ویجت چت شناور *@
+<div id="aiChatWidget" class="ai-chat-widget">
+    <!-- دکمه باز کردن چت -->
+    <button type="button" class="ai-chat-toggle" id="chatToggleBtn">
+        <i class="fas fa-comments"></i>
+        <span class="ai-chat-badge" id="chatBadge" style="display:none;">0</span>
+    </button>
+
+    <!-- پنجره چت -->
+    <div class="ai-chat-window" id="chatWindow" style="display:none;">
+        <!-- هدر -->
+        <div class="ai-chat-header">
+            <div class="d-flex align-items-center">
+                <div class="ai-chat-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="ms-2">
+                    <h6 class="mb-0">دستیار هوشمند</h6>
+                    <small class="text-white-50" id="chatStatus">آنلاین</small>
+                </div>
+            </div>
+            <button type="button" class="ai-chat-close" id="chatCloseBtn">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- لیست پیام‌ها -->
+        <div class="ai-chat-messages" id="chatMessages">
+            <!-- پیام خوش‌آمدگویی -->
+            <div class="ai-chat-message ai-message">
+                <div class="ai-chat-message-content">
+                    <p>سلام! 👋</p>
+                    <p>من دستیار هوشمند رستوران هستم. چطور می‌تونم کمکتون کنم؟</p>
+                    <small>همین الان</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- اینجا در حال تایپ -->
+        <div class="ai-chat-typing" id="chatTyping" style="display:none;">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <!-- فرم ارسال پیام -->
+        <div class="ai-chat-input">
+            <form id="chatForm">
+                <input type="text" 
+                       class="form-control" 
+                       id="chatInput" 
+                       placeholder="پیام خود را بنویسید..." 
+                       autocomplete="off">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- لینک به CSS -->
+<link rel="stylesheet" href="~/css/ai-chat-widget.css" />
+
+<!-- لینک به SignalR -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+
+<!-- JavaScript ویجت -->
+<script>
+    // تنظیمات اولیه
+    const restaurantId = '@Model';
+    const sessionId = generateSessionId();
+    let connection = null;
+    let isConnected = false;
+
+    // المان‌ها
+    const chatToggleBtn = document.getElementById('chatToggleBtn');
+    const chatCloseBtn = document.getElementById('chatCloseBtn');
+    const chatWindow = document.getElementById('chatWindow');
+    const chatMessages = document.getElementById('chatMessages');
+    const chatForm = document.getElementById('chatForm');
+    const chatInput = document.getElementById('chatInput');
+    const chatTyping = document.getElementById('chatTyping');
+    const chatStatus = document.getElementById('chatStatus');
+
+    // تولید Session ID یکتا
+    function generateSessionId() {
+        return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    }
+
+    // باز/بسته کردن چت
+    chatToggleBtn.addEventListener('click', function() {
+        const isVisible = chatWindow.style.display !== 'none';
+        chatWindow.style.display = isVisible ? 'none' : 'block';
+        
+        if (!isVisible && !isConnected) {
+            initializeChat();
+        }
+    });
+
+    chatCloseBtn.addEventListener('click', function() {
+        chatWindow.style.display = 'none';
+    });
+
+    // ارسال پیام
+    chatForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const message = chatInput.value.trim();
+        if (!message) return;
+
+        // نمایش پیام کاربر
+        addMessage(message, true);
+        chatInput.value = '';
+
+        // ارسال به سرور
+        if (isConnected) {
+            try {
+                await connection.invoke('SendMessage', restaurantId, sessionId, message);
+            } catch (error) {
+                console.error('Error sending message:', error);
+                addMessage('متاسفانه خطایی رخ داد. لطفاً دوباره تلاش کنید.', false, true);
+            }
+        }
+    });
+
+    // اضافه کردن پیام به لیست
+    function addMessage(text, isUser = false, isError = false) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `ai-chat-message ${isUser ? 'user-message' : 'ai-message'}`;
+        
+        if (isError) {
+            messageDiv.classList.add('error-message');
+        }
+
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
+
+        messageDiv.innerHTML = `
+            <div class="ai-chat-message-content">
+                <p>${escapeHtml(text)}</p>
+                <small>${timeStr}</small>
+            </div>
+        `;
+
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Escape HTML
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // نمایش/مخفی کردن typing indicator
+    function showTyping(show) {
+        chatTyping.style.display = show ? 'block' : 'none';
+        if (show) {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    }
+
+    // راه‌اندازی اتصال SignalR
+    async function initializeChat() {
+        try {
+            chatStatus.textContent = 'در حال اتصال...';
+            
+            // ایجاد اتصال
+            connection = new signalR.HubConnectionBuilder()
+                .withUrl('/hubs/ai-assistant')
+                .withAutomaticReconnect()
+                .build();
+
+            // رویدادهای دریافت پیام
+            connection.on('ReceiveMessage', function(data) {
+                showTyping(false);
+                addMessage(data.message, false);
+            });
+
+            connection.on('TypingStarted', function() {
+                showTyping(true);
+            });
+
+            connection.on('TypingStopped', function() {
+                showTyping(false);
+            });
+
+            connection.on('ReceiveError', function(data) {
+                showTyping(false);
+                addMessage(data.message, false, true);
+            });
+
+            connection.on('ReceiveHistory', function(messages) {
+                // پاک کردن پیام‌های قبلی (به جز خوش‌آمدگویی)
+                const welcomeMsg = chatMessages.firstElementChild;
+                chatMessages.innerHTML = '';
+                chatMessages.appendChild(welcomeMsg);
+
+                // نمایش تاریخچه
+                messages.forEach(msg => {
+                    addMessage(msg.message, msg.isUserMessage);
+                });
+            });
+
+            // اتصال
+            await connection.start();
+            isConnected = true;
+            chatStatus.textContent = 'آنلاین';
+
+            // پیوستن به گروه رستوران
+            await connection.invoke('JoinRestaurantChat', restaurantId);
+
+            // دریافت تاریخچه
+            await connection.invoke('GetChatHistory', restaurantId, sessionId, 20);
+
+            console.log('SignalR Connected');
+        } catch (error) {
+            console.error('SignalR Connection Error:', error);
+            chatStatus.textContent = 'آفلاین';
+            isConnected = false;
+            addMessage('خطا در برقراری ارتباط با سرور. لطفاً صفحه را رفرش کنید.', false, true);
+        }
+    }
+
+    // قطع اتصال هنگام بستن صفحه
+    window.addEventListener('beforeunload', function() {
+        if (connection && isConnected) {
+            connection.stop();
+        }
+    });
+</script>

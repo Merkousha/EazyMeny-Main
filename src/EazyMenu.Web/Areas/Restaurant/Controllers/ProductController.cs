@@ -1,54 +1,336 @@
+﻿using EazyMenu.Application.Features.Products.Commands.CreateProduct;
+using EazyMenu.Application.Features.Products.Commands.UpdateProduct;
+using EazyMenu.Application.Features.Products.Commands.DeleteProduct;
+using EazyMenu.Application.Features.Products.Queries.GetProductById;
+using EazyMenu.Application.Features.Products.Queries.GetProductsByRestaurant;
+using EazyMenu.Application.Features.Categories.Queries.GetCategoriesByRestaurant;
+using EazyMenu.Application.Features.AI.Commands.GenerateProductContent;
+using EazyMenu.Application.Features.AI.Commands.GenerateProductImage;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace EazyMenu.Web.Areas.Restaurant.Controllers;
 
 /// <summary>
 /// کنترلر مدیریت محصولات رستوران (منو)
 /// </summary>
-[Area("Restaurant")]
-[Authorize(Roles = "RestaurantOwner")]
-public class ProductController : Controller
+//[Area("Restaurant")]
+//[Authorize(Roles = "RestaurantOwner")]
+public class ProductController : BaseRestaurantController
 {
-    public IActionResult Index()
+    private readonly ILogger<ProductController> _logger;
+
+    public ProductController(IMediator mediator, ILogger<ProductController> logger) 
+        : base(mediator)
     {
+        _logger = logger;
+    }
+
+    /// <summary>
+    /// لیست محصولات
+    /// </summary>
+    public async Task<IActionResult> Index()
+    {
+        try
+        {
+            var restaurantId = GetRestaurantId();
+            var query = new GetProductsByRestaurantQuery(restaurantId);
+            var products = await _mediator.Send(query);
+
+            return View(products);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "خطا در بارگذاری لیست محصولات");
+            TempData["Error"] = "خطا در بارگذاری لیست محصولات";
+            return RedirectToAction("Index", "Dashboard");
+        }
+    }
+
+    /// <summary>
+    /// فرم ایجاد محصول جدید
+    /// </summary>
+    public async Task<IActionResult> Create()
+    {
+        await LoadCategories();
         return View();
     }
 
-    public IActionResult Create()
-    {
-        return View();
-    }
-
+    /// <summary>
+    /// ذخیره محصول جدید
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Create(object model)
+    public async Task<IActionResult> Create(CreateProductCommand command)
     {
-        // TODO: Implement product creation
-        TempData["Success"] = "محصول با موفقیت ایجاد شد";
-        return RedirectToAction(nameof(Index));
+        try
+        {
+            command.RestaurantId = GetRestaurantId();
+
+            if (!ModelState.IsValid)
+            {
+                await LoadCategories();
+                return View(command);
+            }
+
+            var productId = await _mediator.Send(command);
+
+            TempData["Success"] = "محصول با موفقیت ایجاد شد";
+            return RedirectToAction(nameof(Edit), new { id = productId });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "خطا در ایجاد محصول");
+            TempData["Error"] = "خطا در ایجاد محصول";
+            await LoadCategories();
+            return View(command);
+        }
     }
 
-    public IActionResult Edit(Guid id)
+    /// <summary>
+    /// فرم ویرایش محصول
+    /// </summary>
+    public async Task<IActionResult> Edit(Guid id)
     {
-        return View();
+        try
+        {
+            var query = new GetProductByIdQuery(id);
+            var product = await _mediator.Send(query);
+
+            if (product == null)
+            {
+                TempData["Error"] = "محصول یافت نشد";
+                return RedirectToAction(nameof(Index));
+            }
+
+            await LoadCategories();
+
+            var command = new UpdateProductCommand
+            {
+                Id = product.Id,
+                CategoryId = product.CategoryId,
+                Name = product.Name,
+                NameEn = product.NameEn,
+                Description = product.Description,
+                Price = product.Price,
+                DiscountedPrice = product.DiscountedPrice,
+                PreparationTime = product.PreparationTime,
+                IsVegetarian = product.IsVegetarian,
+                IsSpicy = product.IsSpicy,
+                IsPopular = product.IsPopular,
+                IsNew = product.IsNew,
+                IsAvailable = product.IsAvailable,
+                DisplayOrder = product.DisplayOrder,
+                IsActive = product.IsActive
+            };
+
+            return View(command);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "خطا در بارگذاری محصول {ProductId}", id);
+            TempData["Error"] = "خطا در بارگذاری محصول";
+            return RedirectToAction(nameof(Index));
+        }
     }
 
+    /// <summary>
+    /// ذخیره ویرایش محصول
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Edit(Guid id, object model)
+    public async Task<IActionResult> Edit(Guid id, UpdateProductCommand command)
     {
-        // TODO: Implement product edit
-        TempData["Success"] = "محصول با موفقیت ویرایش شد";
-        return RedirectToAction(nameof(Index));
+        try
+        {
+            if (id != command.Id)
+            {
+                TempData["Error"] = "شناسه محصول نامعتبر است";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (!ModelState.IsValid)
+            {
+                await LoadCategories();
+                return View(command);
+            }
+
+            await _mediator.Send(command);
+
+            TempData["Success"] = "محصول با موفقیت ویرایش شد";
+            return RedirectToAction(nameof(Index));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "خطا در ویرایش محصول {ProductId}", id);
+            TempData["Error"] = "خطا در ویرایش محصول";
+            await LoadCategories();
+            return View(command);
+        }
     }
 
+    /// <summary>
+    /// حذف محصول
+    /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id)
     {
-        // TODO: Implement product deletion
-        TempData["Success"] = "محصول با موفقیت حذف شد";
-        return RedirectToAction(nameof(Index));
+        try
+        {
+            var command = new DeleteProductCommand(id);
+            await _mediator.Send(command);
+
+            TempData["Success"] = "محصول با موفقیت حذف شد";
+            return RedirectToAction(nameof(Index));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "خطا در حذف محصول {ProductId}", id);
+            TempData["Error"] = "خطا در حذف محصول";
+            return RedirectToAction(nameof(Index));
+        }
     }
+
+    #region AI Methods
+
+    /// <summary>
+    /// تولید محتوای محصول با AI
+    /// </summary>
+    [HttpPost]
+    public async Task<IActionResult> GenerateContent([FromBody] GenerateContentRequest request)
+    {
+        try
+        {
+            var restaurantId = GetRestaurantId();
+
+            var command = new GenerateProductContentCommand
+            {
+                RestaurantId = restaurantId,
+                ProductId = request.ProductId,
+                ProductName = request.ProductName,
+                Ingredients = request.Ingredients ?? string.Empty,
+                Tone = request.Tone ?? "صمیمی"
+            };
+
+            var result = await _mediator.Send(command);
+
+            return Json(new
+            {
+                success = result.IsSuccess,
+                data = result.IsSuccess ? new
+                {
+                    title = result.Title,
+                    shortDescription = result.ShortDescription,
+                    longDescription = result.LongDescription,
+                    keywords = result.Keywords
+                } : null,
+                message = result.IsSuccess ? "محتوا با موفقیت تولید شد" : result.ErrorMessage
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "خطا در تولید محتوا با AI");
+            return Json(new
+            {
+                success = false,
+                message = "خطا در تولید محتوا. لطفاً بعداً تلاش کنید."
+            });
+        }
+    }
+
+    /// <summary>
+    /// تولید تصویر محصول با AI
+    /// </summary>
+    [HttpPost]
+    public async Task<IActionResult> GenerateImage([FromBody] GenerateImageRequest request)
+    {
+        try
+        {
+            var restaurantId = GetRestaurantId();
+
+            var command = new GenerateProductImageCommand
+            {
+                RestaurantId = restaurantId,
+                ProductId = request.ProductId,
+                Description = request.Description,
+                Style = request.Style ?? "واقعی",
+                Width = request.Width,
+                Height = request.Height
+            };
+
+            var result = await _mediator.Send(command);
+
+            return Json(new
+            {
+                success = result.IsSuccess,
+                data = result.IsSuccess ? new
+                {
+                    imageUrl = result.TemporaryPath,
+                    imageSize = result.ImageData?.Length ?? 0
+                } : null,
+                message = result.IsSuccess ? "تصویر با موفقیت تولید شد" : result.ErrorMessage
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "خطا در تولید تصویر با AI");
+            return Json(new
+            {
+                success = false,
+                message = "خطا در تولید تصویر. لطفاً بعداً تلاش کنید."
+            });
+        }
+    }
+
+    #endregion
+
+    #region Private Methods
+
+    /// <summary>
+    /// بارگذاری لیست دسته‌بندی‌ها برای Dropdown
+    /// </summary>
+    private async Task LoadCategories()
+    {
+        try
+        {
+            var restaurantId = GetRestaurantId();
+            var query = new GetCategoriesByRestaurantQuery(restaurantId);
+            var categories = await _mediator.Send(query);
+
+            ViewBag.Categories = new SelectList(categories, "Id", "Name");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "خطا در بارگذاری دسته‌بندی‌ها");
+            ViewBag.Categories = new SelectList(Enumerable.Empty<SelectListItem>());
+        }
+    }
+
+    #endregion
+}
+
+/// <summary>
+/// درخواست تولید محتوا
+/// </summary>
+public class GenerateContentRequest
+{
+    public Guid ProductId { get; set; }
+    public string ProductName { get; set; } = string.Empty;
+    public string? Ingredients { get; set; }
+    public string? Tone { get; set; }
+}
+
+/// <summary>
+/// درخواست تولید تصویر
+/// </summary>
+public class GenerateImageRequest
+{
+    public Guid ProductId { get; set; }
+    public string Description { get; set; } = string.Empty;
+    public string? Style { get; set; }
+    public int Width { get; set; } = 512;
+    public int Height { get; set; } = 512;
 }

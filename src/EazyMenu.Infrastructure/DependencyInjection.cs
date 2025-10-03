@@ -1,5 +1,6 @@
-using EazyMenu.Application.Common.Interfaces;
+﻿using EazyMenu.Application.Common.Interfaces;
 using EazyMenu.Infrastructure.Data;
+using EazyMenu.Infrastructure.Hubs;
 using EazyMenu.Infrastructure.Repositories;
 using EazyMenu.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +35,10 @@ public static class DependencyInjection
         services.AddScoped<IOtpService, OtpService>();
         services.AddScoped<ICartService, SessionCartService>();
         
+        // AI Services
+        services.AddScoped<IAiSettingsProvider, AiSettingsProvider>();
+        services.AddScoped<IAiContentService, AiContentService>();
+        
         // Memory Cache برای OTP
         services.AddMemoryCache();
         
@@ -44,6 +49,14 @@ public static class DependencyInjection
             options.IdleTimeout = TimeSpan.FromMinutes(30); // سبد خرید 30 دقیقه معتبر است
             options.Cookie.HttpOnly = true;
             options.Cookie.IsEssential = true;
+        });
+
+        // SignalR برای چت AI
+        services.AddSignalR(options =>
+        {
+            options.EnableDetailedErrors = true;
+            options.KeepAliveInterval = TimeSpan.FromSeconds(15);
+            options.ClientTimeoutInterval = TimeSpan.FromSeconds(30);
         });
 
         return services;

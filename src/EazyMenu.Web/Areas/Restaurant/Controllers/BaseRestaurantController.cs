@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using MediatR;
@@ -7,8 +7,8 @@ using System.Security.Claims;
 
 namespace EazyMenu.Web.Areas.Restaurant.Controllers;
 
-[Area("Restaurant")]
 [Authorize(Roles = "RestaurantOwner,Admin")]
+[Area("Restaurant")]
 public abstract class BaseRestaurantController : Controller
 {
     protected readonly IMediator _mediator;

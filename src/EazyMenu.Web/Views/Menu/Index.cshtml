@@ -1,4 +1,4 @@
-@model EazyMenu.Application.Common.Models.Menu.RestaurantMenuDto
+﻿@model EazyMenu.Application.Common.Models.Menu.RestaurantMenuDto
 @{
     ViewData["Title"] = Model.Name;
     Layout = "_MenuLayout";
@@ -452,6 +452,9 @@
         }
     }
 </div>
+
+<!-- Chat Widget -->
+@await Component.InvokeAsync("ChatWidget", Model.Id)
 
 @section Scripts {
     <script>

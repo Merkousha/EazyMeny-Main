@@ -1,6 +1,7 @@
-using EazyMenu.Application;
+﻿using EazyMenu.Application;
 using EazyMenu.Infrastructure;
 using EazyMenu.Infrastructure.Data;
+using EazyMenu.Infrastructure.Hubs;
 using EazyMenu.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 
@@ -93,16 +94,24 @@ app.UseAuthorization();
 
 app.MapStaticAssets();
 
+// SignalR Hub Mapping
+app.MapHub<AiAssistantHub>("/hubs/ai-assistant");
+
 // Default routing (باید قبل از Area routing باشد)
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// Area routing - Default (برای تمام Area ها به جز Restaurant)
-app.MapControllerRoute(
-    name: "areas",
-    pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}")
-    .WithStaticAssets();
+// Area routing - Admin
+app.MapAreaControllerRoute(
+        name: "admin",
+        areaName: "Admin",
+        pattern: "Admin/{controller=Home}/{action=Index}/{id?}");
+
+// Area routing - Restaurant
+app.MapAreaControllerRoute(
+        name: "restaurant",
+        areaName: "Restaurant",
+        pattern: "Restaurant/{controller=Dashboard}/{action=Index}/{id?}");
 
 app.Run();

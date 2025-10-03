@@ -1,0 +1,367 @@
+﻿@model EazyMenu.Application.Features.Products.Commands.UpdateProduct.UpdateProductCommand
+
+@{
+    ViewData["Title"] = "ویرایش محصول";
+    Layout = "~/Areas/Restaurant/Views/Shared/_RestaurantLayout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-flex align-items-center">
+                        <h5 class="mb-0">ویرایش محصول: @Model.Name</h5>
+                        <a href="@Url.Action("Index")" class="btn btn-secondary btn-sm ms-auto">
+                            <i class="fas fa-arrow-right"></i> بازگشت
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle"></i> @TempData["Success"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle"></i> @TempData["Error"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <form method="post" asp-action="Edit" asp-route-id="@Model.Id" id="productForm" enctype="multipart/form-data">
+                        <input type="hidden" asp-for="Id" />
+                        
+                        <div class="row">
+                            <!-- اطلاعات اصلی -->
+                            <div class="col-md-8">
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">اطلاعات اصلی</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <!-- دسته‌بندی -->
+                                        <div class="mb-3">
+                                            <label asp-for="CategoryId" class="form-label">دسته‌بندی <span class="text-danger">*</span></label>
+                                            <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.Categories">
+                                                <option value="">-- انتخاب دسته‌بندی --</option>
+                                            </select>
+                                            <span asp-validation-for="CategoryId" class="text-danger"></span>
+                                        </div>
+
+                                        <!-- نام فارسی -->
+                                        <div class="mb-3">
+                                            <label asp-for="Name" class="form-label">نام محصول (فارسی) <span class="text-danger">*</span></label>
+                                            <input asp-for="Name" class="form-control" placeholder="مثال: کباب کوبیده" />
+                                            <span asp-validation-for="Name" class="text-danger"></span>
+                                        </div>
+
+                                        <!-- نام انگلیسی -->
+                                        <div class="mb-3">
+                                            <label asp-for="NameEn" class="form-label">نام محصول (English)</label>
+                                            <input asp-for="NameEn" class="form-control" placeholder="Example: Kebab Koobideh" dir="ltr" />
+                                            <span asp-validation-for="NameEn" class="text-danger"></span>
+                                        </div>
+
+                                        <!-- توضیحات -->
+                                        <div class="mb-3">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <label asp-for="Description" class="form-label mb-0">توضیحات</label>
+                                                <button type="button" class="btn btn-sm btn-info" id="generateContentBtn">
+                                                    <i class="fas fa-magic"></i> تولید با AI
+                                                </button>
+                                            </div>
+                                            <textarea asp-for="Description" class="form-control" rows="4" 
+                                                      placeholder="توضیحات کامل محصول..."></textarea>
+                                            <span asp-validation-for="Description" class="text-danger"></span>
+                                            <small class="form-text text-muted">
+                                                برای تولید خودکار توضیحات با هوش مصنوعی، دکمه "تولید با AI" را کلیک کنید
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- قیمت‌گذاری -->
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">قیمت‌گذاری</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label asp-for="Price" class="form-label">قیمت (تومان) <span class="text-danger">*</span></label>
+                                                <input asp-for="Price" type="number" class="form-control" placeholder="50000" />
+                                                <span asp-validation-for="Price" class="text-danger"></span>
+                                            </div>
+
+                                            <div class="col-md-6 mb-3">
+                                                <label asp-for="DiscountedPrice" class="form-label">قیمت با تخفیف (تومان)</label>
+                                                <input asp-for="DiscountedPrice" type="number" class="form-control" placeholder="45000" />
+                                                <span asp-validation-for="DiscountedPrice" class="text-danger"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label asp-for="PreparationTime" class="form-label">زمان آماده‌سازی (دقیقه)</label>
+                                            <input asp-for="PreparationTime" type="number" class="form-control" />
+                                            <span asp-validation-for="PreparationTime" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- تنظیمات جانبی -->
+                            <div class="col-md-4">
+                                <!-- برچسب‌ها -->
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">برچسب‌ها</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-check mb-2">
+                                            <input asp-for="IsVegetarian" class="form-check-input" />
+                                            <label asp-for="IsVegetarian" class="form-check-label">گیاهی</label>
+                                        </div>
+
+                                        <div class="form-check mb-2">
+                                            <input asp-for="IsSpicy" class="form-check-input" />
+                                            <label asp-for="IsSpicy" class="form-check-label">تند</label>
+                                        </div>
+
+                                        <div class="form-check mb-2">
+                                            <input asp-for="IsPopular" class="form-check-input" />
+                                            <label asp-for="IsPopular" class="form-check-label">محبوب</label>
+                                        </div>
+
+                                        <div class="form-check mb-2">
+                                            <input asp-for="IsNew" class="form-check-input" />
+                                            <label asp-for="IsNew" class="form-check-label">جدید</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- وضعیت -->
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">وضعیت</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-check mb-2">
+                                            <input asp-for="IsAvailable" class="form-check-input" />
+                                            <label asp-for="IsAvailable" class="form-check-label">موجود</label>
+                                        </div>
+
+                                        <div class="form-check mb-2">
+                                            <input asp-for="IsActive" class="form-check-input" />
+                                            <label asp-for="IsActive" class="form-check-label">فعال</label>
+                                        </div>
+
+                                        <div class="mb-0">
+                                            <label asp-for="DisplayOrder" class="form-label">ترتیب نمایش</label>
+                                            <input asp-for="DisplayOrder" type="number" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- دکمه‌ها -->
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> ذخیره تغییرات
+                                    </button>
+                                    <a href="@Url.Action("Index")" class="btn btn-secondary">
+                                        <i class="fas fa-times"></i> انصراف
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal تولید محتوا با AI -->
+<div class="modal fade" id="aiContentModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">تولید محتوا با هوش مصنوعی</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    هوش مصنوعی با توجه به نام محصول، توضیحات جذاب و حرفه‌ای برای شما تولید می‌کند.
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">لحن محتوا</label>
+                    <select class="form-select" id="aiTone">
+                        <option value="صمیمی">صمیمی و دوستانه</option>
+                        <option value="رسمی">رسمی و حرفه‌ای</option>
+                        <option value="خلاقانه">خلاقانه و هنری</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">مواد تشکیل‌دهنده (اختیاری)</label>
+                    <input type="text" class="form-control" id="aiIngredients" 
+                           placeholder="مثال: گوشت چرخ کرده، پیاز، ادویه">
+                    <small class="text-muted">این اطلاعات به AI کمک می‌کند توضیحات بهتری تولید کند</small>
+                </div>
+
+                <div id="aiProgress" style="display:none;">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">در حال تولید...</span>
+                        </div>
+                        <p class="mt-2">در حال تولید محتوا با هوش مصنوعی...</p>
+                        <small class="text-muted">این کار ممکن است چند ثانیه طول بکشد</small>
+                    </div>
+                </div>
+
+                <div id="aiResult" style="display:none;">
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i> محتوا با موفقیت تولید شد!
+                    </div>
+                    <div id="aiGeneratedContent"></div>
+                </div>
+
+                <div id="aiError" style="display:none;" class="alert alert-danger"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">بستن</button>
+                <button type="button" class="btn btn-primary" id="generateBtn">
+                    <i class="fas fa-magic"></i> تولید
+                </button>
+                <button type="button" class="btn btn-success" id="applyContentBtn" style="display:none;">
+                    <i class="fas fa-check"></i> اعمال محتوا
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        const aiModal = new bootstrap.Modal(document.getElementById('aiContentModal'));
+        const productId = '@Model.Id';
+        let generatedContent = null;
+
+        // نمایش مودال AI
+        document.getElementById('generateContentBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const productName = document.getElementById('Name').value;
+            if (!productName) {
+                alert('لطفاً ابتدا نام محصول را وارد کنید');
+                document.getElementById('Name').focus();
+                return;
+            }
+            
+            // Reset modal
+            document.getElementById('aiProgress').style.display = 'none';
+            document.getElementById('aiResult').style.display = 'none';
+            document.getElementById('aiError').style.display = 'none';
+            document.getElementById('applyContentBtn').style.display = 'none';
+            
+            aiModal.show();
+        });
+
+        // تولید محتوا
+        document.getElementById('generateBtn').addEventListener('click', async function() {
+            const productName = document.getElementById('Name').value;
+            const tone = document.getElementById('aiTone').value;
+            const ingredients = document.getElementById('aiIngredients').value;
+
+            // نمایش progress
+            document.getElementById('aiProgress').style.display = 'block';
+            document.getElementById('aiResult').style.display = 'none';
+            document.getElementById('aiError').style.display = 'none';
+            this.disabled = true;
+
+            try {
+                const response = await fetch('@Url.Action("GenerateContent")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify({
+                        productId: productId,
+                        productName: productName,
+                        ingredients: ingredients,
+                        tone: tone
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    generatedContent = result.data;
+                    
+                    // نمایش نتیجه
+                    document.getElementById('aiGeneratedContent').innerHTML = `
+                        <div class="mb-3">
+                            <strong>توضیحات تولید شده:</strong>
+                            <div class="border p-3 rounded mt-2 bg-light">
+                                ${result.data.longDescription}
+                            </div>
+                        </div>
+                        ${result.data.keywords && result.data.keywords.length > 0 ? `
+                        <div>
+                            <strong>کلیدواژه‌های پیشنهادی:</strong><br>
+                            ${result.data.keywords.map(k => `<span class="badge bg-info me-1 mt-1">${k}</span>`).join('')}
+                        </div>
+                        ` : ''}
+                    `;
+                    
+                    document.getElementById('aiProgress').style.display = 'none';
+                    document.getElementById('aiResult').style.display = 'block';
+                    document.getElementById('applyContentBtn').style.display = 'inline-block';
+                } else {
+                    throw new Error(result.message || 'خطا در تولید محتوا');
+                }
+            } catch (error) {
+                document.getElementById('aiProgress').style.display = 'none';
+                document.getElementById('aiError').style.display = 'block';
+                document.getElementById('aiError').innerHTML = `
+                    <i class="fas fa-exclamation-triangle"></i> ${error.message}<br>
+                    <small>لطفاً مطمئن شوید تنظیمات AI در بخش تنظیمات درست وارد شده است.</small>
+                `;
+            } finally {
+                this.disabled = false;
+            }
+        });
+
+        // اعمال محتوای تولید شده
+        document.getElementById('applyContentBtn').addEventListener('click', function() {
+            if (generatedContent) {
+                document.getElementById('Description').value = generatedContent.longDescription;
+                aiModal.hide();
+                
+                // نمایش پیام موفقیت
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-success alert-dismissible fade show';
+                alert.innerHTML = `
+                    <i class="fas fa-check-circle"></i> محتوا با موفقیت اعمال شد! حالا می‌توانید آن را ویرایش کنید یا مستقیماً ذخیره کنید.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                document.querySelector('.card-body').insertBefore(alert, document.querySelector('form'));
+                
+                // Scroll به textarea
+                document.getElementById('Description').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                setTimeout(() => alert.remove(), 5000);
+            }
+        });
+    </script>
+}
