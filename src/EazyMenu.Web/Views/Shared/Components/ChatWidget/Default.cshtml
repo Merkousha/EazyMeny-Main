@@ -36,13 +36,13 @@
                     <small>همین الان</small>
                 </div>
             </div>
-        </div>
-
-        <!-- اینجا در حال تایپ -->
-        <div class="ai-chat-typing" id="chatTyping" style="display:none;">
-            <span></span>
-            <span></span>
-            <span></span>
+            
+            <!-- اینجا در حال تایپ -->
+            <div class="ai-chat-typing" id="chatTyping" style="display:none;">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
         </div>
 
         <!-- فرم ارسال پیام -->
@@ -146,7 +146,14 @@
         `;
 
         chatMessages.appendChild(messageDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+        scrollToBottom();
+    }
+
+    // اسکرول به انتها
+    function scrollToBottom() {
+        setTimeout(() => {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }, 100);
     }
 
     // Escape HTML
@@ -160,7 +167,7 @@
     function showTyping(show) {
         chatTyping.style.display = show ? 'block' : 'none';
         if (show) {
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            scrollToBottom();
         }
     }
 
@@ -204,6 +211,9 @@
                 messages.forEach(msg => {
                     addMessage(msg.message, msg.isUserMessage);
                 });
+                
+                // اسکرول به آخرین پیام
+                scrollToBottom();
             });
 
             // اتصال

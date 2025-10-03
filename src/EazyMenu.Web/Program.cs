@@ -98,9 +98,7 @@ app.MapStaticAssets();
 app.MapHub<AiAssistantHub>("/hubs/ai-assistant");
 
 // Default routing (باید قبل از Area routing باشد)
-app.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}");
+
 
 // Area routing - Admin
 app.MapAreaControllerRoute(
@@ -114,4 +112,7 @@ app.MapAreaControllerRoute(
         areaName: "Restaurant",
         pattern: "Restaurant/{controller=Dashboard}/{action=Index}/{id?}");
 
+app.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
 app.Run();

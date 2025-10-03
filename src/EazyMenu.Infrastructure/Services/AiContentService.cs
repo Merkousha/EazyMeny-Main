@@ -33,7 +33,7 @@ public class AiContentService : IAiContentService
     {
         try
         {
-            _logger.LogInformation("شروع تولید محتوا برای محصول '{ProductName}' در رستوران {RestaurantId}", 
+            _logger.LogInformation("شروع تولید محتوا برای محصول '{ProductName}' در رستوران {RestaurantId}",
                 productName, restaurantId);
 
             // بررسی وجود تنظیمات
@@ -64,7 +64,7 @@ public class AiContentService : IAiContentService
                 executionSettings: new OpenAIPromptExecutionSettings
                 {
                     Temperature = 0.7,
-                    MaxTokens = 500
+                    MaxTokens = 1000
                 },
                 cancellationToken: cancellationToken);
 
@@ -78,7 +78,7 @@ public class AiContentService : IAiContentService
         catch (Exception ex)
         {
             _logger.LogError(ex, "خطا در تولید محتوا برای محصول '{ProductName}'", productName);
-            
+
             return new AiGeneratedContentResult
             {
                 IsSuccess = false,
@@ -111,9 +111,9 @@ public class AiContentService : IAiContentService
 
             // TODO: پیاده‌سازی تولید تصویر با DALL-E یا Stable Diffusion
             // این قسمت بستگی به سرویس تصویری که استفاده می‌کنید دارد
-            
+
             _logger.LogWarning("تولید تصویر هنوز پیاده‌سازی نشده است");
-            
+
             // برای الان یک آرایه خالی برمی‌گردانیم
             return Array.Empty<byte>();
         }
@@ -147,7 +147,7 @@ public class AiContentService : IAiContentService
 
             // ساخت Prompt
             var systemPrompt = BuildChatSystemPrompt(menuContext);
-            
+
             var chatHistory = new ChatHistory();
             chatHistory.AddSystemMessage(systemPrompt);
             chatHistory.AddUserMessage(userMessage);
@@ -158,7 +158,7 @@ public class AiContentService : IAiContentService
                 executionSettings: new OpenAIPromptExecutionSettings
                 {
                     Temperature = 0.6,
-                    MaxTokens = 300
+                    MaxTokens = 2000
                 },
                 cancellationToken: cancellationToken);
 
@@ -183,21 +183,13 @@ public class AiContentService : IAiContentService
 
         var builder = Kernel.CreateBuilder();
 
-        // اگر Azure OpenAI استفاده می‌شود
-        if (baseUrl.Contains("azure", StringComparison.OrdinalIgnoreCase))
-        {
-            builder.AddAzureOpenAIChatCompletion(
-                deploymentName: modelName,
-                endpoint: baseUrl,
-                apiKey: apiKey);
-        }
-        else
-        {
-            // OpenAI معمولی
-            builder.AddOpenAIChatCompletion(
-                modelId: modelName,
-                apiKey: apiKey);
-        }
+
+#pragma warning disable SKEXP0010
+        builder.AddOpenAIChatCompletion(
+            modelId: modelName,
+            endpoint: new Uri(baseUrl),
+            apiKey: apiKey);
+
 
         return builder.Build();
     }
@@ -303,7 +295,7 @@ public class AiContentService : IAiContentService
         catch (Exception ex)
         {
             _logger.LogError(ex, "خطا در پارس پاسخ AI");
-            
+
             return new AiGeneratedContentResult
             {
                 IsSuccess = false,

@@ -49,7 +49,8 @@
     bottom: 80px;
     left: 0;
     width: 380px;
-    height: 500px;
+    height: 550px;
+    max-height: calc(100vh - 120px);
     background: white;
     border-radius: 16px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
@@ -96,9 +97,14 @@
 /* لیست پیام‌ها */
 .ai-chat-messages {
     flex: 1;
+    min-height: 0;
+    max-height: 100%;
     overflow-y: auto;
+    overflow-x: hidden;
     padding: 16px;
+    padding-bottom: 80px;
     background: #f5f5f5;
+    scroll-behavior: smooth;
 }
 
 .ai-chat-message {
@@ -164,9 +170,12 @@
 /* Typing indicator */
 .ai-chat-typing {
     padding: 8px 16px;
-    background: #f5f5f5;
+    margin-bottom: 16px;
+    background: white;
+    border-radius: 12px;
     display: flex;
     gap: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .ai-chat-typing span {
@@ -196,11 +205,15 @@
     }
 }
 
-/* فرم ورودی */
+/* فرم ورودی - Sticky */
 .ai-chat-input {
     padding: 12px;
     background: white;
     border-top: 1px solid #e0e0e0;
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .ai-chat-input form {
