@@ -1,6 +1,13 @@
 # پروژه EazyMenu - Clean Architecture
 
-پلتفرم SaaS برای رستوران‌ها و کافه‌ها
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![.NET](https://img.shields.io/badge/.NET-9.0-512BD4)](https://dotnet.microsoft.com/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
+
+پلتفرم **Open Source** SaaS برای رستوران‌ها و کافه‌ها
+
+> 🎉 **EazyMenu یک پروژه Open Source است!** شما می‌توانید آزادانه از آن استفاده کنید، تغییر دهید و در پروژه‌های تجاری خود به کار ببرید.
 
 ## 🏗️ معماری
 
@@ -204,20 +211,49 @@ dotnet test /p:CollectCoverage=true
 
 ## 🤝 مشارکت
 
-لطفاً قبل از ارسال Pull Request، موارد زیر را رعایت کنید:
-1. رعایت Clean Architecture
-2. نوشتن Unit Test
-3. رعایت SOLID Principles
-4. Code Review
+ما از مشارکت شما استقبال می‌کنیم! 🎉
 
-## 📞 پشتیبانی
+برای شروع:
+1. فایل [CONTRIBUTING.md](CONTRIBUTING.md) را مطالعه کنید
+2. یک Fork از پروژه بگیرید
+3. تغییرات خود را اعمال کنید
+4. Pull Request ارسال کنید
 
-- Email: support@eazymenu.ir
-- Website: https://eazymenu.ir
+**راه‌های مشارکت:**
+- 🐛 گزارش باگ
+- 💡 پیشنهاد ویژگی جدید
+- 💻 نوشتن کد
+- 📚 بهبود مستندات
+- 🌍 ترجمه
+
+## 💰 مدل کسب‌وکار
+
+EazyMenu یک پروژه Open Source با مدل کسب‌وکار پایدار است:
+- نسخه **Self-Hosted**: رایگان و Open Source ✅
+- نسخه **Cloud (SaaS)**: اشتراک ماهانه 💳
+- **خدمات حرفه‌ای**: پشتیبانی، مشاوره، آموزش 🏢
+
+جزئیات کامل در [BUSINESS_MODEL.md](BUSINESS_MODEL.md)
+
+## 📞 ارتباط با ما
+
+- 💬 **Discussions**: [GitHub Discussions](https://github.com/[username]/EazyMenu/discussions)
+- 🐛 **Issues**: [GitHub Issues](https://github.com/[username]/EazyMenu/issues)
+- 📧 **Email**: contact@eazymenu.io
+- 🌐 **Website**: https://eazymenu.io
+- 💼 **Enterprise**: enterprise@eazymenu.io
 
 ## 📄 لایسنس
 
-این پروژه تحت لایسنس MIT منتشر شده است.
+این پروژه تحت [لایسنس MIT](LICENSE) منتشر شده است - شما می‌توانید آزادانه از آن استفاده، تغییر و توزیع کنید.
+
+```
+MIT License - Copyright (c) 2025 EazyMenu Team
+```
+
+## 🙏 تشکر ویژه
+
+از تمام [مشارکت‌کنندگان](CONTRIBUTORS.md) که در توسعه EazyMenu نقش داشتند، صمیمانه تشکر می‌کنیم! ❤️
 
 ---
 

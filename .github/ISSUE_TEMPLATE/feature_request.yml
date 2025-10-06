@@ -1,0 +1,103 @@
+name: Feature Request
+description: پیشنهاد ویژگی یا بهبود جدید
+title: "[FEATURE]: "
+labels: ["enhancement", "needs-discussion"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        از اینکه ایده جدیدی ارائه می‌دهید، ممنونیم! 💡
+        
+  - type: textarea
+    id: problem
+    attributes:
+      label: مشکل یا نیاز
+      description: چه مشکل یا نیازی را این ویژگی حل می‌کند؟
+      placeholder: همیشه ناامید می‌شوم وقتی...
+    validations:
+      required: true
+      
+  - type: textarea
+    id: solution
+    attributes:
+      label: راه‌حل پیشنهادی
+      description: توضیح دهید می‌خواهید چه چیزی اضافه شود
+      placeholder: دکمه‌ای اضافه شود که...
+    validations:
+      required: true
+      
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: راه‌حل‌های جایگزین
+      description: آیا راه‌حل‌های دیگری فکر کردید؟
+      placeholder: همچنین می‌توان از X استفاده کرد...
+      
+  - type: textarea
+    id: examples
+    attributes:
+      label: مثال‌ها
+      description: لینک یا اسکرین‌شات از پیاده‌سازی‌های مشابه
+      placeholder: مثلاً در سایت X این ویژگی به این صورت است...
+      
+  - type: dropdown
+    id: category
+    attributes:
+      label: دسته‌بندی
+      description: این ویژگی به کدام بخش مربوط است؟
+      options:
+        - مدیریت رستوران
+        - مدیریت منو
+        - سیستم سفارش
+        - رزرو میز
+        - پرداخت
+        - گزارش‌گیری
+        - هوش مصنوعی
+        - UI/UX
+        - عملکرد
+        - امنیت
+        - API
+        - موبایل
+        - دیگر
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: priority
+    attributes:
+      label: اولویت (نظر شما)
+      description: فکر می‌کنید این ویژگی چقدر مهم است؟
+      options:
+        - Must Have - بدون این کار نمی‌کنم
+        - Should Have - خیلی مفید است
+        - Nice to Have - خوب است اگر باشد
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: implementation
+    attributes:
+      label: آیا مایل به پیاده‌سازی هستید؟
+      description: می‌خواهید خودتان این ویژگی را بسازید؟
+      options:
+        - بله، Pull Request می‌فرستم
+        - بله، اما به راهنمایی نیاز دارم
+        - خیر، فقط پیشنهاد می‌دهم
+    validations:
+      required: true
+      
+  - type: textarea
+    id: additional
+    attributes:
+      label: اطلاعات اضافی
+      description: هر چیز دیگری که می‌خواهید اضافه کنید
+      
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: چک‌لیست
+      options:
+        - label: این ویژگی را قبلاً جستجو کردم و تکراری نیست
+          required: true
+        - label: این ویژگی با اهداف EazyMenu هماهنگ است
+          required: true

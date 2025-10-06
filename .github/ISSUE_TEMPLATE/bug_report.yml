@@ -1,0 +1,131 @@
+name: Bug Report
+description: گزارش باگ یا مشکل فنی
+title: "[BUG]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        از اینکه وقت می‌گذارید و باگ را گزارش می‌دهید، ممنونیم! 🙏
+        
+  - type: textarea
+    id: description
+    attributes:
+      label: توضیح باگ
+      description: توضیح واضح و مختصر از باگ
+      placeholder: وقتی روی دکمه X کلیک می‌کنم، خطای Y رخ می‌دهد...
+    validations:
+      required: true
+      
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: مراحل بازتولید
+      description: مراحلی که باید انجام شود تا باگ رخ دهد
+      placeholder: |
+        1. برو به صفحه '...'
+        2. کلیک روی '...'
+        3. اسکرول کن به '...'
+        4. خطا را ببین
+    validations:
+      required: true
+      
+  - type: textarea
+    id: expected
+    attributes:
+      label: رفتار مورد انتظار
+      description: توضیح دهید چه چیزی باید اتفاق بیفتد
+      placeholder: باید محصول به سبد خرید اضافه شود...
+    validations:
+      required: true
+      
+  - type: textarea
+    id: actual
+    attributes:
+      label: رفتار واقعی
+      description: چه اتفاقی واقعاً می‌افتد؟
+      placeholder: پیغام خطا نمایش داده می‌شود...
+    validations:
+      required: true
+      
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: اسکرین‌شات یا ویدیو
+      description: اگر امکان دارد، اسکرین‌شات یا ویدیوی خطا را اضافه کنید
+      placeholder: می‌توانید فایل‌ها را اینجا بکشید و رها کنید
+      
+  - type: dropdown
+    id: environment
+    attributes:
+      label: محیط
+      description: کجا این باگ را دیدید؟
+      options:
+        - Self-Hosted (خودم نصب کردم)
+        - Cloud (eazymenu.io)
+        - Local Development
+    validations:
+      required: true
+      
+  - type: input
+    id: version
+    attributes:
+      label: نسخه
+      description: کدام نسخه از EazyMenu استفاده می‌کنید؟
+      placeholder: v1.2.0
+    validations:
+      required: true
+      
+  - type: input
+    id: os
+    attributes:
+      label: سیستم عامل
+      description: چه سیستم عاملی استفاده می‌کنید؟
+      placeholder: Windows 11, Ubuntu 22.04, macOS 14
+    validations:
+      required: true
+      
+  - type: input
+    id: browser
+    attributes:
+      label: مرورگر
+      description: در صورتی که مشکل در مرورگر است
+      placeholder: Chrome 120, Firefox 118, Safari 17
+      
+  - type: textarea
+    id: logs
+    attributes:
+      label: لاگ‌ها
+      description: لاگ‌های خطا (اگر وجود دارد)
+      render: shell
+      
+  - type: dropdown
+    id: severity
+    attributes:
+      label: شدت مشکل
+      description: این باگ چقدر جدی است؟
+      options:
+        - Critical - سیستم کار نمی‌کند
+        - High - ویژگی مهم کار نمی‌کند
+        - Medium - ویژگی کار می‌کند اما با مشکل
+        - Low - مشکل کوچک UI/UX
+    validations:
+      required: true
+      
+  - type: textarea
+    id: additional
+    attributes:
+      label: اطلاعات اضافی
+      description: هر چیز دیگری که فکر می‌کنید مفید باشد
+      
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: چک‌لیست
+      options:
+        - label: این باگ را قبلاً جستجو کردم و تکراری نیست
+          required: true
+        - label: لاگ‌ها و خطاها را بررسی کردم
+          required: true
+        - label: مستندات را خواندم
+          required: false
