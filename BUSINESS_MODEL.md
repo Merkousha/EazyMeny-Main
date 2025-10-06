@@ -19,7 +19,7 @@ EazyMenu یک پروژه **Open Source** با لایسنس MIT است که به 
 #### مدل: Freemium + Subscription
 ```
 نسخه Self-Hosted: رایگان و Open Source ✅
-نسخه Cloud (EazyMenu.io): اشتراک ماهانه/سالانه 💳
+نسخه Cloud (eazymenu.ir): اشتراک ماهانه/سالانه 💳
 ```
 
 **پلن‌های پیشنهادی:**
@@ -233,7 +233,7 @@ Professional Services:                         20,000,000 تومان/ماه
 ### فاز 1: آماده‌سازی (ماه 1-2)
 - ✅ انتشار کد در GitHub
 - ✅ مستندات کامل
-- ✅ راه‌اندازی وبسایت (eazymenu.io)
+- ✅ راه‌اندازی وبسایت (eazymenu.ir)
 - ✅ ساخت محیط Demo
 
 ### فاز 2: راه‌اندازی Community (ماه 3-4)
@@ -258,12 +258,12 @@ Professional Services:                         20,000,000 تومان/ماه
 
 ## 📞 لینک‌های مفید
 
-- 🌐 Website: https://eazymenu.io
-- 💻 GitHub: https://github.com/[username]/EazyMenu
-- 📚 Docs: https://docs.eazymenu.io
-- 💬 Community: https://community.eazymenu.io
-- 📧 Sales: sales@eazymenu.io
-- 🎯 Enterprise: enterprise@eazymenu.io
+- 🌐 Website: https://eazymenu.ir
+- 💻 GitHub: https://github.com/Merkousha/EazyMenu
+- 📚 Docs: https://docs.eazymenu.ir
+- 💬 Community: https://community.eazymenu.ir
+- 📧 Sales: sales@eazymenu.ir
+- 🎯 Enterprise: enterprise@eazymenu.ir
 
 ---
 

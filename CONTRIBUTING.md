@@ -19,10 +19,10 @@
 ## 🎯 روش‌های مشارکت
 
 ### 1. گزارش باگ 🐛
-اگر باگی پیدا کردید، آن را در [GitHub Issues](https://github.com/[username]/EazyMenu/issues) گزارش دهید.
+اگر باگی پیدا کردید، آن را در [GitHub Issues](https://github.com/Merkousha/EazyMenu/issues) گزارش دهید.
 
 ### 2. پیشنهاد ویژگی جدید 💡
-ایده جدیدی دارید؟ در [GitHub Discussions](https://github.com/[username]/EazyMenu/discussions) مطرح کنید.
+ایده جدیدی دارید؟ در [GitHub Discussions](https://github.com/Merkousha/EazyMenu/discussions) مطرح کنید.
 
 ### 3. بهبود مستندات 📚
 مستندات را بهتر کنید، مثال‌های بیشتری اضافه کنید، یا اشتباهات املایی را اصلاح کنید.
@@ -305,7 +305,7 @@ dotnet build /p:TreatWarningsAsErrors=true
 ## 📞 ارتباط با ما
 
 - 💬 **Discord**: [لینک دیسکورد]
-- 📧 **Email**: contribute@eazymenu.io
+- 📧 **Email**: contribute@eazymenu.ir
 - 🐦 **Twitter**: [@EazyMenuIO]
 - 💻 **GitHub Discussions**: [لینک Discussions]
 

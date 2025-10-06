@@ -237,11 +237,11 @@ EazyMenu یک پروژه Open Source با مدل کسب‌وکار پایدار 
 
 ## 📞 ارتباط با ما
 
-- 💬 **Discussions**: [GitHub Discussions](https://github.com/[username]/EazyMenu/discussions)
-- 🐛 **Issues**: [GitHub Issues](https://github.com/[username]/EazyMenu/issues)
-- 📧 **Email**: contact@eazymenu.io
-- 🌐 **Website**: https://eazymenu.io
-- 💼 **Enterprise**: enterprise@eazymenu.io
+- 💬 **Discussions**: [GitHub Discussions](https://github.com/Merkousha/EazyMenu/discussions)
+- 🐛 **Issues**: [GitHub Issues](https://github.com/Merkousha/EazyMenu/issues)
+- 📧 **Email**: contact@eazymenu.ir
+- 🌐 **Website**: https://eazymenu.ir
+- 💼 **Enterprise**: enterprise@eazymenu.ir
 
 ## 📄 لایسنس
 

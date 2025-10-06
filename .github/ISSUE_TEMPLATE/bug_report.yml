@@ -62,7 +62,7 @@ body:
       description: کجا این باگ را دیدید؟
       options:
         - Self-Hosted (خودم نصب کردم)
-        - Cloud (eazymenu.io)
+        - Cloud (eazymenu.ir)
         - Local Development
     validations:
       required: true
